@@ -3,6 +3,8 @@
 	"compilerOptions": {
 		"jsx": "preserve",
 		"jsxImportSource": "kaori.js",
+		"noEmit": true,
+		"moduleResolution": "bundler",
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"

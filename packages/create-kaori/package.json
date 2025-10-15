@@ -6,21 +6,11 @@
 	"bin": {
 		"create-kaori": "./main.js"
 	},
-	"publishConfig": {
-		"exports": {
-			".": "./src/index.js",
-			"./jsx-runtime": "./src/jsx/types.d.ts",
-			"./jsx-dev-runtime": "./src/jsx/types.d.ts"
-		}
-	},
 	"files": [
 		"main.js",
 		"templates",
 		"package.json"
 	],
-	"scripts": {
-		"build": "tsc"
-	},
 	"author": "golok",
 	"packageManager": "pnpm@10.12.4",
 	"dependencies": {

@@ -231,29 +231,4 @@ function Todos(props: {
 	);
 }
 
-function Starter(props: { name: string }) {
-	const count = signal(0);
-	const double = computed(() => count.value * 2);
-	// auto memoization coming soon :)
-	const cond = computed(() => count.value > 3);
-
-	function increment() {
-		count.value++;
-	}
-
-	return () => (
-		<div class="h-full flex flex-col gap-4 items-center justify-center">
-			<h1 class="text-xl font-bold">Welcome to Kaori ^^</h1>
-			<p class="text-lg">Hello {props.name}</p>
-			<button class="button-primary" onClick={increment}>
-				Click Me!
-			</button>
-			<p>Count: {count.value}</p>
-			<p>Double: {double.value}</p>
-			<Show when={cond.value}>Count is greater than 3!</Show>
-		</div>
-	);
-}
-
-render(<Starter name={"Aadi"} />, root);
-// render(<App />, root);
+render(<App />, root);

@@ -1,7 +1,7 @@
-import { html, render } from "lit-html";
+import { html } from "lit-html";
 import { AsyncDirective, directive } from "lit-html/async-directive.js";
 import { effect as syncEffect, untracked } from "@preact/signals-core";
-import type { Component, RenderOptions } from "./types.js";
+import type { Component } from "./types.js";
 import { invariant } from "./utils.js";
 
 const logger = {
