@@ -14,6 +14,8 @@ This was made in an afternoon so expect bugs and rough edges.
 
 If you find any bugs or have suggestions, please open an issue or a PR.
 
+Its my playground for now so expect breaking changes.
+
 ## Installation
 
 ```bash
