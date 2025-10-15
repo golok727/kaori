@@ -1,0 +1,16 @@
+{
+	"name": "bloom",
+	"version": "0.0.1",
+	"description": "A beautiful js framework",
+	"exports": {
+		".": "./src/index.ts"
+	},
+	"scripts": {},
+	"keywords": [],
+	"author": "golok727",
+	"packageManager": "pnpm@10.12.4",
+	"dependencies": {
+		"@preact/signals-core": "^1.12.1",
+		"lit-html": "^3.3.1"
+	}
+}

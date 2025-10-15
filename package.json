@@ -1,0 +1,12 @@
+{
+	"name": "bloom-monorepo",
+	"version": "0.0.1",
+	"description": "A beautiful js framework",
+	"keywords": [],
+	"author": "",
+	"scripts": {
+		"dev": "pnpm --filter playground dev"
+	},
+	"license": "MIT",
+	"packageManager": "pnpm@10.12.4"
+}
