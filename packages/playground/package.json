@@ -9,7 +9,7 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"bloom": "workspace:*",
+		"kaori.js": "workspace:*",
 		"tailwindcss": "^4.1.14"
 	},
 	"devDependencies": {

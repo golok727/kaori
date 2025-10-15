@@ -11,7 +11,7 @@ import {
 	Show,
 	nothing,
 	onMount,
-} from "bloom";
+} from "kaori.js";
 
 const root = document.querySelector<HTMLDivElement>("#root")!;
 

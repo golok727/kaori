@@ -19,7 +19,7 @@ importers:
 
   packages/playground:
     dependencies:
-      bloom:
+      kaori.js:
         specifier: workspace:*
         version: link:../bloom
       tailwindcss:

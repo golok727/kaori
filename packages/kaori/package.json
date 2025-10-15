@@ -1,7 +1,7 @@
 {
-	"name": "bloom",
+	"name": "kaori.js",
 	"version": "0.0.1",
-	"description": "A beautiful js framework",
+	"description": "A fragrant TS framework",
 	"exports": {
 		".": "./src/index.ts"
 	},
