@@ -1,7 +1,7 @@
 {
 	"name": "create-kaori",
-	"version": "0.0.1",
-	"description": "A fragrant TS framework",
+	"version": "0.0.2",
+	"description": "Create a new Kaori project",
 	"type": "module",
 	"bin": {
 		"create-kaori": "./main.js"

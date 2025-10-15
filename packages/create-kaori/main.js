@@ -5,11 +5,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 import prompts from "prompts";
 
+export const VERSION = "0.0.2"; // todo pull from package.json
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function main() {
 	console.log("\n🌸 Welcome to Kaori - A fragrant TS framework\n");
+	console.log(`using create-kaori ${VERSION}\n`);
 
 	const response = await prompts({
 		type: "text",
