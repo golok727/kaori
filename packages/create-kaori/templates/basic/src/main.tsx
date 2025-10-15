@@ -1,3 +1,4 @@
+import "./style.css";
 import { signal, computed, render, Show } from "kaori.js";
 
 function Starter(props: { name: string }) {
@@ -21,5 +22,5 @@ function Starter(props: { name: string }) {
 	);
 }
 
-const root = document.getElementById("#root") as HTMLElement;
+const root = document.getElementById("root") as HTMLElement;
 render(<Starter name={"Kaori"} />, root);
