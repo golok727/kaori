@@ -1,66 +1,97 @@
+import "./style.css";
 import {
 	computed,
-	html,
+	render,
 	signal,
-	type Bloom,
-	type ComponentContext,
+	For,
+	getBloom,
+	onCleanup,
+	Show,
 } from "bloom";
 
-export function App(_: Bloom, props: { initialCount: number }) {
-	const count = signal(props.initialCount);
-	const checked = signal(false);
-
-	return () => {
-		if (count.value === 0x45) {
-			return <h1>Nicw !!!</h1>;
-		}
-
-		return (
-			<div>
-				<h1>Count {count.value}</h1>
-				<button onClick={() => count.value++}>Increment</button>
-				<input
-					$prop:checked={checked.value}
-					onChange={(ev: any) => (checked.value = ev.target.value)}
-				>
-					Check
-				</input>
-				<input $bind:value={checked}>Check 2</input>
-				<input
-					value={checked.value}
-					onChange={(ev: any) => (checked.value = ev.target.value)}
-				>
-					Check 3
-				</input>
-			</div>
-		);
+function useToggle(initial = false) {
+	const state = signal(initial);
+	return {
+		get show() {
+			return state.value;
+		},
+		toggle() {
+			state.value = !state.peek();
+		},
+		set(value: boolean) {
+			state.value = value;
+		},
 	};
 }
 
-declare global {
-	namespace JSX {
-		interface IntrinsicElements {
-			[elemName: string]: any;
-		}
+function App() {
+	const showThing = useToggle(true);
+
+	const todos = signal([
+		{ id: 1, title: "Learn Bloom", completed: false },
+		{ id: 2, title: "Build something awesome", completed: false },
+	]);
+
+	function addTodo(title: string) {
+		const newTodo = {
+			id: todos.value.length + 1,
+			title,
+			completed: false,
+		};
+		todos.value = [...todos.value, newTodo];
 	}
-}
-interface Todo {
-	id: number;
-	title: string;
-	completed: boolean;
+
+	function toggleCompleted(id: number) {
+		todos.value = todos.value.map((todo) =>
+			todo.id === id ? { ...todo, completed: !todo.completed } : todo
+		);
+	}
+
+	return () => (
+		<div>
+			<h1>Bloom Playground</h1>
+
+			<Show when={showThing.show}>
+				<BloomThing />
+			</Show>
+
+			<button className="button-primary" onClick={() => showThing.toggle()}>
+				{showThing.show ? "Hide" : "Show"} BloomThing
+			</button>
+
+			<Todos
+				todos={todos.value}
+				addTodo={addTodo}
+				toggleCompleted={toggleCompleted}
+			/>
+		</div>
+	);
 }
 
-export function Todos({
-	props,
-}: ComponentContext<{
+function BloomThing() {
+	let count = 0;
+	const bloom = getBloom();
+
+	let id = setInterval(() => {
+		count++;
+		bloom.update();
+	}, 1000);
+
+	onCleanup(() => {
+		console.log("component unmounted, clearing interval");
+		clearInterval(id);
+	});
+
+	return () => <div>Without signals count: {count}</div>;
+}
+
+function Todos(props: {
 	todos: Todo[];
 	addTodo: (title: string) => void;
 	toggleCompleted: (id: number) => void;
-}>) {
+}) {
 	const newTodoText = signal("");
-
 	const length = computed(() => props.todos.length);
-
 	const numChecked = computed(
 		() => props.todos.filter((todo) => todo.completed).length
 	);
@@ -71,30 +102,72 @@ export function Todos({
 
 	const addTodo = () => {
 		const value = newTodoText.value;
-		if (value !== "") {
-			props.addTodo(value);
-		}
+		if (value !== "") props.addTodo(value);
+	};
+
+	const handleCheckedChange = (id: number) => {
+		props.toggleCompleted(id);
 	};
 
 	return () => (
 		<div>
-			<h2>Todos ${numChecked + " Completed"}</h2>
-			<input type="text" id="new-todo" change={handleInputChange} />
-			<button click={addTodo}>addTodo</button>
-			<Switch when={length.value === 0} fallback={<p>No todos</p>}>
+			<h2>Todos {numChecked.value} Completed</h2>
+
+			<input
+				value={newTodoText.value}
+				type="text"
+				id="new-todo"
+				onChange={handleInputChange}
+			/>
+
+			<button className="button-primary" onClick={addTodo}>
+				addTodo
+			</button>
+
+			{length.value === 0 ? (
+				<p>No todos</p>
+			) : (
 				<ul>
-					<For each={props.todos} key={(todo: Todo) => todo.id}>
+					<For items={props.todos} key={(todo) => todo.id}>
 						{(todo: Todo) => (
 							<li>
-								<input type="checkbox" checked={todo.completed} />${todo.title}
+								<input
+									type="checkbox"
+									checked={todo.completed}
+									onChange={() => handleCheckedChange(todo.id)}
+								/>
+								{todo.title}
 							</li>
 						)}
 					</For>
 				</ul>
-			</Switch>
+			)}
 		</div>
 	);
 }
 
-function For() {}
-function Switch() {}
+const root = document.querySelector("#root") as HTMLDivElement;
+if (!root) throw new Error("Root element not found");
+render(App, { props: { initialCount: 65 }, target: root });
+
+declare global {
+	namespace JSX {
+		type Element = unknown;
+
+		interface ElementChildrenAttribute {
+			children: {}; // This tells TS to use 'children' prop for content between tags
+		}
+
+		interface IntrinsicElements {
+			[elemName: string]: {
+				children?: any;
+				[key: string]: any;
+			};
+		}
+	}
+}
+interface Todo {
+	id: number;
+	title: string;
+	completed: boolean;
+}
