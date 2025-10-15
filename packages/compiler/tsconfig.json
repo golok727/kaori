@@ -3,8 +3,7 @@
 	"compilerOptions": {
 		"outDir": "./dist",
 		"rootDir": "./src",
-		"moduleResolution": "node",
 		"tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
 	},
-	"include": ["src", "src/jsx"]
+	"include": ["src"]
 }

@@ -1,8 +1,6 @@
 import "./style.css";
 import {
-	component,
 	computed,
-	html,
 	render,
 	signal,
 	For,
@@ -115,30 +113,27 @@ function App() {
 		);
 	}
 
-	return () =>
-		html`<div>
+	return () => (
+		<div>
 			<h1 class="text-xl font-bold">Bloom Playground</h1>
-			${component(Show, {
-				get when() {
-					return showThing.show;
-				},
-				children: html`${component(BloomThing, {})}`,
-			})}
-			<button class="button-primary" @click=${() => showThing.toggle()}>
-				${showThing.show ? "Hide" : "Show"} BloomThing
+			<Show when={showThing.show}>
+				<KaoriThing />
+			</Show>
+			<button class="button-primary" onClick={() => showThing.toggle()}>
+				{showThing.show ? "Hide" : "Show"} BloomThing
 			</button>
-			${query.loading ? html`<p>Loading todos...</p>` : nothing}
-			${component(Todos, {
-				get todos() {
-					return query.data!;
-				},
-				addTodo,
-				toggleCompleted,
-			})}
-		</div>`;
+			<h1 class="text-xl font-bold">Bloom Playground</h1>
+			{query.loading ? <p>Loading todos...</p> : nothing}
+			<Todos
+				todos={query.data!}
+				addTodo={addTodo}
+				toggleCompleted={toggleCompleted}
+			/>
+		</div>
+	);
 }
 
-function BloomThing() {
+function KaoriThing() {
 	let count = 0;
 	const bloom = getBloom();
 
@@ -152,8 +147,9 @@ function BloomThing() {
 		clearInterval(id);
 	});
 
-	return () =>
-		html`<h1 class="text-lg font-bold">Without signals count: ${count}</h1>`;
+	return () => (
+		<h1 class="text-lg font-bold"> Without signals count {count}</h1>
+	);
 }
 
 type Todo = {
@@ -198,39 +194,66 @@ function Todos(props: {
 		props.toggleCompleted(id);
 	};
 
-	return () =>
-		html`<div>
-			<h2>Todos ${numChecked.value + " Completed"}</h2>
-			${error.value
-				? html`<p class="text-red-600">${error.value}</p>`
-				: nothing}
+	return () => (
+		<div>
+			<h2>Todos {numChecked.value + " Completed"}</h2>
+			{error.value ? <p class="text-red-600">{error.value}</p> : nothing}
 			<input
-				.value=${newTodoText.value}
+				prop:value={newTodoText.value}
 				class="py-2 px-2 border border-gray-300 rounded"
 				type="text"
 				id="new-todo"
-				@change=${handleInputChange}
+				onChange={handleInputChange}
 			/>
-			<button class="button-primary" @click=${addTodo}>addTodo</button>
-			${length.value === 0
-				? html`<p>No todos</p>`
-				: html`<ul>
-						${component(For<Todo>, {
-							get items() {
-								return props.todos;
-							},
-							key: (todo) => todo.id,
-							children: (todo) =>
-								html`<li class=${`${todo.completed ? "line-through" : ""}`}>
-									<input
-										type="checkbox"
-										?checked=${todo.completed}
-										@change=${() => handleCheckedChange(todo.id)}
-									/>
-									${todo.title}
-								</li>`,
-						})}
-				  </ul>`}
-		</div>`;
+			<button class="button-primary" onClick={addTodo}>
+				addTodo
+			</button>
+
+			{length.value === 0 ? (
+				<p>No todos</p>
+			) : (
+				<ul>
+					<For items={props.todos} key={(todo) => todo.id}>
+						{(todo) => (
+							<li class={`${todo.completed ? "line-through" : ""}`}>
+								<input
+									type="checkbox"
+									bool:checked={todo.completed}
+									onChange={() => handleCheckedChange(todo.id)}
+								/>
+								{todo.title}
+							</li>
+						)}
+					</For>
+				</ul>
+			)}
+		</div>
+	);
 }
-render(App, { props: { initialCount: 65 }, target: root });
+
+function Starter(props: { name: string }) {
+	const count = signal(0);
+	const double = computed(() => count.value * 2);
+	// auto memoization coming soon :)
+	const cond = computed(() => count.value > 3);
+
+	function increment() {
+		count.value++;
+	}
+
+	return () => (
+		<div class="h-full flex flex-col gap-4 items-center justify-center">
+			<h1 class="text-xl font-bold">Welcome to Kaori ^^</h1>
+			<p class="text-lg">Hello {props.name}</p>
+			<button class="button-primary" onClick={increment}>
+				Click Me!
+			</button>
+			<p>Count: {count.value}</p>
+			<p>Double: {double.value}</p>
+			<Show when={cond.value}>Count is greater than 3!</Show>
+		</div>
+	);
+}
+
+render(<Starter name={"Aadi"} />, root);
+// render(<App />, root);

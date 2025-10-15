@@ -1,12 +1,10 @@
 {
-	"name": "kaori.js",
+	"name": "create-kaori",
 	"version": "0.0.1",
 	"description": "A fragrant TS framework",
 	"type": "module",
-	"exports": {
-		".": "./src/index.ts",
-		"./jsx-runtime": "./src/jsx/types.ts",
-		"./jsx-dev-runtime": "./src/jsx/types.ts"
+	"bin": {
+		"create-kaori": "./main.js"
 	},
 	"publishConfig": {
 		"exports": {
@@ -16,28 +14,16 @@
 		}
 	},
 	"files": [
-		"dist",
-		"src",
+		"main.js",
+		"templates",
 		"package.json"
 	],
 	"scripts": {
 		"build": "tsc"
 	},
-	"keywords": [
-		"framework",
-		"web",
-		"frontend",
-		"ui",
-		"typescript",
-		"kaori",
-		"reactive",
-		"signals",
-		"lit-html"
-	],
 	"author": "golok",
 	"packageManager": "pnpm@10.12.4",
 	"dependencies": {
-		"@preact/signals-core": "^1.12.1",
-		"lit-html": "^3.3.1"
+		"prompts": "^2.4.2"
 	}
 }

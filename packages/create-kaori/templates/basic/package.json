@@ -1,5 +1,5 @@
 {
-	"name": "playground",
+	"name": "basic",
 	"private": true,
 	"version": "0.0.0",
 	"type": "module",
@@ -9,13 +9,12 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
-		"kaori.js": "workspace:*",
+		"kaori.js": "^0.0.1",
 		"tailwindcss": "^4.1.14"
 	},
 	"devDependencies": {
-		"@tailwindcss/vite": "^4.1.14",
+		"kaori-compiler": "^0.0.1",
 		"typescript": "~5.9.3",
-		"vite": "^7.1.7",
-		"kaori-compiler": "workspace:*"
+		"vite": "^7.1.7"
 	}
 }

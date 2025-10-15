@@ -1,8 +1,14 @@
 import { html, render } from "lit-html";
 import { AsyncDirective, directive } from "lit-html/async-directive.js";
 import { effect as syncEffect, untracked } from "@preact/signals-core";
-import type { Component, RenderOptions } from "./types";
-import { invariant } from "./utils";
+import type { Component, RenderOptions } from "./types.js";
+import { invariant } from "./utils.js";
+
+const logger = {
+	log: (...args: any[]) => {
+		console.log("[Kaori:DEV]", ...args);
+	},
+};
 
 export type Bloom = {
 	update(): void;
@@ -107,7 +113,7 @@ function get_bloom(): Bloom {
 }
 
 function dispose_bloom(bloom: BloomInternal) {
-	console.log("Disposing bloom and running cleanup functions");
+	logger.log("Disposing bloom and running cleanup functions");
 	bloom.__disposables.forEach((dispose) => {
 		try {
 			dispose();
@@ -135,7 +141,7 @@ class ComponentDirective<Props = any> extends AsyncDirective {
 		const componentName = C.name || "Anonymous";
 
 		if (!this.hasInitialized) {
-			console.log("Rendering component ", componentName, props);
+			logger.log("Rendering component ", componentName, props);
 			// Create the bloom object with update method
 			this.bloom = {
 				update: () => {
@@ -162,11 +168,12 @@ class ComponentDirective<Props = any> extends AsyncDirective {
 			if (typeof this._rawTemplate === "function") {
 				// reactive return
 				bloom_effect(() => {
-					console.log("Effect, ", componentName);
+					logger.log("Effect, ", componentName);
 					this.bloom?.update();
 				}, this.bloom);
 			}
 
+			this._cachedTemplate = this.$_getTemplate;
 			this.hasInitialized = true;
 		}
 
@@ -192,25 +199,17 @@ interface ComponentDirectiveFn {
 
 export const component = directive(ComponentDirective) as ComponentDirectiveFn;
 
-function render_bloom<Props>(
-	C: Component<Props>,
-	{ props, target }: RenderOptions<Props>
-) {
-	const root = html`${component(C as never, props as never)}`;
-	render(root, target);
-}
-
 export { For, Show } from "./helpers";
 export type { ForProps, ShowProps } from "./helpers";
 
 export {
-	render_bloom as render,
 	get_bloom as getBloom,
 	bloom_effect as effect,
 	on_mount as onMount,
 	on_cleanup as onCleanup,
 	html,
 };
+export { render } from "lit-html";
 
 export * from "./types";
 

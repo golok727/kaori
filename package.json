@@ -3,10 +3,16 @@
 	"version": "0.0.1",
 	"description": "A fragrant TS framework",
 	"keywords": [],
-	"author": "",
+	"author": "golok",
 	"scripts": {
 		"dev": "pnpm --filter playground dev"
 	},
 	"license": "MIT",
-	"packageManager": "pnpm@10.12.4"
+	"packageManager": "pnpm@10.12.4",
+	"devDependencies": {
+		"typescript": "~5.9.3"
+	},
+	"dependencies": {
+		"kaori-monorepo": "link:"
+	}
 }
