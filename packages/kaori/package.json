@@ -1,6 +1,6 @@
 {
 	"name": "kaori.js",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"description": "A fragrant TS framework",
 	"type": "module",
 	"exports": {
@@ -10,9 +10,9 @@
 	},
 	"publishConfig": {
 		"exports": {
-			".": "./src/index.js",
-			"./jsx-runtime": "./src/jsx/types.d.ts",
-			"./jsx-dev-runtime": "./src/jsx/types.d.ts"
+			".": "./dist/index.js",
+			"./jsx-runtime": "./dist/jsx/types.d.ts",
+			"./jsx-dev-runtime": "./dist/jsx/types.d.ts"
 		}
 	},
 	"files": [
