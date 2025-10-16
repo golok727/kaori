@@ -8,7 +8,7 @@ const KAORI_PACKAGE_NAME = "kaori.js";
 // Import Manager - Handles all import-related logic
 // ============================================================================
 
-type ImportType = "component" | "html" | "ref";
+type ImportType = "component" | "html" | "ref" | "styleMap";
 
 interface ImportInfo {
 	name: string; // The name to use in generated code
@@ -28,6 +28,11 @@ class ImportManager {
 		});
 		this.imports.set("html", { name: "html", exists: false, needed: false });
 		this.imports.set("ref", { name: "ref", exists: false, needed: false });
+		this.imports.set("styleMap", {
+			name: "styleMap",
+			exists: false,
+			needed: false,
+		});
 	}
 
 	/**
@@ -236,6 +241,21 @@ class AttributeProcessor {
 					[attrValue]
 				),
 			};
+		}
+
+		// Handle style attribute with object expressions
+		if (attrName === "style" && !t.isStringLiteral(attrValue)) {
+			// Check if it's an object expression or identifier (object variable)
+			if (t.isObjectExpression(attrValue) || t.isIdentifier(attrValue) || t.isMemberExpression(attrValue) || t.isCallExpression(attrValue)) {
+				this.importManager.markNeeded("styleMap");
+				return {
+					type: "directive",
+					expression: t.callExpression(
+						t.identifier(this.importManager.getName("styleMap")),
+						[attrValue]
+					),
+				};
+			}
 		}
 
 		const normalizedName = this.normalizeAttributeName(attrName);

@@ -240,3 +240,4 @@ export { choose } from "lit-html/directives/choose.js";
 export { repeat } from "lit-html/directives/repeat.js";
 export { map } from "lit-html/directives/map.js";
 export { type Ref, ref, createRef } from "lit-html/directives/ref.js";
+export { styleMap } from "lit-html/directives/style-map.js";
