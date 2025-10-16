@@ -1,5 +1,8 @@
 import type { nothing, TemplateResult } from "lit-html";
 import type { DirectiveResult } from "lit-html/async-directive.js";
+import type { RefOrCallback } from "lit-html/directives/ref";
+
+// todo give full types TT
 
 declare global {
 	namespace JSX {
@@ -33,6 +36,7 @@ declare global {
 		interface IntrinsicElements {
 			[elemName: string]: {
 				children?: any;
+				ref?: RefOrCallback<HTMLElement>;
 				[key: string]: any;
 			};
 		}

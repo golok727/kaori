@@ -9,6 +9,7 @@ import {
 	Show,
 	nothing,
 	onMount,
+	createRef,
 } from "kaori.js";
 
 const root = document.querySelector<HTMLDivElement>("#root")!;
@@ -119,6 +120,7 @@ function App() {
 			<Show when={showThing.show}>
 				<KaoriThing />
 			</Show>
+			<RefTest />
 			<button class="button-primary" onClick={() => showThing.toggle()}>
 				{showThing.show ? "Hide" : "Show"} BloomThing
 			</button>
@@ -129,6 +131,26 @@ function App() {
 				addTodo={addTodo}
 				toggleCompleted={toggleCompleted}
 			/>
+		</div>
+	);
+}
+
+function RefTest() {
+	const divRef = createRef<HTMLDivElement>();
+	const bloom = getBloom();
+	let width = 0;
+
+	onMount(() => {
+		if (divRef.value) {
+			width = Math.floor(divRef.value.getBoundingClientRect().width);
+			console.log(width);
+			bloom.update();
+		}
+	});
+
+	return () => (
+		<div class="p-2 bg-amber-200 rounded" ref={divRef}>
+			This div has a width of {width} px
 		</div>
 	);
 }
