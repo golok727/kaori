@@ -71,7 +71,7 @@ Coming soon.. It's my birthday today and its 2:47 AM now so i want to sleep :3
 - You can pass props to components and access them inside the component function.
 
 - `prop:value={val}` is equivalent to `.value=${val}` in lit-html.
-- `bool:checked={val}` is equivalent to `.value=${val}` in lit-html.
+- `bool:checked={val}` is equivalent to `?value=${val}` in lit-html.
 - `onClick={val}` is equivalent to `@click=${val}` in lit-html.
 More on these later..
 
@@ -119,7 +119,7 @@ function OnceComponent() {
 ## Manually trigger updates
 ```tsx
 import { getBloom } from "kaori.js";
-function OnceComponent() {
+function Thing() {
   const bloom = getBloom(); // only call this inside setup code
 
   let count = 0; 
@@ -180,7 +180,7 @@ function EffectComponent() {
 
 ## onCleanup
 ```tsx
-import { onMount, onCleanup } from "kaori.js";
+import { onMount } from "kaori.js";
 
 function CleanupComponent() {
   let id:
@@ -189,12 +189,10 @@ function CleanupComponent() {
     id = setInterval(() => {
       console.log("Interval running");
     }, 1000);
-    // will support returning a cleanup function here soon
-  });
-
-  onCleanup(() => {
-    clearInterval(interval);
-    console.log("Interval cleared");
+     return () => {
+     clearInterval(interval);
+console.log("Interval cleared");
+  }
   });
 
   return () => (
