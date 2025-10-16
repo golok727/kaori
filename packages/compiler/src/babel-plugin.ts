@@ -257,7 +257,8 @@ class AttributeProcessor {
 			) {
 				this.importManager.markNeeded("styleMap");
 				return {
-					type: "directive",
+					type: "dynamic",
+					name: "style",
 					expression: t.callExpression(
 						t.identifier(this.importManager.getName("styleMap")),
 						[attrValue]

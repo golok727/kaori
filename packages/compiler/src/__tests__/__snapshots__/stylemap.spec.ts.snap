@@ -1,0 +1,152 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`styleMap transformation > should handle multiple elements with styles 1`] = `
+"import { html, styleMap } from "kaori.js";
+function App() {
+  const headerStyles = {
+    fontSize: '24px'
+  };
+  const contentStyles = {
+    padding: '20px'
+  };
+  return html\`<div><header style=\${styleMap(headerStyles)}>Header</header><main style=\${styleMap(contentStyles)}><p style=\${styleMap({
+    color: 'gray'
+  })}>Content</p></main></div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should handle style with spread operator 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestSpreadStyle() {
+  const baseStyles = {
+    padding: '10px'
+  };
+  return html\`<div style=\${styleMap({
+    ...baseStyles,
+    color: 'red'
+  })}>Content</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should handle styleMap variable conflict 1`] = `
+"import { html, styleMap as styleMap1 } from "kaori.js";
+function App() {
+  const styleMap = "I'm a variable named styleMap";
+  const styles = {
+    color: 'red'
+  };
+  return html\`<div style=\${styleMap1(styles)}>\${styleMap}</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should not wrap string style attributes 1`] = `
+"import { html } from "kaori.js";
+function TestStringStyle() {
+  return html\`<div style="color: green;">Hello</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should work with aliased styleMap import 1`] = `
+"import { html } from "kaori.js";
+import { styleMap as sm } from "kaori.js";
+function App() {
+  const styles = {
+    color: 'red'
+  };
+  return html\`<div style=\${sm(styles)}>Hello</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should work with existing styleMap import 1`] = `
+"import { html, styleMap } from "kaori.js";
+function App() {
+  const styles = {
+    color: 'red'
+  };
+  return html\`<div style=\${styleMap(styles)}>Hello</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should work with style and other directives 1`] = `
+"import { html, ref, styleMap } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const divRef = createRef();
+  const styles = {
+    color: 'red',
+    padding: '10px'
+  };
+  return html\`<div \${ref(divRef)} style=\${styleMap(styles)}>Hello</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should wrap inline style object in styleMap 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestInlineStyle() {
+  return html\`<div style=\${styleMap({
+    color: 'blue',
+    margin: '10px'
+  })}>Hello</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should wrap style with conditional expression in styleMap 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestConditionalStyle() {
+  const isActive = true;
+  const activeStyles = {
+    color: 'blue'
+  };
+  const inactiveStyles = {
+    color: 'gray'
+  };
+  return html\`<div style=\${styleMap(isActive ? activeStyles : inactiveStyles)}>Content</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should wrap style with function call in styleMap 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestComplexStyle() {
+  function getStyles() {
+    return {
+      color: 'red',
+      fontSize: '16px'
+    };
+  }
+  return html\`<div style=\${styleMap(getStyles())}>Content</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should wrap style with logical expression in styleMap 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestLogicalStyle() {
+  const showStyles = true;
+  const styles = {
+    color: 'red'
+  };
+  return html\`<div style=\${styleMap(showStyles && styles)}>Content</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should wrap style with member expression in styleMap 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestMemberStyle() {
+  const theme = {
+    primary: {
+      color: 'blue'
+    }
+  };
+  return html\`<div style=\${styleMap(theme.primary)}>Content</div>\`;
+}"
+`;
+
+exports[`styleMap transformation > should wrap style with object variable in styleMap 1`] = `
+"import { html, styleMap } from "kaori.js";
+function TestStyle() {
+  const styles = {
+    color: 'red',
+    fontSize: '20px'
+  };
+  return html\`<div style=\${styleMap(styles)}>Hello</div>\`;
+}"
+`;
