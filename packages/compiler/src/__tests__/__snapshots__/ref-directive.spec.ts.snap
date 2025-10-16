@@ -1,0 +1,118 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Ref directive transformation > should transform aliased ref import 1`] = `
+"import { html } from "kaori.js";
+import { ref as litRef, createRef } from "kaori.js";
+function App() {
+  const myRef = createRef();
+  return html\`<div \${litRef(myRef)}>Hello</div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform basic ref usage 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const myRef = createRef();
+  return html\`<div \${ref(myRef)}>Hello</div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform multiple refs in one component 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const inputRef = createRef();
+  const buttonRef = createRef();
+  const divRef = createRef();
+  return html\`<div \${ref(divRef)}><input \${ref(inputRef)} type="text" /><button \${ref(buttonRef)} @click=\${handleClick}>
+        Click me
+      </button></div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref in nested elements 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const outerRef = createRef();
+  const innerRef = createRef();
+  return html\`<div \${ref(outerRef)} class="outer"><section><p \${ref(innerRef)}>Nested content</p></section></div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref on component 1`] = `
+"import { component, html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const myRef = createRef();
+  return [component(MyComponent, {
+    ref: myRef
+  }), html\`<div \${ref(myRef)}>HTML element</div>\`];
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref with conflicting name 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  const ref = "some variable";
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>Hello \${ref}</div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref with dynamic expression 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const myRef = createRef();
+  const shouldUseRef = true;
+  return html\`<div \${ref(shouldUseRef ? myRef : undefined)}>
+      Conditional ref
+    </div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref with existing ref import 1`] = `
+"import { ref, createRef, html } from "kaori.js";
+function App() {
+  const myRef = createRef();
+  return html\`<div \${ref(myRef)}>Hello</div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref with inline createRef 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  return html\`<div \${ref(createRef())}>Inline ref</div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref with other attributes 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const inputRef = createRef();
+  return html\`<input \${ref(inputRef)} type="text" class="input" .value=\${getValue()} ?disabled=\${isDisabled()} @change=\${handleChange} placeholder="Enter text" />\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform ref with path import 1`] = `
+"import { ref } from "kaori.js";
+import { createRef, html, component } from "/@fs/C:/Users/Radha/dev/frameworks/kaori/packages/kaori/src/index.ts";
+function App() {
+  const myRef = createRef();
+  return html\`<div \${ref(myRef)}>Hello</div>\`;
+}"
+`;
+
+exports[`Ref directive transformation > should transform self-closing element with ref 1`] = `
+"import { html, ref } from "kaori.js";
+import { createRef } from "kaori.js";
+function App() {
+  const inputRef = createRef();
+  const imgRef = createRef();
+  return [html\`<input \${ref(inputRef)} type="text" />\`, html\`<img \${ref(imgRef)} src="/logo.png" alt="Logo" />\`];
+}"
+`;

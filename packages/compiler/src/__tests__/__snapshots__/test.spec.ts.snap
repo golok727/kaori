@@ -1,0 +1,139 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`JSX to lit-html transformation > should handle getter wrapping for complex expressions 1`] = `
+"import { component, html } from "kaori.js";
+function GetterWrapping() {
+  const count = {
+    value: 5
+  };
+  return html\`<div>\${component(Component, {
+    get when() {
+      return count.value > 10;
+    }
+  })}\${component(Component, {
+    get count() {
+      return count.value;
+    }
+  })}\${component(Component, {
+    onClick: handleClick
+  })}\${component(Component, {
+    get data() {
+      return getData();
+    }
+  })}\${component(Component, {
+    get isActive() {
+      return user.isLoggedIn && user.role === 'admin';
+    }
+  })}\${component(Component, {
+    simple: "static string"
+  })}\${component(Component, {
+    number: 42
+  })}\${component(Component, {
+    get condition() {
+      return a > b && c.value < d.getValue();
+    }
+  })}</div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should handle import thing 1`] = `
+"import { component, html } from "kaori.js";
+function ImportThing() {
+  return html\`<div>\${component(ImportThing, {})}</div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform basic nested elements 1`] = `
+"import { html } from "kaori.js";
+function Basic() {
+  return html\`<div class="container"><header>
+        <h1>Title</h1>
+        <nav>
+          <a href="/home">Home</a>
+          <a href="/about">About</a>
+        </nav>
+      </header><main>
+        <p>Content here</p>
+      </main></div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform complex nesting with all attribute types 1`] = `
+"import { component, html } from "kaori.js";
+function ComplexNesting() {
+  return html\`<div class="outer"><input type="text" .value=\${getValue()} ?disabled=\${isDisabled()} @change=\${handleChange} />\${component(Show, {
+    get when() {
+      return showContent();
+    },
+    children: html\`<div class="inner">\${component(For, {
+      get items() {
+        return items();
+      },
+      children: item => component(Card, {
+        get key() {
+          return item.id;
+        },
+        children: [html\`<h3>\${item.title}</h3>\`, html\`<p>\${item.description}</p>\`, html\`<button @click=\${() => handleClick(item.id)}>\${item.completed ? "Undo" : "Complete"}</button>\`]
+      })
+    })}</div>\`
+  })}</div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform components with children 1`] = `
+"import { component, html } from "kaori.js";
+function ComponentChildren() {
+  return component(Layout, {
+    children: [component(Header, {
+      title: "My App"
+    }), component(Content, {
+      children: component(Article, {
+        get title() {
+          return getTitle();
+        },
+        children: [html\`<p>Article content</p>\`, component(Comments, {
+          get comments() {
+            return getComments();
+          }
+        })]
+      })
+    }), component(Footer, {})]
+  });
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform empty children and whitespace 1`] = `
+"import { component, html } from "kaori.js";
+function EmptyChildren() {
+  return html\`<div>\${component(Empty, {})}\${component(WithChildren, {})}<p></p></div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform fragments 1`] = `
+"import { html } from "kaori.js";
+function FragmentTest() {
+  return [html\`<h1>Title</h1>\`, html\`<p>Paragraph 1</p>\`, html\`<p>Paragraph 2</p>\`];
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform mixed children (text, expressions, elements) 1`] = `
+"import { html } from "kaori.js";
+function MixedChildren() {
+  const name = "World";
+  const count = 42;
+  return html\`<div>
+      Hello \${name}!
+      <span>Count: \${count}</span>
+      Some more text
+      <p>Paragraph</p>
+      Final text
+    </div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should transform self-closing elements 1`] = `
+"import { html } from "kaori.js";
+function SelfClosing() {
+  return html\`<div><img src="/logo.png" alt="Logo" /><input type="text" .value=\${text()} /><br /><hr class="divider" /><meta name="description" content="Test" /></div>\`;
+}"
+`;

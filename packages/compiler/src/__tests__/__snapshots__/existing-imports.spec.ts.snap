@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`JSX transformation with existing imports > should handle aliased imports 1`] = `
+"import { component as comp, html as h } from "kaori.js";
+function App() {
+  return h\`<div><h1>My App</h1>\${comp(MyComponent, {})}</div>\`;
+}"
+`;
+
+exports[`JSX transformation with existing imports > should handle existing component only import 1`] = `
+"import { html } from "kaori.js";
+import { component, render } from "kaori.js";
+function App() {
+  return html\`<div><h1>My App</h1>\${component(MyComponent, {})}</div>\`;
+}"
+`;
+
+exports[`JSX transformation with existing imports > should handle existing html only import 1`] = `
+"import { component } from "kaori.js";
+import { html, render } from "kaori.js";
+function App() {
+  return html\`<div><h1>My App</h1>\${component(MyComponent, {})}</div>\`;
+}"
+`;
+
+exports[`JSX transformation with existing imports > should handle existing kaori imports from path 1`] = `
+"import { component, computed, html, render, signal, For, getBloom, onCleanup, Show, nothing, onMount } from "/@fs/C:/Users/Radha/dev/frameworks/bloom/packages/kaori/src/index.ts";
+function BloomThing() {
+  let count = 0;
+  return () => html\`<h1 class="text-lg font-bold"> Without signals count \${count}</h1>\`;
+}
+function App() {
+  return html\`<div><h1>My App</h1>\${component(BloomThing, {})}<p>Some content</p></div>\`;
+}"
+`;
+
+exports[`JSX transformation with existing imports > should handle existing kaori.js imports 1`] = `
+"import { component, computed, html, render, signal } from "kaori.js";
+function BloomThing() {
+  let count = 0;
+  return () => html\`<h1 class="text-lg font-bold"> Without signals count \${count}</h1>\`;
+}
+function App() {
+  return html\`<div><h1>My App</h1>\${component(BloomThing, {})}<p>Some content</p></div>\`;
+}"
+`;
