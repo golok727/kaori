@@ -246,7 +246,15 @@ class AttributeProcessor {
 		// Handle style attribute with object expressions
 		if (attrName === "style" && !t.isStringLiteral(attrValue)) {
 			// Check if it's an object expression or identifier (object variable)
-			if (t.isObjectExpression(attrValue) || t.isIdentifier(attrValue) || t.isMemberExpression(attrValue) || t.isCallExpression(attrValue)) {
+			// Also handle member expressions, call expressions, conditional expressions, and logical expressions
+			if (
+				t.isObjectExpression(attrValue) || 
+				t.isIdentifier(attrValue) || 
+				t.isMemberExpression(attrValue) || 
+				t.isCallExpression(attrValue) ||
+				t.isConditionalExpression(attrValue) ||
+				t.isLogicalExpression(attrValue)
+			) {
 				this.importManager.markNeeded("styleMap");
 				return {
 					type: "directive",
