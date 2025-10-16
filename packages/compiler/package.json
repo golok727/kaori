@@ -1,34 +1,34 @@
 {
-  "name": "kaori-compiler",
-  "version": "0.0.2",
-  "description": "JSX to lit-html compiler for kaori",
-  "type": "module",
-  "exports": {
-    ".": "./dist/babel-plugin.js",
-    "./vite": "./dist/vite-plugin.js"
-  },
-  "scripts": {
-    "build": "tsc"
-  },
-  "files": [
-    "dist",
-    "src",
-    "package.json"
-  ],
-  "keywords": [],
-  "author": "golok",
-  "packageManager": "pnpm@10.12.4",
-  "dependencies": {
-    "@babel/core": "^7.28.4",
-    "@babel/plugin-syntax-jsx": "^7.27.1",
-    "@babel/traverse": "^7.28.4",
-    "@babel/types": "^7.28.4"
-  },
-  "optionalDependencies": {
-    "vite": "^7.1.10"
-  },
-  "devDependencies": {
-    "@types/babel__core": "^7.20.5",
-    "@types/babel__traverse": "^7.28.0"
-  }
+	"name": "kaori-compiler",
+	"version": "0.0.3",
+	"description": "JSX to lit-html compiler for kaori",
+	"type": "module",
+	"exports": {
+		".": "./dist/babel-plugin.js",
+		"./vite": "./dist/vite-plugin.js"
+	},
+	"scripts": {
+		"build": "tsc"
+	},
+	"files": [
+		"dist",
+		"src",
+		"package.json"
+	],
+	"keywords": [],
+	"author": "golok",
+	"packageManager": "pnpm@10.12.4",
+	"dependencies": {
+		"@babel/core": "^7.28.4",
+		"@babel/plugin-syntax-jsx": "^7.27.1",
+		"@babel/traverse": "^7.28.4",
+		"@babel/types": "^7.28.4"
+	},
+	"optionalDependencies": {
+		"vite": "^7.1.10"
+	},
+	"devDependencies": {
+		"@types/babel__core": "^7.20.5",
+		"@types/babel__traverse": "^7.28.0"
+	}
 }
