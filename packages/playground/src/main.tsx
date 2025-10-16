@@ -5,7 +5,6 @@ import {
 	signal,
 	For,
 	getBloom,
-	onCleanup,
 	Show,
 	nothing,
 	onMount,
@@ -159,14 +158,17 @@ function KaoriThing() {
 	let count = 0;
 	const bloom = getBloom();
 
-	let id = setInterval(() => {
-		count++;
-		bloom.update();
-	}, 1000);
+	onMount(() => {
+		console.log("component mounted, setting up interval");
+		const interval = setInterval(() => {
+			count++;
+			bloom.update();
+		}, 1000);
 
-	onCleanup(() => {
-		console.log("component unmounted, clearing interval");
-		clearInterval(id);
+		return () => {
+			console.log("component unmounted, clearing interval");
+			clearInterval(interval);
+		};
 	});
 
 	return () => (

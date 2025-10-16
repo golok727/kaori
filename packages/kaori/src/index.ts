@@ -77,12 +77,19 @@ function schedule_update(bloom: BloomInternal, fn: () => void) {
 	queued_updates.push([bloom, fn]);
 }
 
-function on_mount(fn: () => void) {
+function on_mount(fn: () => (() => void) | void) {
 	invariant(
 		active_bloom !== null,
 		"onMount() should be called during component setup (not in render functions or effects)"
 	);
-	queue_microtask(fn);
+
+	const bloom = active_bloom;
+	queue_microtask(() => {
+		const cleanup = fn();
+		if (typeof cleanup === "function") {
+			bloom.__disposables.add(cleanup);
+		}
+	});
 }
 
 function on_cleanup(fn: () => void) {
@@ -99,8 +106,11 @@ function bloom_effect(fn: () => void, bloom = active_bloom) {
 		bloom !== null,
 		"effect() should be called during component setup (not in render functions or effects)"
 	);
-	const dispose = untracked(() => syncEffect(fn));
-	bloom.__disposables.add(dispose);
+
+	queue_microtask(() => {
+		const dispose = untracked(() => syncEffect(fn));
+		bloom.__disposables.add(dispose);
+	});
 }
 
 function get_bloom(): Bloom {
@@ -168,7 +178,7 @@ class ComponentDirective<Props = any> extends AsyncDirective {
 			if (typeof this._rawTemplate === "function") {
 				// reactive return
 				bloom_effect(() => {
-					logger.log("Effect, ", componentName);
+					logger.log("(effect) Update component: ", componentName);
 					this.bloom?.update();
 				}, this.bloom);
 			}
