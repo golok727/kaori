@@ -1,0 +1,168 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Ref directive with naming conflicts > should handle arrow function with ref parameter 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+const App = ({
+  ref
+}) => {
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>\${ref}</div>\`;
+};"
+`;
+
+exports[`Ref directive with naming conflicts > should handle complex scenario with all types of conflicts 1`] = `
+"import { html, ref as ref3 } from "kaori.js";
+import { ref as externalRef } from "other-package";
+const ref = "global";
+function App({
+  ref: propRef
+}) {
+  const ref1 = "local";
+  const {
+    ref: destructuredRef
+  } = props;
+  function ref2() {
+    return "function";
+  }
+  const myRef = createRef();
+  const anotherRef = createRef();
+  return html\`<div \${ref3(myRef)}>\${ref} \${ref1} \${ref2()} \${propRef} \${destructuredRef} \${externalRef}<p \${ref3(anotherRef)}>Multiple refs</p></div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle multiple conflicts (ref, ref1, ref2 all taken) 1`] = `
+"import { html, ref as ref3 } from "kaori.js";
+function App() {
+  const ref = "taken";
+  const ref1 = "also taken";
+  const ref2 = "still taken";
+  const myRef = createRef();
+  return html\`<div \${ref3(myRef)}>Content</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle multiple elements with refs and conflict 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  const ref = "conflict";
+  const inputRef = createRef();
+  const buttonRef = createRef();
+  const divRef = createRef();
+  return html\`<div \${ref1(divRef)}>\${ref}<input \${ref1(inputRef)} type="text" /><button \${ref1(buttonRef)}>Click</button></div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle multiple import conflicts 1`] = `
+"import { component as component1, html as html1, ref as ref1 } from "kaori.js";
+function App() {
+  const ref = "variable";
+  const html = "also a variable";
+  const component = "another variable";
+  const myRef = createRef();
+  return html1\`<div \${ref1(myRef)}>\${ref} \${html} \${component}\${component1(MyComponent, {})}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref as class property 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+class App {
+  ref = "class property";
+  render() {
+    const myRef = createRef();
+    return html\`<div \${ref1(myRef)}>\${this.ref}</div>\`;
+  }
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref as const in upper scope 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+const ref = "global ref";
+function App() {
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>\${ref}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref as function name 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  function ref(element) {
+    console.log("Custom ref function", element);
+  }
+  const divRef = createRef();
+  return html\`<div \${ref1(divRef)}>Content</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref as parameter name 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App({
+  ref
+}) {
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>\${ref}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref imported from different package 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+import { ref } from "some-other-package";
+function App() {
+  const myRef = createRef();
+  const otherRef = ref();
+  return html\`<div \${ref1(myRef)}>\${otherRef}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref in destructuring 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  const {
+    ref
+  } = props;
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>\${ref}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref in nested scope 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  const myRef = createRef();
+  function innerFunc() {
+    const ref = "inner scope";
+    return ref;
+  }
+  return html\`<div \${ref1(myRef)}>\${innerFunc()}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref in object property 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  const config = {
+    ref: "property"
+  };
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>\${config.ref}</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle ref1 also conflicts (should use ref2) 1`] = `
+"import { html, ref as ref2 } from "kaori.js";
+function App() {
+  const ref = "original";
+  const ref1 = "also taken";
+  const myRef = createRef();
+  return html\`<div \${ref2(myRef)}>Content</div>\`;
+}"
+`;
+
+exports[`Ref directive with naming conflicts > should handle simple ref variable conflict 1`] = `
+"import { html, ref as ref1 } from "kaori.js";
+function App() {
+  const ref = "I'm a variable named ref";
+  const myRef = createRef();
+  return html\`<div \${ref1(myRef)}>\${ref}</div>\`;
+}"
+`;
