@@ -1,19 +1,20 @@
 {
-	"name": "kaori-monorepo",
-	"private": true,
-	"version": "0.0.1",
-	"description": "A fragrant TS framework",
-	"keywords": [],
-	"author": "golok",
-	"scripts": {
-		"dev": "pnpm --filter playground dev"
-	},
-	"license": "MIT",
-	"packageManager": "pnpm@10.12.4",
-	"devDependencies": {
-		"typescript": "~5.9.3"
-	},
-	"dependencies": {
-		"kaori-monorepo": "link:"
-	}
+  "name": "kaori-monorepo",
+  "private": true,
+  "description": "A fragrant TS framework",
+  "keywords": [],
+  "author": "golok",
+  "scripts": {
+    "dev": "pnpm --filter playground dev",
+    "build:packages": "pnpm -r --filter \"!./packages/playground\" run build",
+    "ci:publish": "pnpm build:packages && pnpm -r publish --access public --no-git-checks"
+  },
+  "license": "MIT",
+  "packageManager": "pnpm@10.12.4",
+  "devDependencies": {
+    "typescript": "~5.9.3"
+  },
+  "dependencies": {
+    "kaori-monorepo": "link:"
+  }
 }
