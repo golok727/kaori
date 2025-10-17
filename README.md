@@ -13,7 +13,7 @@ Its my playground for now so expect breaking changes.
 ## Installation
 
 ```bash
-pnpm create kaori-app awesome-kaori
+pnpm create kaori awesome-kaori
 cd awesome-kaori
 pnpm install
 pnpm dev
