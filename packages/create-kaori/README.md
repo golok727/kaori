@@ -1,4 +1,4 @@
-# Create-Kaori 
+# Create-Kaori
 
 [Kaori](https://github.com/golok727/kaori)
 is a lightweight reactive framework for building web applications using TypeScript and JSX. It leverages the power of [Lit](https://lit.dev/) for efficient rendering and [Preact Signals](https://preactjs.com/signals/) for reactivity.

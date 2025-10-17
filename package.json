@@ -8,12 +8,15 @@
     "dev": "pnpm --filter playground dev",
     "build:compiler": "pnpm --filter kaori-compiler build",
     "watch:compiler": "pnpm --filter kaori-compiler build:watch",
+    "test": "pnpm --filter kaori-compiler test",
     "build:packages": "pnpm -r --filter \"!./packages/playground\" run build",
+    "format": "prettier --write .",
     "ci:publish": "pnpm build:packages && pnpm -r publish --access public --no-git-checks"
   },
   "license": "MIT",
   "packageManager": "pnpm@10.12.4",
   "devDependencies": {
+    "prettier": "^3.6.2",
     "typescript": "~5.9.3"
   },
   "dependencies": {

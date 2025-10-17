@@ -1,19 +1,19 @@
-import { describe, it, expect } from "vitest";
-import babel from "@babel/core";
-import { KaoriCompiler } from "../babel-plugin.js";
+import { describe, it, expect } from 'vitest';
+import babel from '@babel/core';
+import { KaoriCompiler } from '../babel-plugin.js';
 
 async function transformJSX(jsxCode: string) {
   const result = await babel.transformAsync(jsxCode, {
-    plugins: [["@babel/plugin-syntax-jsx"], [KaoriCompiler]],
+    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
     parserOpts: {
-      plugins: ["jsx", "typescript"],
+      plugins: ['jsx', 'typescript'],
     },
   });
-  return result?.code || "";
+  return result?.code || '';
 }
 
-describe("Ref directive transformation", () => {
-  it("should transform basic ref usage", async () => {
+describe('Ref directive transformation', () => {
+  it('should transform basic ref usage', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -26,7 +26,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref with existing ref import", async () => {
+  it('should transform ref with existing ref import', async () => {
     const input = `
 import { ref, createRef, html } from "kaori.js";
 
@@ -39,7 +39,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref with conflicting name", async () => {
+  it('should transform ref with conflicting name', async () => {
     const input = `
 function App() {
   const ref = "some variable";
@@ -51,7 +51,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform multiple refs in one component", async () => {
+  it('should transform multiple refs in one component', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -74,7 +74,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref with other attributes", async () => {
+  it('should transform ref with other attributes', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -98,7 +98,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref in nested elements", async () => {
+  it('should transform ref in nested elements', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -119,7 +119,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref with dynamic expression", async () => {
+  it('should transform ref with dynamic expression', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -138,7 +138,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref with inline createRef", async () => {
+  it('should transform ref with inline createRef', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -150,7 +150,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref on component", async () => {
+  it('should transform ref on component', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -169,7 +169,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform self-closing element with ref", async () => {
+  it('should transform self-closing element with ref', async () => {
     const input = `
 import { createRef } from "kaori.js";
 
@@ -189,7 +189,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform ref with path import", async () => {
+  it('should transform ref with path import', async () => {
     const input = `
 import { createRef, html, component } from "/@fs/C:/Users/Radha/dev/frameworks/kaori/packages/kaori/src/index.ts";
 
@@ -202,7 +202,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should transform aliased ref import", async () => {
+  it('should transform aliased ref import', async () => {
     const input = `
 import { ref as litRef, createRef } from "kaori.js";
 

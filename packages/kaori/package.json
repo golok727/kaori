@@ -1,43 +1,43 @@
 {
-	"name": "kaori.js",
-	"version": "0.0.4",
-	"description": "A fragrant TS framework",
-	"type": "module",
-	"exports": {
-		".": "./src/index.ts",
-		"./jsx-runtime": "./src/jsx/types.ts",
-		"./jsx-dev-runtime": "./src/jsx/types.ts"
-	},
-	"publishConfig": {
-		"exports": {
-			".": "./dist/index.js",
-			"./jsx-runtime": "./dist/jsx/types.d.ts",
-			"./jsx-dev-runtime": "./dist/jsx/types.d.ts"
-		}
-	},
-	"files": [
-		"dist",
-		"src",
-		"package.json"
-	],
-	"scripts": {
-		"build": "tsc"
-	},
-	"keywords": [
-		"framework",
-		"web",
-		"frontend",
-		"ui",
-		"typescript",
-		"kaori",
-		"reactive",
-		"signals",
-		"lit-html"
-	],
-	"author": "golok",
-	"packageManager": "pnpm@10.12.4",
-	"dependencies": {
-		"@preact/signals-core": "^1.12.1",
-		"lit-html": "^3.3.1"
-	}
+  "name": "kaori.js",
+  "version": "0.0.4",
+  "description": "A fragrant TS framework",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./jsx-runtime": "./src/jsx/types.ts",
+    "./jsx-dev-runtime": "./src/jsx/types.ts"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": "./dist/index.js",
+      "./jsx-runtime": "./dist/jsx/types.d.ts",
+      "./jsx-dev-runtime": "./dist/jsx/types.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "package.json"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [
+    "framework",
+    "web",
+    "frontend",
+    "ui",
+    "typescript",
+    "kaori",
+    "reactive",
+    "signals",
+    "lit-html"
+  ],
+  "author": "golok",
+  "packageManager": "pnpm@10.12.4",
+  "dependencies": {
+    "@preact/signals-core": "^1.12.1",
+    "lit-html": "^3.3.1"
+  }
 }

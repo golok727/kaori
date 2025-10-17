@@ -1,12 +1,12 @@
-import { html } from "lit-html";
-import { AsyncDirective, directive } from "lit-html/async-directive.js";
-import { effect as syncEffect, untracked } from "@preact/signals-core";
-import type { Component } from "./types.js";
-import { invariant } from "./utils.js";
+import { html } from 'lit-html';
+import { AsyncDirective, directive } from 'lit-html/async-directive.js';
+import { effect as syncEffect, untracked } from '@preact/signals-core';
+import type { Component } from './types.js';
+import { invariant } from './utils.js';
 
 const logger = {
   log: (...args: any[]) => {
-    console.log("[Kaori:DEV]", ...args);
+    console.log('[Kaori:DEV]', ...args);
   },
 };
 
@@ -81,13 +81,13 @@ function schedule_update(handle: ComponentHandleInternal, fn: () => void) {
 function on_mount(fn: () => (() => void) | void) {
   invariant(
     active_handle !== null,
-    "onMount() should be called during component setup (not in render functions or effects)",
+    'onMount() should be called during component setup (not in render functions or effects)'
   );
 
   const handle = active_handle;
   queue_microtask(() => {
     const cleanup = fn();
-    if (typeof cleanup === "function") {
+    if (typeof cleanup === 'function') {
       handle.__disposables.add(cleanup);
     }
   });
@@ -97,7 +97,7 @@ function on_cleanup(fn: () => void) {
   const handle = active_handle;
   invariant(
     handle !== null,
-    "onCleanup() should be called during component setup (not in render functions or effects)",
+    'onCleanup() should be called during component setup (not in render functions or effects)'
   );
   handle.__disposables.add(fn);
 }
@@ -105,7 +105,7 @@ function on_cleanup(fn: () => void) {
 function kaoi_effect(fn: () => void, handle = active_handle) {
   invariant(
     handle !== null,
-    "effect() should be called during component setup (not in render functions or effects)",
+    'effect() should be called during component setup (not in render functions or effects)'
   );
 
   queue_microtask(() => {
@@ -117,7 +117,7 @@ function kaoi_effect(fn: () => void, handle = active_handle) {
 function get_handle(): ComponentHandle {
   invariant(
     active_handle !== null,
-    "getHandle() can only be called during component setup (not in render functions or effects)",
+    'getHandle() can only be called during component setup (not in render functions or effects)'
   );
 
   return active_handle;
@@ -126,11 +126,11 @@ function get_handle(): ComponentHandle {
 function dispose_handle(handle: ComponentHandleInternal) {
   logger.log(`Disposing component(${handle.__dbg_n}) & running cleanup`);
 
-  handle.__disposables.forEach((dispose) => {
+  handle.__disposables.forEach(dispose => {
     try {
       dispose();
     } catch (e) {
-      console.error("Error during cleanup:", e);
+      console.error('Error during cleanup:', e);
     }
   });
   handle.__disposables.clear();
@@ -144,16 +144,16 @@ class ComponentDirective<Props = any> extends AsyncDirective {
   private _cachedTemplate: unknown = null;
 
   private get $_getTemplate() {
-    return typeof this._rawTemplate === "function"
+    return typeof this._rawTemplate === 'function'
       ? this._rawTemplate()
       : this._rawTemplate;
   }
 
   render(C: Component<Props>, props: Props): unknown {
-    const componentName = C.name || "Anonymous";
+    const componentName = C.name || 'Anonymous';
 
     if (!this.hasInitialized) {
-      logger.log("Rendering component ", componentName, props);
+      logger.log('Rendering component ', componentName, props);
       this.handle = {
         __dbg_n: componentName,
         update: () => {
@@ -176,10 +176,10 @@ class ComponentDirective<Props = any> extends AsyncDirective {
 
       this._rawTemplate = result;
 
-      if (typeof this._rawTemplate === "function") {
+      if (typeof this._rawTemplate === 'function') {
         // reactive return
         kaoi_effect(() => {
-          logger.log("(effect) Update component: ", componentName);
+          logger.log('(effect) Update component: ', componentName);
           this.handle?.update();
         }, this.handle);
       }
@@ -210,8 +210,8 @@ interface ComponentDirectiveFn {
 
 export const component = directive(ComponentDirective) as ComponentDirectiveFn;
 
-export { For, Show } from "./helpers";
-export type { ForProps, ShowProps } from "./helpers";
+export { For, Show } from './helpers';
+export type { ForProps, ShowProps } from './helpers';
 
 export {
   /**
@@ -224,9 +224,9 @@ export {
   on_cleanup as onCleanup,
   html,
 };
-export { render } from "lit-html";
+export { render } from 'lit-html';
 
-export * from "./types";
+export * from './types';
 
 export {
   signal,
@@ -237,12 +237,12 @@ export {
   computed,
   effect as syncEffect,
   untracked,
-} from "@preact/signals-core";
+} from '@preact/signals-core';
 
-export { nothing } from "lit-html";
-export { when } from "lit-html/directives/when.js";
-export { choose } from "lit-html/directives/choose.js";
-export { repeat } from "lit-html/directives/repeat.js";
-export { map } from "lit-html/directives/map.js";
-export { type Ref, ref, createRef } from "lit-html/directives/ref.js";
-export { styleMap } from "lit-html/directives/style-map.js";
+export { nothing } from 'lit-html';
+export { when } from 'lit-html/directives/when.js';
+export { choose } from 'lit-html/directives/choose.js';
+export { repeat } from 'lit-html/directives/repeat.js';
+export { map } from 'lit-html/directives/map.js';
+export { type Ref, ref, createRef } from 'lit-html/directives/ref.js';
+export { styleMap } from 'lit-html/directives/style-map.js';

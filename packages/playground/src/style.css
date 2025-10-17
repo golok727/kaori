@@ -1,27 +1,27 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 *,
 *::before,
 *::after {
-	box-sizing: border-box;
-	margin: 0;
+  box-sizing: border-box;
+  margin: 0;
 }
 
 body,
 html,
 #root {
-	height: 100%;
+  height: 100%;
 }
 
 #root {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 @layer baser {
-	.button-primary {
-		@apply bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition;
-	}
+  .button-primary {
+    @apply bg-black text-white px-4 py-2 rounded-md hover:bg-gray-800 transition;
+  }
 }

@@ -1,19 +1,19 @@
-import { describe, it, expect } from "vitest";
-import babel from "@babel/core";
-import { KaoriCompiler } from "../babel-plugin.js";
+import { describe, it, expect } from 'vitest';
+import babel from '@babel/core';
+import { KaoriCompiler } from '../babel-plugin.js';
 
 async function transformJSX(jsxCode: string) {
   const result = await babel.transformAsync(jsxCode, {
-    plugins: [["@babel/plugin-syntax-jsx"], [KaoriCompiler]],
+    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
     parserOpts: {
-      plugins: ["jsx", "typescript"],
+      plugins: ['jsx', 'typescript'],
     },
   });
-  return result?.code || "";
+  return result?.code || '';
 }
 
-describe("Ref directive with naming conflicts", () => {
-  it("should handle simple ref variable conflict", async () => {
+describe('Ref directive with naming conflicts', () => {
+  it('should handle simple ref variable conflict', async () => {
     const input = `
 function App() {
   const ref = "I'm a variable named ref";
@@ -25,7 +25,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref as function name", async () => {
+  it('should handle ref as function name', async () => {
     const input = `
 function App() {
   function ref(element) {
@@ -40,7 +40,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref1 also conflicts (should use ref2)", async () => {
+  it('should handle ref1 also conflicts (should use ref2)', async () => {
     const input = `
 function App() {
   const ref = "original";
@@ -53,7 +53,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle multiple conflicts (ref, ref1, ref2 all taken)", async () => {
+  it('should handle multiple conflicts (ref, ref1, ref2 all taken)', async () => {
     const input = `
 function App() {
   const ref = "taken";
@@ -67,7 +67,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref as parameter name", async () => {
+  it('should handle ref as parameter name', async () => {
     const input = `
 function App({ ref }) {
   const myRef = createRef();
@@ -78,7 +78,7 @@ function App({ ref }) {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref in destructuring", async () => {
+  it('should handle ref in destructuring', async () => {
     const input = `
 function App() {
   const { ref } = props;
@@ -90,7 +90,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref as class property", async () => {
+  it('should handle ref as class property', async () => {
     const input = `
 class App {
   ref = "class property";
@@ -105,7 +105,7 @@ class App {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref in nested scope", async () => {
+  it('should handle ref in nested scope', async () => {
     const input = `
 function App() {
   const myRef = createRef();
@@ -122,7 +122,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref imported from different package", async () => {
+  it('should handle ref imported from different package', async () => {
     const input = `
 import { ref } from "some-other-package";
 
@@ -136,7 +136,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle multiple import conflicts", async () => {
+  it('should handle multiple import conflicts', async () => {
     const input = `
 function App() {
   const ref = "variable";
@@ -156,7 +156,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle arrow function with ref parameter", async () => {
+  it('should handle arrow function with ref parameter', async () => {
     const input = `
 const App = ({ ref }) => {
   const myRef = createRef();
@@ -167,7 +167,7 @@ const App = ({ ref }) => {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref as const in upper scope", async () => {
+  it('should handle ref as const in upper scope', async () => {
     const input = `
 const ref = "global ref";
 
@@ -180,7 +180,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle multiple elements with refs and conflict", async () => {
+  it('should handle multiple elements with refs and conflict', async () => {
     const input = `
 function App() {
   const ref = "conflict";
@@ -201,7 +201,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle ref in object property", async () => {
+  it('should handle ref in object property', async () => {
     const input = `
 function App() {
   const config = { ref: "property" };
@@ -213,7 +213,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle complex scenario with all types of conflicts", async () => {
+  it('should handle complex scenario with all types of conflicts', async () => {
     const input = `
 import { ref as externalRef } from "other-package";
 

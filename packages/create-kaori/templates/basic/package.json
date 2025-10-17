@@ -1,19 +1,19 @@
 {
-	"name": "basic",
-	"private": true,
-	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc && vite build",
-		"preview": "vite preview"
-	},
-	"dependencies": {
-		"kaori.js": "^0.0.4"
-	},
-	"devDependencies": {
-		"kaori-compiler": "^0.0.4",
-		"typescript": "~5.9.3",
-		"vite": "^7.1.7"
-	}
+  "name": "basic",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "kaori.js": "^0.0.4"
+  },
+  "devDependencies": {
+    "kaori-compiler": "^0.0.4",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  }
 }

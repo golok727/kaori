@@ -1,0 +1,13 @@
+**/node_modules
+.git
+.vscode
+.yarnrc.yml
+pnpm-lock.yaml
+.docker
+**/.storybook
+
+target
+test-results
+**/dist
+**/public
+**/static

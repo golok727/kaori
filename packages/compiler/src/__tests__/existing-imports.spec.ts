@@ -1,19 +1,19 @@
-import { describe, it, expect } from "vitest";
-import babel from "@babel/core";
-import { KaoriCompiler } from "../babel-plugin.js";
+import { describe, it, expect } from 'vitest';
+import babel from '@babel/core';
+import { KaoriCompiler } from '../babel-plugin.js';
 
 async function transformJSX(jsxCode: string) {
   const result = await babel.transformAsync(jsxCode, {
-    plugins: [["@babel/plugin-syntax-jsx"], [KaoriCompiler]],
+    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
     parserOpts: {
-      plugins: ["jsx", "typescript"],
+      plugins: ['jsx', 'typescript'],
     },
   });
-  return result?.code || "";
+  return result?.code || '';
 }
 
-describe("JSX transformation with existing imports", () => {
-  it("should handle existing kaori.js imports", async () => {
+describe('JSX transformation with existing imports', () => {
+  it('should handle existing kaori.js imports', async () => {
     const input = `
 import {component, computed, html, render, signal} from "kaori.js";
 
@@ -36,7 +36,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle existing kaori imports from path", async () => {
+  it('should handle existing kaori imports from path', async () => {
     const input = `
 import {component, computed, html, render, signal, For, getBloom, onCleanup, Show, nothing, onMount} from "kaori.js";
 
@@ -59,7 +59,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle existing html only import", async () => {
+  it('should handle existing html only import', async () => {
     const input = `
 import {html, render} from "kaori.js";
 
@@ -76,7 +76,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle existing component only import", async () => {
+  it('should handle existing component only import', async () => {
     const input = `
 import {component, render} from "kaori.js";
 
@@ -93,7 +93,7 @@ function App() {
     expect(output).toMatchSnapshot();
   });
 
-  it("should handle aliased imports", async () => {
+  it('should handle aliased imports', async () => {
     const input = `
 import {component as comp, html as h} from "kaori.js";
 

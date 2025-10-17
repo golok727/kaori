@@ -1,14 +1,14 @@
 // Refactored by Dominic Gannaway - Birthday Edition! 🎂
-import type { PluginObj, PluginPass } from "@babel/core";
-import * as t from "@babel/types";
+import type { PluginObj, PluginPass } from '@babel/core';
+import * as t from '@babel/types';
 
-const KAORI_PACKAGE_NAME = "kaori.js";
+const KAORI_PACKAGE_NAME = 'kaori.js';
 
 // ============================================================================
 // Import Manager - Handles all import-related logic
 // ============================================================================
 
-type ImportType = "component" | "html" | "ref" | "styleMap";
+type ImportType = 'component' | 'html' | 'ref' | 'styleMap';
 
 interface ImportInfo {
   name: string; // The name to use in generated code
@@ -21,15 +21,15 @@ class ImportManager {
   private existingNames = new Set<string>();
 
   constructor() {
-    this.imports.set("component", {
-      name: "component",
+    this.imports.set('component', {
+      name: 'component',
       exists: false,
       needed: false,
     });
-    this.imports.set("html", { name: "html", exists: false, needed: false });
-    this.imports.set("ref", { name: "ref", exists: false, needed: false });
-    this.imports.set("styleMap", {
-      name: "styleMap",
+    this.imports.set('html', { name: 'html', exists: false, needed: false });
+    this.imports.set('ref', { name: 'ref', exists: false, needed: false });
+    this.imports.set('styleMap', {
+      name: 'styleMap',
       exists: false,
       needed: false,
     });
@@ -52,7 +52,7 @@ class ImportManager {
         if (
           t.isStringLiteral(innerPath.node.source) &&
           (innerPath.node.source.value === KAORI_PACKAGE_NAME ||
-            innerPath.node.source.value.includes("kaori"))
+            innerPath.node.source.value.includes('kaori'))
         ) {
           innerPath.node.specifiers.forEach((spec: any) => {
             if (t.isImportSpecifier(spec) && t.isIdentifier(spec.imported)) {
@@ -121,7 +121,7 @@ class ImportManager {
     for (const [type, info] of this.imports.entries()) {
       if (info.needed && !info.exists) {
         neededImports.push(
-          t.importSpecifier(t.identifier(info.name), t.identifier(type)),
+          t.importSpecifier(t.identifier(info.name), t.identifier(type))
         );
       }
     }
@@ -132,7 +132,7 @@ class ImportManager {
 
     return t.importDeclaration(
       neededImports,
-      t.stringLiteral(KAORI_PACKAGE_NAME),
+      t.stringLiteral(KAORI_PACKAGE_NAME)
     );
   }
 }
@@ -142,7 +142,7 @@ class ImportManager {
 // ============================================================================
 
 class TemplateBuilder {
-  private parts: string[] = [""];
+  private parts: string[] = [''];
   private expressions: t.Expression[] = [];
 
   /**
@@ -157,7 +157,7 @@ class TemplateBuilder {
    * Add a dynamic expression to the template
    */
   addExpression(expr: t.Expression): this {
-    this.parts.push("");
+    this.parts.push('');
     this.expressions.push(expr);
     return this;
   }
@@ -169,8 +169,8 @@ class TemplateBuilder {
     const templateElements = this.parts.map((part, index) =>
       t.templateElement(
         { raw: part, cooked: part },
-        index === this.parts.length - 1,
-      ),
+        index === this.parts.length - 1
+      )
     );
 
     return t.templateLiteral(templateElements, this.expressions);
@@ -182,7 +182,7 @@ class TemplateBuilder {
   isEmpty(): boolean {
     return (
       this.parts.length === 1 &&
-      this.parts[0] === "" &&
+      this.parts[0] === '' &&
       this.expressions.length === 0
     );
   }
@@ -193,7 +193,7 @@ class TemplateBuilder {
 // ============================================================================
 
 interface ProcessedAttribute {
-  type: "static" | "dynamic" | "directive";
+  type: 'static' | 'dynamic' | 'directive';
   content?: string; // For static attributes
   name?: string; // For dynamic attributes
   expression?: t.Expression; // For dynamic attributes and directives
@@ -206,7 +206,7 @@ class AttributeProcessor {
    * Process JSX attributes and return template-ready results
    */
   processAttributes(
-    attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[],
+    attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[]
   ): ProcessedAttribute[] {
     const results: ProcessedAttribute[] = [];
 
@@ -232,19 +232,19 @@ class AttributeProcessor {
     }
 
     // Handle ref directive
-    if (attrName === "ref") {
-      this.importManager.markNeeded("ref");
+    if (attrName === 'ref') {
+      this.importManager.markNeeded('ref');
       return {
-        type: "directive",
+        type: 'directive',
         expression: t.callExpression(
-          t.identifier(this.importManager.getName("ref")),
-          [attrValue],
+          t.identifier(this.importManager.getName('ref')),
+          [attrValue]
         ),
       };
     }
 
     // Handle style attribute with object expressions
-    if (attrName === "style" && !t.isStringLiteral(attrValue)) {
+    if (attrName === 'style' && !t.isStringLiteral(attrValue)) {
       // Check if it's an object expression or identifier (object variable)
       // Also handle member expressions, call expressions, conditional expressions, and logical expressions
       if (
@@ -255,13 +255,13 @@ class AttributeProcessor {
         t.isConditionalExpression(attrValue) ||
         t.isLogicalExpression(attrValue)
       ) {
-        this.importManager.markNeeded("styleMap");
+        this.importManager.markNeeded('styleMap');
         return {
-          type: "dynamic",
-          name: "style",
+          type: 'dynamic',
+          name: 'style',
           expression: t.callExpression(
-            t.identifier(this.importManager.getName("styleMap")),
-            [attrValue],
+            t.identifier(this.importManager.getName('styleMap')),
+            [attrValue]
           ),
         };
       }
@@ -270,27 +270,27 @@ class AttributeProcessor {
     const normalizedName = this.normalizeAttributeName(attrName);
 
     // Handle event handlers (onClick -> @click)
-    if (attrName.startsWith("on") && attrName.length > 2) {
+    if (attrName.startsWith('on') && attrName.length > 2) {
       const eventName = attrName.slice(2).toLowerCase();
       return {
-        type: "dynamic",
+        type: 'dynamic',
         name: `@${eventName}`,
         expression: attrValue,
       };
     }
 
     // Handle namespaced attributes (prop:value, bool:disabled)
-    if (attrName.includes(":")) {
-      const [namespace, name] = attrName.split(":");
-      if (namespace === "prop") {
+    if (attrName.includes(':')) {
+      const [namespace, name] = attrName.split(':');
+      if (namespace === 'prop') {
         return {
-          type: "dynamic",
+          type: 'dynamic',
           name: `.${name}`,
           expression: attrValue,
         };
-      } else if (namespace === "bool") {
+      } else if (namespace === 'bool') {
         return {
-          type: "dynamic",
+          type: 'dynamic',
           name: `?${name}`,
           expression: attrValue,
         };
@@ -301,14 +301,14 @@ class AttributeProcessor {
     // Static string attribute
     if (t.isStringLiteral(attrValue)) {
       return {
-        type: "static",
+        type: 'static',
         content: ` ${normalizedName}="${attrValue.value}"`,
       };
     }
 
     // Dynamic attribute
     return {
-      type: "dynamic",
+      type: 'dynamic',
       name: normalizedName,
       expression: attrValue,
     };
@@ -341,7 +341,7 @@ class AttributeProcessor {
   }
 
   private normalizeAttributeName(attrName: string): string {
-    if (attrName === "className") return "class";
+    if (attrName === 'className') return 'class';
     return attrName;
   }
 }
@@ -361,7 +361,7 @@ interface PluginState extends PluginPass {
 
 export function KaoriCompiler(): PluginObj<PluginState> {
   return {
-    name: "jsx-to-lit-html",
+    name: 'jsx-to-lit-html',
     visitor: {
       Program: {
         enter(path, state) {
@@ -369,14 +369,14 @@ export function KaoriCompiler(): PluginObj<PluginState> {
           state.importManager = new ImportManager();
           state.importManager.scanProgram(path);
           state.attributeProcessor = new AttributeProcessor(
-            state.importManager,
+            state.importManager
           );
         },
         exit(path, state) {
           // Add any needed imports
           const importDecl = state.importManager!.generateImports();
           if (importDecl) {
-            path.unshiftContainer("body", importDecl);
+            path.unshiftContainer('body', importDecl);
           }
         },
       },
@@ -387,16 +387,16 @@ export function KaoriCompiler(): PluginObj<PluginState> {
 
         // Check if this is a component (starts with capital letter)
         if (isComponent(tagName)) {
-          state.importManager!.markNeeded("component");
+          state.importManager!.markNeeded('component');
           path.replaceWith(createComponentCall(node, tagName, state));
         } else {
-          state.importManager!.markNeeded("html");
+          state.importManager!.markNeeded('html');
           path.replaceWith(createHTMLElement(node, state));
         }
       },
 
       JSXFragment(path, state) {
-        state.importManager!.markNeeded("html");
+        state.importManager!.markNeeded('html');
         const children = processChildren(path.node.children, state);
 
         if (children.length === 0) {
@@ -404,9 +404,9 @@ export function KaoriCompiler(): PluginObj<PluginState> {
           const builder = new TemplateBuilder();
           path.replaceWith(
             t.taggedTemplateExpression(
-              t.identifier(state.importManager!.getName("html")),
-              builder.build(),
-            ),
+              t.identifier(state.importManager!.getName('html')),
+              builder.build()
+            )
           );
         } else if (children.length === 1) {
           // Single child - wrap in html``
@@ -414,9 +414,9 @@ export function KaoriCompiler(): PluginObj<PluginState> {
           builder.addExpression(children[0]);
           path.replaceWith(
             t.taggedTemplateExpression(
-              t.identifier(state.importManager!.getName("html")),
-              builder.build(),
-            ),
+              t.identifier(state.importManager!.getName('html')),
+              builder.build()
+            )
           );
         } else {
           // Multiple children - create array expression
@@ -432,7 +432,7 @@ export function KaoriCompiler(): PluginObj<PluginState> {
 // ============================================================================
 
 function getJSXElementName(
-  name: t.JSXIdentifier | t.JSXMemberExpression | t.JSXNamespacedName,
+  name: t.JSXIdentifier | t.JSXMemberExpression | t.JSXNamespacedName
 ): string {
   if (t.isJSXIdentifier(name)) {
     return name.name;
@@ -443,7 +443,7 @@ function getJSXElementName(
   if (t.isJSXNamespacedName(name)) {
     return `${name.namespace.name}:${name.name.name}`;
   }
-  return "";
+  return '';
 }
 
 function isComponent(tagName: string): boolean {
@@ -452,20 +452,20 @@ function isComponent(tagName: string): boolean {
 
 function isSelfClosingTag(tagName: string): boolean {
   const selfClosingTags = [
-    "area",
-    "base",
-    "br",
-    "col",
-    "embed",
-    "hr",
-    "img",
-    "input",
-    "link",
-    "meta",
-    "param",
-    "source",
-    "track",
-    "wbr",
+    'area',
+    'base',
+    'br',
+    'col',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr',
   ];
   return selfClosingTags.includes(tagName.toLowerCase());
 }
@@ -477,7 +477,7 @@ function isSelfClosingTag(tagName: string): boolean {
 function createComponentCall(
   element: t.JSXElement,
   componentName: string,
-  state: PluginState,
+  state: PluginState
 ): t.Expression {
   const props = createPropsObject(element.openingElement.attributes);
   const children = processChildren(element.children, state);
@@ -489,19 +489,19 @@ function createComponentCall(
 
     if (t.isObjectExpression(props)) {
       props.properties.push(
-        t.objectProperty(t.identifier("children"), childrenValue),
+        t.objectProperty(t.identifier('children'), childrenValue)
       );
     }
   }
 
   return t.callExpression(
-    t.identifier(state.importManager!.getName("component")),
-    [t.identifier(componentName), props],
+    t.identifier(state.importManager!.getName('component')),
+    [t.identifier(componentName), props]
   );
 }
 
 function createPropsObject(
-  attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[],
+  attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[]
 ): t.ObjectExpression {
   const properties: (t.ObjectProperty | t.ObjectMethod | t.SpreadElement)[] =
     [];
@@ -517,10 +517,10 @@ function createPropsObject(
         // Check if value needs getter wrapping (function calls, member access)
         if (needsGetterWrapping(propValue)) {
           const getter = t.objectMethod(
-            "get",
+            'get',
             t.identifier(propName),
             [],
-            t.blockStatement([t.returnStatement(propValue)]),
+            t.blockStatement([t.returnStatement(propValue)])
           );
           properties.push(getter);
         } else {
@@ -577,10 +577,10 @@ function needsGetterWrapping(expression: t.Expression): boolean {
 
     for (const key in node) {
       const child = (node as any)[key];
-      if (child && typeof child === "object") {
+      if (child && typeof child === 'object') {
         if (Array.isArray(child)) {
           for (const item of child) {
-            if (item && typeof item === "object" && item.type) {
+            if (item && typeof item === 'object' && item.type) {
               traverse(item);
             }
           }
@@ -601,7 +601,7 @@ function needsGetterWrapping(expression: t.Expression): boolean {
 
 function createHTMLElement(
   element: t.JSXElement,
-  state: PluginState,
+  state: PluginState
 ): t.TaggedTemplateExpression {
   const tagName = getJSXElementName(element.openingElement.name);
   const builder = new TemplateBuilder();
@@ -611,16 +611,16 @@ function createHTMLElement(
 
   // Process attributes
   const processedAttrs = state.attributeProcessor!.processAttributes(
-    element.openingElement.attributes,
+    element.openingElement.attributes
   );
 
   for (const attr of processedAttrs) {
-    if (attr.type === "static") {
+    if (attr.type === 'static') {
       builder.addStatic(attr.content!);
-    } else if (attr.type === "dynamic") {
+    } else if (attr.type === 'dynamic') {
       builder.addStatic(` ${attr.name}=`);
       builder.addExpression(attr.expression!);
-    } else if (attr.type === "directive") {
+    } else if (attr.type === 'directive') {
       builder.addStatic(` `);
       builder.addExpression(attr.expression!);
     }
@@ -628,14 +628,14 @@ function createHTMLElement(
 
   // Handle self-closing vs regular elements
   if (isSelfClosingTag(tagName)) {
-    builder.addStatic(" />");
+    builder.addStatic(' />');
   } else {
-    builder.addStatic(">");
+    builder.addStatic('>');
 
     // Process children
     const childResults = processChildrenForTemplate(element.children, state);
     for (const result of childResults) {
-      if (result.type === "static") {
+      if (result.type === 'static') {
         builder.addStatic(result.content);
       } else {
         builder.addExpression(result.expression);
@@ -646,8 +646,8 @@ function createHTMLElement(
   }
 
   return t.taggedTemplateExpression(
-    t.identifier(state.importManager!.getName("html")),
-    builder.build(),
+    t.identifier(state.importManager!.getName('html')),
+    builder.build()
   );
 }
 
@@ -656,8 +656,8 @@ function createHTMLElement(
 // ============================================================================
 
 type ChildResult =
-  | { type: "static"; content: string }
-  | { type: "dynamic"; expression: t.Expression };
+  | { type: 'static'; content: string }
+  | { type: 'dynamic'; expression: t.Expression };
 
 function processChildren(
   children: (
@@ -667,7 +667,7 @@ function processChildren(
     | t.JSXText
     | t.JSXSpreadChild
   )[],
-  state: PluginState,
+  state: PluginState
 ): t.Expression[] {
   const processedChildren: t.Expression[] = [];
 
@@ -684,10 +684,10 @@ function processChildren(
     } else if (t.isJSXElement(child)) {
       const tagName = getJSXElementName(child.openingElement.name);
       if (isComponent(tagName)) {
-        state.importManager!.markNeeded("component");
+        state.importManager!.markNeeded('component');
         processedChildren.push(createComponentCall(child, tagName, state));
       } else {
-        state.importManager!.markNeeded("html");
+        state.importManager!.markNeeded('html');
         processedChildren.push(createHTMLElement(child, state));
       }
     } else if (t.isJSXFragment(child)) {
@@ -707,7 +707,7 @@ function processChildrenForTemplate(
     | t.JSXText
     | t.JSXSpreadChild
   )[],
-  state: PluginState,
+  state: PluginState
 ): ChildResult[] {
   const results: ChildResult[] = [];
 
@@ -715,31 +715,31 @@ function processChildrenForTemplate(
     if (t.isJSXText(child)) {
       const text = child.value;
       if (text.trim()) {
-        results.push({ type: "static", content: text });
-      } else if (text.includes("\n")) {
+        results.push({ type: 'static', content: text });
+      } else if (text.includes('\n')) {
         // Skip whitespace-only with newlines
         continue;
       } else {
         // Preserve inline whitespace
-        results.push({ type: "static", content: text });
+        results.push({ type: 'static', content: text });
       }
     } else if (t.isJSXExpressionContainer(child)) {
       if (t.isExpression(child.expression)) {
-        results.push({ type: "dynamic", expression: child.expression });
+        results.push({ type: 'dynamic', expression: child.expression });
       }
     } else if (t.isJSXElement(child)) {
       const tagName = getJSXElementName(child.openingElement.name);
       if (isComponent(tagName)) {
-        state.importManager!.markNeeded("component");
+        state.importManager!.markNeeded('component');
         results.push({
-          type: "dynamic",
+          type: 'dynamic',
           expression: createComponentCall(child, tagName, state),
         });
       } else {
         // Check if we can inline as static HTML
         if (canInlineAsStaticHTML(child)) {
           results.push({
-            type: "static",
+            type: 'static',
             content: convertElementToStaticHTML(child),
           });
         } else {
@@ -760,7 +760,7 @@ function processChildrenForTemplate(
 function canInlineAsStaticHTML(element: t.JSXElement): boolean {
   // Can inline if element has no dynamic attributes and all children are static
   const hasOnlyStaticAttributes = element.openingElement.attributes.every(
-    (attr) => {
+    attr => {
       if (t.isJSXAttribute(attr)) {
         const attrValue = getAttributeValue(attr);
         return (
@@ -770,13 +770,13 @@ function canInlineAsStaticHTML(element: t.JSXElement): boolean {
         );
       }
       return false; // spread attributes are dynamic
-    },
+    }
   );
 
   if (!hasOnlyStaticAttributes) return false;
 
   // Check if all children are static text or static HTML elements
-  return element.children.every((child) => {
+  return element.children.every(child => {
     if (t.isJSXText(child)) return true;
     if (t.isJSXElement(child)) {
       const tagName = getJSXElementName(child.openingElement.name);
@@ -800,7 +800,7 @@ function convertElementToStaticHTML(element: t.JSXElement): string {
 
       if (attrName && attrValue) {
         const normalizedAttrName =
-          attrName === "className" ? "class" : attrName;
+          attrName === 'className' ? 'class' : attrName;
 
         if (t.isStringLiteral(attrValue)) {
           html += ` ${normalizedAttrName}="${attrValue.value}"`;
@@ -812,9 +812,9 @@ function convertElementToStaticHTML(element: t.JSXElement): string {
   }
 
   if (isSelfClosing) {
-    html += " />";
+    html += ' />';
   } else {
-    html += ">";
+    html += '>';
 
     // Add children
     for (const child of element.children) {
@@ -833,7 +833,7 @@ function convertElementToStaticHTML(element: t.JSXElement): string {
 
 function inlineElementInTemplate(
   element: t.JSXElement,
-  state: PluginState,
+  state: PluginState
 ): ChildResult[] {
   const tagName = getJSXElementName(element.openingElement.name);
   const results: ChildResult[] = [];
@@ -841,49 +841,49 @@ function inlineElementInTemplate(
 
   // Process attributes using AttributeProcessor
   const processedAttrs = state.attributeProcessor!.processAttributes(
-    element.openingElement.attributes,
+    element.openingElement.attributes
   );
 
   for (const attr of processedAttrs) {
-    if (attr.type === "static") {
+    if (attr.type === 'static') {
       currentPart += attr.content;
-    } else if (attr.type === "dynamic") {
+    } else if (attr.type === 'dynamic') {
       currentPart += ` ${attr.name}=`;
-      results.push({ type: "static", content: currentPart });
-      results.push({ type: "dynamic", expression: attr.expression! });
-      currentPart = "";
-    } else if (attr.type === "directive") {
+      results.push({ type: 'static', content: currentPart });
+      results.push({ type: 'dynamic', expression: attr.expression! });
+      currentPart = '';
+    } else if (attr.type === 'directive') {
       currentPart += ` `;
-      results.push({ type: "static", content: currentPart });
-      results.push({ type: "dynamic", expression: attr.expression! });
-      currentPart = "";
+      results.push({ type: 'static', content: currentPart });
+      results.push({ type: 'dynamic', expression: attr.expression! });
+      currentPart = '';
     }
   }
 
   // Handle self-closing vs regular elements
   if (isSelfClosingTag(tagName)) {
-    currentPart += " />";
-    results.push({ type: "static", content: currentPart });
+    currentPart += ' />';
+    results.push({ type: 'static', content: currentPart });
   } else {
-    currentPart += ">";
+    currentPart += '>';
 
     // Process children
     const childResults = processChildrenForTemplate(element.children, state);
     if (childResults.length === 0) {
       // No children, just close the tag
       currentPart += `</${tagName}>`;
-      results.push({ type: "static", content: currentPart });
+      results.push({ type: 'static', content: currentPart });
     } else {
       // Add opening tag part
       if (currentPart) {
-        results.push({ type: "static", content: currentPart });
+        results.push({ type: 'static', content: currentPart });
       }
 
       // Add children
       results.push(...childResults);
 
       // Add closing tag
-      results.push({ type: "static", content: `</${tagName}>` });
+      results.push({ type: 'static', content: `</${tagName}>` });
     }
   }
 

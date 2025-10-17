@@ -1,5 +1,5 @@
 export type Component<Props = any> = (
-  props: Props,
+  props: Props
 ) => unknown | (() => unknown);
 
 export type RenderOptions<Props> = {

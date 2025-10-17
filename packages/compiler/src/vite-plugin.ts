@@ -1,6 +1,6 @@
-import type { Plugin } from "vite";
-import { transformAsync } from "@babel/core";
-import { KaoriCompiler } from "./babel-plugin.js";
+import type { Plugin } from 'vite';
+import { transformAsync } from '@babel/core';
+import { KaoriCompiler } from './babel-plugin.js';
 
 export interface KaoriPluginOptions {
   /**
@@ -39,16 +39,16 @@ export function kaori(options: KaoriPluginOptions = {}): Plugin {
   } = options;
 
   return {
-    name: "vite:kaori",
+    name: 'vite:kaori',
 
     async transform(code: string, id: string) {
       // Check if file should be processed
-      const shouldInclude = include.some((pattern) =>
-        typeof pattern === "string" ? id.includes(pattern) : pattern.test(id),
+      const shouldInclude = include.some(pattern =>
+        typeof pattern === 'string' ? id.includes(pattern) : pattern.test(id)
       );
 
-      const shouldExclude = exclude.some((pattern) =>
-        typeof pattern === "string" ? id.includes(pattern) : pattern.test(id),
+      const shouldExclude = exclude.some(pattern =>
+        typeof pattern === 'string' ? id.includes(pattern) : pattern.test(id)
       );
 
       if (!shouldInclude || shouldExclude) {
@@ -57,22 +57,22 @@ export function kaori(options: KaoriPluginOptions = {}): Plugin {
 
       // Only process files that likely contain JSX
       if (
-        !code.includes("<") ||
-        (!code.includes("jsx") && !id.match(/\.[jt]sx?$/))
+        !code.includes('<') ||
+        (!code.includes('jsx') && !id.match(/\.[jt]sx?$/))
       ) {
         return null;
       }
 
       try {
         // Prepare babel plugins
-        const plugins = [["@babel/plugin-syntax-jsx"], [KaoriCompiler]];
+        const plugins = [['@babel/plugin-syntax-jsx'], [KaoriCompiler]];
 
         // Transform the code
         const result = await transformAsync(code, {
           filename: id,
           plugins,
           parserOpts: {
-            plugins: typescript ? ["jsx"] : ["jsx"],
+            plugins: typescript ? ['jsx'] : ['jsx'],
           },
           sourceMaps: true,
           configFile: false,
@@ -100,7 +100,7 @@ export function kaori(options: KaoriPluginOptions = {}): Plugin {
     config(config) {
       // Ensure JSX is handled properly in dev
       config.esbuild = config.esbuild || {};
-      config.esbuild.jsx = "preserve"; // Let our plugin handle JSX transformation
+      config.esbuild.jsx = 'preserve'; // Let our plugin handle JSX transformation
     },
 
     // Handle HMR for better dev experience

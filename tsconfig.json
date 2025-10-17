@@ -1,39 +1,39 @@
 {
-	"compilerOptions": {
-		// Strictness
-		"strict": true,
-		"verbatimModuleSyntax": true,
-		"exactOptionalPropertyTypes": false,
-		"noFallthroughCasesInSwitch": true,
-		"noImplicitOverride": true,
-		"noImplicitReturns": true,
-		"noUnusedLocals": true,
-		"noUnusedParameters": true,
-		"noPropertyAccessFromIndexSignature": false,
-		"noUncheckedIndexedAccess": false,
-		"skipLibCheck": true,
+  "compilerOptions": {
+    // Strictness
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "exactOptionalPropertyTypes": false,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "noUncheckedIndexedAccess": false,
+    "skipLibCheck": true,
 
-		// Modules
-		"module": "ESNext",
-		"moduleResolution": "bundler",
-		"resolveJsonModule": true,
+    // Modules
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
 
-		// Emit
-		"lib": ["esnext", "dom", "dom.iterable"],
-		"target": "esnext",
-		"useDefineForClassFields": false,
-		"declaration": true,
-		"declarationMap": true,
-		"sourceMap": true,
-		"importsNotUsedAsValues": "remove",
+    // Emit
+    "lib": ["esnext", "dom", "dom.iterable"],
+    "target": "esnext",
+    "useDefineForClassFields": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "importsNotUsedAsValues": "remove",
 
-		// Interop Constraints
-		"forceConsistentCasingInFileNames": true,
-		"allowSyntheticDefaultImports": true,
-		"isolatedModules": true,
+    // Interop Constraints
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
 
-		// Composite
-		"composite": true
-	},
-	"exclude": ["node_modules", "target", "dist", "lib"]
+    // Composite
+    "composite": true
+  },
+  "exclude": ["node_modules", "target", "dist", "lib"]
 }

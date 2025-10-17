@@ -26,35 +26,35 @@ pnpm dev
 ## Example
 
 ```tsx
-import { signal, computed, render } from "kaori.js";
+import { signal, computed, render } from 'kaori.js';
 
 function App(props: { name: string }) {
-	const count = signal(0);
-	const double = computed(() => count.value * 2);
-	const cond = computed(() => count.value > 3);
+  const count = signal(0);
+  const double = computed(() => count.value * 2);
+  const cond = computed(() => count.value > 3);
 
   // this part runs only once
 
-	function increment() {
-		count.value++;
-	}
+  function increment() {
+    count.value++;
+  }
 
-	return () => (
-     // this part runs on every state change
-		<div class="h-full flex flex-col gap-4 items-center justify-center">
-			<h1 class="text-xl font-bold">Welcome to Kaori ^^</h1>
-			<p class="text-lg">Hello {props.name}</p>
-			<button class="button-primary" onClick={increment}>
-				Click Me!
-			</button>
-			<p>Count: {count.value}</p>
-			<p>Double: {double.value}</p>
-			<Show when={cond.value}>Count is greater than 3!</Show>
-		</div>
-	);
+  return () => (
+    // this part runs on every state change
+    <div class="h-full flex flex-col gap-4 items-center justify-center">
+      <h1 class="text-xl font-bold">Welcome to Kaori ^^</h1>
+      <p class="text-lg">Hello {props.name}</p>
+      <button class="button-primary" onClick={increment}>
+        Click Me!
+      </button>
+      <p>Count: {count.value}</p>
+      <p>Double: {double.value}</p>
+      <Show when={cond.value}>Count is greater than 3!</Show>
+    </div>
+  );
 }
 
-render(<App name={"ayana"} />, root);
+render(<App name={'ayana'} />, root);
 ```
 
 ## Docs
@@ -71,28 +71,25 @@ Coming soon.. It's my birthday today and its 2:47 AM now so i want to sleep :3
 - `prop:value={val}` is equivalent to `.value=${val}` in lit-html.
 - `bool:checked={val}` is equivalent to `.value=${val}` in lit-html.
 - `onClick={val}` is equivalent to `@click=${val}` in lit-html.
-More on these later..
+  More on these later..
 
 ## For Component
+
 ```tsx
-import { For } from "kaori.js";
+import { For } from 'kaori.js';
 function List(props: { items: string[] }) {
   return () => (
     <ul>
-      <For each={props.items}>
-        {(item) => (
-          <li>{item}</li>
-        )}
-      </For>
+      <For each={props.items}>{item => <li>{item}</li>}</For>
     </ul>
   );
 }
 ```
 
-
 ## Show Component
+
 ```tsx
-import { Show } from "kaori.js";
+import { Show } from 'kaori.js';
 function Conditional(props: { isVisible: boolean }) {
   return () => (
     <div>
@@ -105,18 +102,21 @@ function Conditional(props: { isVisible: boolean }) {
 ```
 
 ## Once render
+
 ```tsx
 function OnceComponent() {
-  return <div>
+  return (
+    <div>
       <p>This content is rendered only once!</p>
     </div>
-  ;
+  );
 }
 ```
 
 ## Manually trigger updates
+
 ```tsx
-import { getHandle } from "kaori.js";
+import { getHandle } from 'kaori.js';
 function OnceComponent() {
   const handle = getHandle(); // only call this inside setup code
 
@@ -128,55 +128,55 @@ function OnceComponent() {
   }
 
   return () => (
-      <div>
-        <p>Count: {count}!</p>
-        <button onClick={increment}>Update</button>
-      </div>
-    )
-  ;
+    <div>
+      <p>Count: {count}!</p>
+      <button onClick={increment}>Update</button>
+    </div>
+  );
 }
 ```
 
 ## On Mount
+
 ```tsx
-import { onMount } from "kaori.js";
+import { onMount } from 'kaori.js';
 function OnMountComponent() {
   onMount(() => {
-    console.log("Component mounted!");
+    console.log('Component mounted!');
   });
   return () => (
-      <div>
-        <p>This component logs to console when mounted!</p>
-      </div>
-    )
-  ;
+    <div>
+      <p>This component logs to console when mounted!</p>
+    </div>
+  );
 }
 ```
 
 ## Effect
+
 ```tsx
-import { signal, effect } from "kaori.js";
+import { signal, effect } from 'kaori.js';
 function EffectComponent() {
   const count = signal(0);
 
   effect(() => {
-    console.log("Count changed:", count.value);
+    console.log('Count changed:', count.value);
   });
 
   function increment() {
     count.value++;
   }
   return () => (
-      <div>
-        <p>Count: {count.value}!</p>
-        <button onClick={increment}>Increment</button>
-      </div>
-    )
-  ;
+    <div>
+      <p>Count: {count.value}!</p>
+      <button onClick={increment}>Increment</button>
+    </div>
+  );
 }
 ```
 
 ## onCleanup
+
 ```tsx
 import { onMount, onCleanup } from "kaori.js";
 

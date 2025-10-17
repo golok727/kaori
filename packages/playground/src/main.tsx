@@ -1,4 +1,4 @@
-import "./style.css";
+import './style.css';
 import {
   computed,
   render,
@@ -9,9 +9,9 @@ import {
   nothing,
   onMount,
   createRef,
-} from "kaori.js";
+} from 'kaori.js';
 
-const root = document.querySelector<HTMLDivElement>("#root")!;
+const root = document.querySelector<HTMLDivElement>('#root')!;
 
 function useQuery<T>(options: { query: () => Promise<T>; initialData?: T }) {
   const state = signal<{
@@ -37,10 +37,10 @@ function useQuery<T>(options: { query: () => Promise<T>; initialData?: T }) {
 
     options
       .query()
-      .then((res) => {
+      .then(res => {
         state.value = { data: res, error: null, loading: false };
       })
-      .catch((err) => {
+      .catch(err => {
         state.value = { data: null, error: err as Error, loading: false };
       })
       .finally(() => {
@@ -64,14 +64,14 @@ function useQuery<T>(options: { query: () => Promise<T>; initialData?: T }) {
 
 function fetchTodos() {
   return new Promise<{ id: number; title: string; completed: boolean }[]>(
-    (resolve) => {
+    resolve => {
       setTimeout(() => {
         resolve([
-          { id: 1, title: "Learn Kaori", completed: false },
-          { id: 2, title: "Build something awesome", completed: false },
+          { id: 1, title: 'Learn Kaori', completed: false },
+          { id: 2, title: 'Build something awesome', completed: false },
         ]);
       }, 2000);
-    },
+    }
   );
 }
 
@@ -95,9 +95,9 @@ function StyleThing() {
   return (
     <p
       style={{
-        backgroundColor: "lightblue",
-        padding: "10px",
-        borderRadius: "6px",
+        backgroundColor: 'lightblue',
+        padding: '10px',
+        borderRadius: '6px',
       }}
     >
       Inline styles work property !!
@@ -120,9 +120,9 @@ function App() {
 
   function toggleCompleted(id: number) {
     query.setQueryData(
-      query.data!.map((todo) =>
-        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
-      ),
+      query.data!.map(todo =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
     );
   }
 
@@ -135,7 +135,7 @@ function App() {
       <StyleThing />
       <RefTest />
       <button class="button-primary" onClick={() => showThing.toggle()}>
-        {showThing.show ? "Hide" : "Show"} Test Life
+        {showThing.show ? 'Hide' : 'Show'} Test Life
       </button>
       <h1 class="text-xl font-bold">Kaori Playground</h1>
       {query.loading ? <p>Loading todos...</p> : nothing}
@@ -174,14 +174,14 @@ function KaoriThing() {
   const handle = getHandle();
 
   onMount(() => {
-    console.log("component mounted, setting up interval");
+    console.log('component mounted, setting up interval');
     const interval = setInterval(() => {
       count++;
       handle.update();
     }, 1000);
 
     return () => {
-      console.log("component unmounted, clearing interval");
+      console.log('component unmounted, clearing interval');
       clearInterval(interval);
     };
   });
@@ -202,13 +202,13 @@ function Todos(props: {
   addTodo: (title: string) => void;
   toggleCompleted: (id: number) => void;
 }) {
-  const newTodoText = signal("");
+  const newTodoText = signal('');
   const error = signal<string | null>(null);
 
   const length = computed(() => props.todos.length);
 
   const numChecked = computed(
-    () => props.todos.filter((todo) => todo.completed).length,
+    () => props.todos.filter(todo => todo.completed).length
   );
 
   const handleInputChange = (ev: InputEvent) => {
@@ -217,15 +217,15 @@ function Todos(props: {
 
   const addTodo = () => {
     const value = newTodoText.value;
-    if (value === "") {
-      error.value = "Todo cannot be empty";
+    if (value === '') {
+      error.value = 'Todo cannot be empty';
       setTimeout(() => {
         error.value = null;
       }, 1000);
     } else {
       error.value = null;
       props.addTodo(value);
-      newTodoText.value = "";
+      newTodoText.value = '';
     }
   };
 
@@ -235,7 +235,7 @@ function Todos(props: {
 
   return () => (
     <div>
-      <h2>Todos {numChecked.value + " Completed"}</h2>
+      <h2>Todos {numChecked.value + ' Completed'}</h2>
       {error.value ? <p class="text-red-600">{error.value}</p> : nothing}
       <input
         prop:value={newTodoText.value}
@@ -252,9 +252,9 @@ function Todos(props: {
         <p>No todos</p>
       ) : (
         <ul>
-          <For items={props.todos} key={(todo) => todo.id}>
-            {(todo) => (
-              <li class={`${todo.completed ? "line-through" : ""}`}>
+          <For items={props.todos} key={todo => todo.id}>
+            {todo => (
+              <li class={`${todo.completed ? 'line-through' : ''}`}>
                 <input
                   type="checkbox"
                   bool:checked={todo.completed}
