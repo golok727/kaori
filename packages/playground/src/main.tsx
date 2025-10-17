@@ -91,6 +91,26 @@ function useToggle(initial = false) {
   };
 }
 
+function ClassMapThing() {
+  const count = signal(9);
+
+  return () => (
+    <div>
+      <p
+        classMap={{
+          'text-blue-500': count.value <= 10,
+          'text-amber-500': count.value > 10,
+        }}
+      >
+        ClassMap Example Count: {count.value}
+      </p>
+      <button class="button-primary" onClick={() => count.value++}>
+        Click
+      </button>
+    </div>
+  );
+}
+
 function StyleThing() {
   return (
     <p
@@ -132,11 +152,12 @@ function App() {
       <Show when={showThing.show}>
         <KaoriThing />
       </Show>
-      <StyleThing />
-      <RefTest />
       <button class="button-primary" onClick={() => showThing.toggle()}>
         {showThing.show ? 'Hide' : 'Show'} Test Life
       </button>
+      <StyleThing />
+      <RefTest />
+      <ClassMapThing />
       <h1 class="text-xl font-bold">Kaori Playground</h1>
       {query.loading ? <p>Loading todos...</p> : nothing}
       <Todos

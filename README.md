@@ -6,12 +6,6 @@ Kaori is built on top of `lit-html` and `@preact-signals/core` for signals.
 
 Kaori's compiler converts JSX into template literals which are then rendered using `lit-html`.
 
-This looks simple but this is very powerful and allows to do a lot of stuff with it.
-
-This is the framework I always wanted to build.
-
-This was made in an afternoon so expect bugs and rough edges.
-
 If you find any bugs or have suggestions, please open an issue or a PR.
 
 Its my playground for now so expect breaking changes.
@@ -61,8 +55,6 @@ render(<App name={'ayana'} />, root);
 
 ## Docs
 
-Coming soon.. It's my birthday today and its 2:47 AM now so i want to sleep :3
-
 - So basically if you access any signal/computed inside the component function, it will trigger a re-render when the signal/computed changes.
 - It will only rerun the render function not the whole component function.
 - You can use `onMount` to run a function when the component is mounted.
@@ -70,10 +62,14 @@ Coming soon.. It's my birthday today and its 2:47 AM now so i want to sleep :3
 - You can use `For` and `Show` for conditional rendering and list rendering.
 - You can pass props to components and access them inside the component function.
 
-- `prop:value={val}` is equivalent to `.value=${val}` in lit-html.
-- `bool:checked={val}` is equivalent to `?value=${val}` in lit-html.
-- `onClick={val}` is equivalent to `@click=${val}` in lit-html.
-  More on these later..
+
+## Special attributes for elements
+- `prop:value={val}` → sets a property on the element (equivalent to `.value=${val}` in Lit).
+
+- `bool:checked={val}` → toggles a boolean attribute (equivalent to `?checked=${val}` in Lit).
+
+- `onClick={val}` → any attribute starting with `on` adds an event listener (equivalent to `@click=${val}` in Lit).
+
 
 ## For Component
 
@@ -115,8 +111,27 @@ function OnceComponent() {
 }
 ```
 
-## Manually trigger updates
 
+## classMap attribute
+`classMap` attribute lets you dynamically apply CSS classes based on a truthy value.
+```tsx
+function MoodBadge(props: { mood: 'happy' | 'sad' | 'angry' }) {
+  return () => (
+    <span
+      classMap={{
+        'bg-yellow-300': props.mood === 'happy',
+        'bg-blue-300': props.mood === 'sad',
+        'bg-red-300': props.mood === 'angry',
+        'text-white': props.mood === 'angry',
+      }}
+    >
+      {props.mood.toUpperCase()} MOOD
+    </span>
+  );
+}
+```
+
+## Manually trigger updates
 ```tsx
 import { getHandle } from 'kaori.js';
 function Thing() {

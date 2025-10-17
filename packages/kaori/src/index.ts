@@ -153,7 +153,7 @@ class ComponentDirective<Props = any> extends AsyncDirective {
     const componentName = C.name || 'Anonymous';
 
     if (!this.hasInitialized) {
-      logger.log('Rendering component ', componentName, props);
+      logger.log('Initial render for component', componentName, props);
       this.handle = {
         __dbg_n: componentName,
         update: () => {
@@ -246,3 +246,4 @@ export { repeat } from 'lit-html/directives/repeat.js';
 export { map } from 'lit-html/directives/map.js';
 export { type Ref, ref, createRef } from 'lit-html/directives/ref.js';
 export { styleMap } from 'lit-html/directives/style-map.js';
+export { classMap } from 'lit-html/directives/class-map.js';

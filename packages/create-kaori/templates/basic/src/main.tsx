@@ -1,7 +1,7 @@
 import './style.css';
 import { signal, computed, render, Show } from 'kaori.js';
 
-function Starter(props: { name: string }) {
+function App(props: { name: string }) {
   const count = signal(0);
   const double = computed(() => count.value * 2);
   const cond = computed(() => count.value > 3); // auto memoization coming soon :)
@@ -23,4 +23,4 @@ function Starter(props: { name: string }) {
 }
 
 const root = document.getElementById('root') as HTMLElement;
-render(<Starter name={'Kaori'} />, root);
+render(<App name={'Kaori'} />, root);
