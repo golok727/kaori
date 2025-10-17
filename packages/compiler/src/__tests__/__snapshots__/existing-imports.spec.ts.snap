@@ -24,23 +24,23 @@ function App() {
 `;
 
 exports[`JSX transformation with existing imports > should handle existing kaori imports from path 1`] = `
-"import { component, computed, html, render, signal, For, getBloom, onCleanup, Show, nothing, onMount } from "/@fs/C:/Users/Radha/dev/frameworks/bloom/packages/kaori/src/index.ts";
-function BloomThing() {
+"import { component, computed, html, render, signal, For, getBloom, onCleanup, Show, nothing, onMount } from "kaori.js";
+function KaoriThing() {
   let count = 0;
   return () => html\`<h1 class="text-lg font-bold"> Without signals count \${count}</h1>\`;
 }
 function App() {
-  return html\`<div><h1>My App</h1>\${component(BloomThing, {})}<p>Some content</p></div>\`;
+  return html\`<div><h1>My App</h1>\${component(KaoriThing, {})}<p>Some content</p></div>\`;
 }"
 `;
 
 exports[`JSX transformation with existing imports > should handle existing kaori.js imports 1`] = `
 "import { component, computed, html, render, signal } from "kaori.js";
-function BloomThing() {
+function Kaori() {
   let count = 0;
   return () => html\`<h1 class="text-lg font-bold"> Without signals count \${count}</h1>\`;
 }
 function App() {
-  return html\`<div><h1>My App</h1>\${component(BloomThing, {})}<p>Some content</p></div>\`;
+  return html\`<div><h1>My App</h1>\${component(Kaori, {})}<p>Some content</p></div>\`;
 }"
 `;

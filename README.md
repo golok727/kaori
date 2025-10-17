@@ -2,7 +2,7 @@
 
 A Typescript library for building reactive user interfaces with familiar syntax with react, solid.
 
-Kaori is built on top of `lit-html` and `@preact-signals/core` for signals. 
+Kaori is built on top of `lit-html` and `@preact-signals/core` for signals.
 
 Kaori's compiler converts JSX into template literals which are then rendered using `lit-html`.
 
@@ -106,7 +106,7 @@ function Conditional(props: { isVisible: boolean }) {
 }
 ```
 
-## Once render 
+## Once render
 ```tsx
 function OnceComponent() {
   return <div>
@@ -118,16 +118,16 @@ function OnceComponent() {
 
 ## Manually trigger updates
 ```tsx
-import { getBloom } from "kaori.js";
+import { getHandle } from "kaori.js";
 function Thing() {
-  const bloom = getBloom(); // only call this inside setup code
+  const handle = getHandle(); // only call this inside setup code
 
-  let count = 0; 
+  let count = 0;
 
   function increment() {
     count++;
-    bloom.update();
-  } 
+    handle.update();
+  }
 
   return () => (
       <div>
@@ -159,7 +159,7 @@ function OnMountComponent() {
 ```tsx
 import { signal, effect } from "kaori.js";
 function EffectComponent() {
-  const count = signal(0);  
+  const count = signal(0);
 
   effect(() => {
     console.log("Count changed:", count.value);

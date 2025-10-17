@@ -1,258 +1,273 @@
 import "./style.css";
 import {
-	computed,
-	render,
-	signal,
-	For,
-	getBloom,
-	Show,
-	nothing,
-	onMount,
-	createRef,
+  computed,
+  render,
+  signal,
+  For,
+  getHandle,
+  Show,
+  nothing,
+  onMount,
+  createRef,
 } from "kaori.js";
 
 const root = document.querySelector<HTMLDivElement>("#root")!;
 
 function useQuery<T>(options: { query: () => Promise<T>; initialData?: T }) {
-	const state = signal<{
-		data: T | null;
-		error: Error | null;
-		loading: boolean;
-	}>({
-		data: options.initialData ?? null,
-		error: null,
-		loading: false,
-	});
+  const state = signal<{
+    data: T | null;
+    error: Error | null;
+    loading: boolean;
+  }>({
+    data: options.initialData ?? null,
+    error: null,
+    loading: false,
+  });
 
-	function setQueryData(data: T) {
-		state.value = { data, error: null, loading: false };
-	}
+  function setQueryData(data: T) {
+    state.value = { data, error: null, loading: false };
+  }
 
-	onMount(() => {
-		state.value = {
-			data: options.initialData ?? null,
-			error: null,
-			loading: true,
-		};
+  onMount(() => {
+    state.value = {
+      data: options.initialData ?? null,
+      error: null,
+      loading: true,
+    };
 
-		options
-			.query()
-			.then((res) => {
-				state.value = { data: res, error: null, loading: false };
-			})
-			.catch((err) => {
-				state.value = { data: null, error: err as Error, loading: false };
-			})
-			.finally(() => {
-				state.value = { ...state.value!, loading: false };
-			});
-	});
+    options
+      .query()
+      .then((res) => {
+        state.value = { data: res, error: null, loading: false };
+      })
+      .catch((err) => {
+        state.value = { data: null, error: err as Error, loading: false };
+      })
+      .finally(() => {
+        state.value = { ...state.value!, loading: false };
+      });
+  });
 
-	return {
-		get data() {
-			return state.value.data;
-		},
-		get error() {
-			return state.value.error;
-		},
-		get loading() {
-			return state.value.loading;
-		},
-		setQueryData,
-	};
+  return {
+    get data() {
+      return state.value.data;
+    },
+    get error() {
+      return state.value.error;
+    },
+    get loading() {
+      return state.value.loading;
+    },
+    setQueryData,
+  };
 }
 
 function fetchTodos() {
-	return new Promise<{ id: number; title: string; completed: boolean }[]>(
-		(resolve) => {
-			setTimeout(() => {
-				resolve([
-					{ id: 1, title: "Learn Bloom", completed: false },
-					{ id: 2, title: "Build something awesome", completed: false },
-				]);
-			}, 2000);
-		}
-	);
+  return new Promise<{ id: number; title: string; completed: boolean }[]>(
+    (resolve) => {
+      setTimeout(() => {
+        resolve([
+          { id: 1, title: "Learn Kaori", completed: false },
+          { id: 2, title: "Build something awesome", completed: false },
+        ]);
+      }, 2000);
+    },
+  );
 }
 
 function useToggle(initial = false) {
-	const state = signal(initial);
+  const state = signal(initial);
 
-	return {
-		get show() {
-			return state.value;
-		},
-		toggle() {
-			state.value = !state.peek();
-		},
-		set(value: boolean) {
-			state.value = value;
-		},
-	};
+  return {
+    get show() {
+      return state.value;
+    },
+    toggle() {
+      state.value = !state.peek();
+    },
+    set(value: boolean) {
+      state.value = value;
+    },
+  };
 }
 
+function StyleThing() {
+  return (
+    <p
+      style={{
+        backgroundColor: "lightblue",
+        padding: "10px",
+        borderRadius: "6px",
+      }}
+    >
+      Inline styles work property !!
+    </p>
+  );
+}
 function App() {
-	const showThing = useToggle(true);
+  const showThing = useToggle(true);
 
-	const query = useQuery({ query: fetchTodos, initialData: [] });
+  const query = useQuery({ query: fetchTodos, initialData: [] });
 
-	function addTodo(title: string) {
-		const newTodo: Todo = {
-			id: query.data!.length + 1,
-			title,
-			completed: false,
-		};
-		query.setQueryData([...query.data!, newTodo]);
-	}
+  function addTodo(title: string) {
+    const newTodo: Todo = {
+      id: query.data!.length + 1,
+      title,
+      completed: false,
+    };
+    query.setQueryData([...query.data!, newTodo]);
+  }
 
-	function toggleCompleted(id: number) {
-		query.setQueryData(
-			query.data!.map((todo) =>
-				todo.id === id ? { ...todo, completed: !todo.completed } : todo
-			)
-		);
-	}
+  function toggleCompleted(id: number) {
+    query.setQueryData(
+      query.data!.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+      ),
+    );
+  }
 
-	return () => (
-		<div>
-			<h1 class="text-xl font-bold">Bloom Playground</h1>
-			<Show when={showThing.show}>
-				<KaoriThing />
-			</Show>
-			<RefTest />
-			<button class="button-primary" onClick={() => showThing.toggle()}>
-				{showThing.show ? "Hide" : "Show"} BloomThing
-			</button>
-			<h1 class="text-xl font-bold">Bloom Playground</h1>
-			{query.loading ? <p>Loading todos...</p> : nothing}
-			<Todos
-				todos={query.data!}
-				addTodo={addTodo}
-				toggleCompleted={toggleCompleted}
-			/>
-		</div>
-	);
+  return () => (
+    <div>
+      <h1 class="text-xl font-bold">Kaori Playground</h1>
+      <Show when={showThing.show}>
+        <KaoriThing />
+      </Show>
+      <StyleThing />
+      <RefTest />
+      <button class="button-primary" onClick={() => showThing.toggle()}>
+        {showThing.show ? "Hide" : "Show"} Test Life
+      </button>
+      <h1 class="text-xl font-bold">Kaori Playground</h1>
+      {query.loading ? <p>Loading todos...</p> : nothing}
+      <Todos
+        todos={query.data!}
+        addTodo={addTodo}
+        toggleCompleted={toggleCompleted}
+      />
+    </div>
+  );
 }
 
 function RefTest() {
-	const divRef = createRef<HTMLDivElement>();
-	const bloom = getBloom();
-	let width = 0;
+  const divRef = createRef<HTMLDivElement>();
+  const handle = getHandle();
 
-	onMount(() => {
-		if (divRef.value) {
-			width = Math.floor(divRef.value.getBoundingClientRect().width);
-			console.log(width);
-			bloom.update();
-		}
-	});
+  let width = 0;
 
-	return () => (
-		<div class="p-2 bg-amber-200 rounded" ref={divRef}>
-			This div has a width of {width} px
-		</div>
-	);
+  onMount(() => {
+    if (divRef.value) {
+      width = Math.floor(divRef.value.getBoundingClientRect().width);
+      console.log(width);
+      handle.update();
+    }
+  });
+
+  return () => (
+    <div class="p-2 bg-amber-200 rounded" ref={divRef}>
+      This div has a width of {width} px
+    </div>
+  );
 }
 
 function KaoriThing() {
-	let count = 0;
-	const bloom = getBloom();
+  let count = 0;
+  const handle = getHandle();
 
-	onMount(() => {
-		console.log("component mounted, setting up interval");
-		const interval = setInterval(() => {
-			count++;
-			bloom.update();
-		}, 1000);
+  onMount(() => {
+    console.log("component mounted, setting up interval");
+    const interval = setInterval(() => {
+      count++;
+      handle.update();
+    }, 1000);
 
-		return () => {
-			console.log("component unmounted, clearing interval");
-			clearInterval(interval);
-		};
-	});
+    return () => {
+      console.log("component unmounted, clearing interval");
+      clearInterval(interval);
+    };
+  });
 
-	return () => (
-		<h1 class="text-lg font-bold"> Without signals count {count}</h1>
-	);
+  return () => (
+    <h1 class="text-lg font-bold"> Without signals count {count}</h1>
+  );
 }
 
 type Todo = {
-	id: number;
-	title: string;
-	completed: boolean;
+  id: number;
+  title: string;
+  completed: boolean;
 };
 
 function Todos(props: {
-	todos: Todo[];
-	addTodo: (title: string) => void;
-	toggleCompleted: (id: number) => void;
+  todos: Todo[];
+  addTodo: (title: string) => void;
+  toggleCompleted: (id: number) => void;
 }) {
-	const newTodoText = signal("");
-	const error = signal<string | null>(null);
+  const newTodoText = signal("");
+  const error = signal<string | null>(null);
 
-	const length = computed(() => props.todos.length);
+  const length = computed(() => props.todos.length);
 
-	const numChecked = computed(
-		() => props.todos.filter((todo) => todo.completed).length
-	);
+  const numChecked = computed(
+    () => props.todos.filter((todo) => todo.completed).length,
+  );
 
-	const handleInputChange = (ev: InputEvent) => {
-		newTodoText.value = (ev.target as HTMLInputElement).value;
-	};
+  const handleInputChange = (ev: InputEvent) => {
+    newTodoText.value = (ev.target as HTMLInputElement).value;
+  };
 
-	const addTodo = () => {
-		const value = newTodoText.value;
-		if (value === "") {
-			error.value = "Todo cannot be empty";
-			setTimeout(() => {
-				error.value = null;
-			}, 1000);
-		} else {
-			error.value = null;
-			props.addTodo(value);
-			newTodoText.value = "";
-		}
-	};
+  const addTodo = () => {
+    const value = newTodoText.value;
+    if (value === "") {
+      error.value = "Todo cannot be empty";
+      setTimeout(() => {
+        error.value = null;
+      }, 1000);
+    } else {
+      error.value = null;
+      props.addTodo(value);
+      newTodoText.value = "";
+    }
+  };
 
-	const handleCheckedChange = (id: number) => {
-		props.toggleCompleted(id);
-	};
+  const handleCheckedChange = (id: number) => {
+    props.toggleCompleted(id);
+  };
 
-	return () => (
-		<div>
-			<h2>Todos {numChecked.value + " Completed"}</h2>
-			{error.value ? <p class="text-red-600">{error.value}</p> : nothing}
-			<input
-				prop:value={newTodoText.value}
-				class="py-2 px-2 border border-gray-300 rounded"
-				type="text"
-				id="new-todo"
-				onChange={handleInputChange}
-			/>
-			<button class="button-primary" onClick={addTodo}>
-				addTodo
-			</button>
+  return () => (
+    <div>
+      <h2>Todos {numChecked.value + " Completed"}</h2>
+      {error.value ? <p class="text-red-600">{error.value}</p> : nothing}
+      <input
+        prop:value={newTodoText.value}
+        class="py-2 px-2 border border-gray-300 rounded"
+        type="text"
+        id="new-todo"
+        onChange={handleInputChange}
+      />
+      <button class="button-primary" onClick={addTodo}>
+        addTodo
+      </button>
 
-			{length.value === 0 ? (
-				<p>No todos</p>
-			) : (
-				<ul>
-					<For items={props.todos} key={(todo) => todo.id}>
-						{(todo) => (
-							<li class={`${todo.completed ? "line-through" : ""}`}>
-								<input
-									type="checkbox"
-									bool:checked={todo.completed}
-									onChange={() => handleCheckedChange(todo.id)}
-								/>
-								{todo.title}
-							</li>
-						)}
-					</For>
-				</ul>
-			)}
-		</div>
-	);
+      {length.value === 0 ? (
+        <p>No todos</p>
+      ) : (
+        <ul>
+          <For items={props.todos} key={(todo) => todo.id}>
+            {(todo) => (
+              <li class={`${todo.completed ? "line-through" : ""}`}>
+                <input
+                  type="checkbox"
+                  bool:checked={todo.completed}
+                  onChange={() => handleCheckedChange(todo.id)}
+                />
+                {todo.title}
+              </li>
+            )}
+          </For>
+        </ul>
+      )}
+    </div>
+  );
 }
 
 render(<App />, root);

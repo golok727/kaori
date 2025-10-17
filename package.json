@@ -6,6 +6,8 @@
   "author": "golok",
   "scripts": {
     "dev": "pnpm --filter playground dev",
+    "build:compiler": "pnpm --filter kaori-compiler build",
+    "watch:compiler": "pnpm --filter kaori-compiler build:watch",
     "build:packages": "pnpm -r --filter \"!./packages/playground\" run build",
     "ci:publish": "pnpm build:packages && pnpm -r publish --access public --no-git-checks"
   },

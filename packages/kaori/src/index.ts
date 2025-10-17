@@ -5,206 +5,207 @@ import type { Component } from "./types.js";
 import { invariant } from "./utils.js";
 
 const logger = {
-	log: (...args: any[]) => {
-		console.log("[Kaori:DEV]", ...args);
-	},
+  log: (...args: any[]) => {
+    console.log("[Kaori:DEV]", ...args);
+  },
 };
 
-export type Bloom = {
-	update(): void;
+// a handle to a component
+export type ComponentHandle = {
+  update(): void;
 };
 
-type BloomInternal = Bloom & {
-	__disposables: Set<() => void>;
+type ComponentHandleInternal = ComponentHandle & {
+  __disposables: Set<() => void>;
+  __dbg_n: string;
 };
 
-// todo move to a runtime file
 /*
  Globals
  -----------------------------------------------------------------------
 */
-let active_bloom: BloomInternal | null = null;
+let active_handle: ComponentHandleInternal | null = null;
 let is_micro_task_queued = false;
 let queued_microtasks: Array<() => void> = [];
-let queued_updates: Array<[BloomInternal, () => void]> = [];
-let dirty_blooms = new WeakSet<BloomInternal>();
+let queued_updates: Array<[ComponentHandleInternal, () => void]> = [];
+let dirty_handles = new WeakSet<ComponentHandleInternal>();
 /*--------------------------------------------------------------- */
 
 function queue_microtask(fn: () => void) {
-	if (!is_micro_task_queued) {
-		is_micro_task_queued = true;
-		queueMicrotask(flush_microtasks);
-	}
+  if (!is_micro_task_queued) {
+    is_micro_task_queued = true;
+    queueMicrotask(flush_microtasks);
+  }
 
-	if (fn) {
-		queued_microtasks.push(fn);
-	}
+  if (fn) {
+    queued_microtasks.push(fn);
+  }
 }
 
 function flush_microtasks() {
-	is_micro_task_queued = false;
+  is_micro_task_queued = false;
 
-	if (queued_microtasks.length > 0) {
-		let microtasks = queued_microtasks;
-		queued_microtasks = [];
-		for (let i = 0; i < microtasks.length; i++) {
-			microtasks[i]();
-		}
-	}
+  if (queued_microtasks.length > 0) {
+    let microtasks = queued_microtasks;
+    queued_microtasks = [];
+    for (let i = 0; i < microtasks.length; i++) {
+      microtasks[i]();
+    }
+  }
 
-	const needs_updates = queued_updates;
-	queued_updates = [];
+  const needs_updates = queued_updates;
+  queued_updates = [];
 
-	for (let i = 0; i < needs_updates.length; i++) {
-		const [bloom, fn] = needs_updates[i];
-		dirty_blooms.delete(bloom);
-		fn();
-	}
+  for (let i = 0; i < needs_updates.length; i++) {
+    const [handle, fn] = needs_updates[i];
+    dirty_handles.delete(handle);
+    fn();
+  }
 }
 
-function schedule_update(bloom: BloomInternal, fn: () => void) {
-	if (dirty_blooms.has(bloom)) {
-		return;
-	}
+function schedule_update(handle: ComponentHandleInternal, fn: () => void) {
+  if (dirty_handles.has(handle)) {
+    return;
+  }
 
-	dirty_blooms.add(bloom);
+  dirty_handles.add(handle);
 
-	if (!is_micro_task_queued) {
-		is_micro_task_queued = true;
-		queueMicrotask(flush_microtasks);
-	}
+  if (!is_micro_task_queued) {
+    is_micro_task_queued = true;
+    queueMicrotask(flush_microtasks);
+  }
 
-	queued_updates.push([bloom, fn]);
+  queued_updates.push([handle, fn]);
 }
 
 function on_mount(fn: () => (() => void) | void) {
-	invariant(
-		active_bloom !== null,
-		"onMount() should be called during component setup (not in render functions or effects)"
-	);
+  invariant(
+    active_handle !== null,
+    "onMount() should be called during component setup (not in render functions or effects)",
+  );
 
-	const bloom = active_bloom;
-	queue_microtask(() => {
-		const cleanup = fn();
-		if (typeof cleanup === "function") {
-			bloom.__disposables.add(cleanup);
-		}
-	});
+  const handle = active_handle;
+  queue_microtask(() => {
+    const cleanup = fn();
+    if (typeof cleanup === "function") {
+      handle.__disposables.add(cleanup);
+    }
+  });
 }
 
 function on_cleanup(fn: () => void) {
-	const bloom = active_bloom;
-	invariant(
-		bloom !== null,
-		"onCleanup() should be called during component setup (not in render functions or effects)"
-	);
-	bloom.__disposables.add(fn);
+  const handle = active_handle;
+  invariant(
+    handle !== null,
+    "onCleanup() should be called during component setup (not in render functions or effects)",
+  );
+  handle.__disposables.add(fn);
 }
 
-function bloom_effect(fn: () => void, bloom = active_bloom) {
-	invariant(
-		bloom !== null,
-		"effect() should be called during component setup (not in render functions or effects)"
-	);
+function kaoi_effect(fn: () => void, handle = active_handle) {
+  invariant(
+    handle !== null,
+    "effect() should be called during component setup (not in render functions or effects)",
+  );
 
-	queue_microtask(() => {
-		const dispose = untracked(() => syncEffect(fn));
-		bloom.__disposables.add(dispose);
-	});
+  queue_microtask(() => {
+    const dispose = untracked(() => syncEffect(fn));
+    handle.__disposables.add(dispose);
+  });
 }
 
-function get_bloom(): Bloom {
-	invariant(
-		active_bloom !== null,
-		"getBloom() can only be called during component setup (not in render functions or effects)"
-	);
+function get_handle(): ComponentHandle {
+  invariant(
+    active_handle !== null,
+    "getHandle() can only be called during component setup (not in render functions or effects)",
+  );
 
-	return active_bloom;
+  return active_handle;
 }
 
-function dispose_bloom(bloom: BloomInternal) {
-	logger.log("Disposing bloom and running cleanup functions");
-	bloom.__disposables.forEach((dispose) => {
-		try {
-			dispose();
-		} catch (e) {
-			console.error("Error during cleanup:", e);
-		}
-	});
-	bloom.__disposables.clear();
+function dispose_handle(handle: ComponentHandleInternal) {
+  logger.log(`Disposing component(${handle.__dbg_n}) & running cleanup`);
+
+  handle.__disposables.forEach((dispose) => {
+    try {
+      dispose();
+    } catch (e) {
+      console.error("Error during cleanup:", e);
+    }
+  });
+  handle.__disposables.clear();
 }
 
 class ComponentDirective<Props = any> extends AsyncDirective {
-	private _rawTemplate: (() => unknown) | unknown = null;
-	private bloom: BloomInternal | null = null;
-	private hasInitialized = false;
+  private _rawTemplate: (() => unknown) | unknown = null;
+  private handle: ComponentHandleInternal | null = null;
+  private hasInitialized = false;
 
-	private _cachedTemplate: unknown = null;
+  private _cachedTemplate: unknown = null;
 
-	private get $_getTemplate() {
-		return typeof this._rawTemplate === "function"
-			? this._rawTemplate()
-			: this._rawTemplate;
-	}
+  private get $_getTemplate() {
+    return typeof this._rawTemplate === "function"
+      ? this._rawTemplate()
+      : this._rawTemplate;
+  }
 
-	render(C: Component<Props>, props: Props): unknown {
-		const componentName = C.name || "Anonymous";
+  render(C: Component<Props>, props: Props): unknown {
+    const componentName = C.name || "Anonymous";
 
-		if (!this.hasInitialized) {
-			logger.log("Rendering component ", componentName, props);
-			// Create the bloom object with update method
-			this.bloom = {
-				update: () => {
-					this._cachedTemplate = this.$_getTemplate;
-					if (this.bloom) {
-						schedule_update(this.bloom, () => {
-							if (this.isConnected) {
-								this.setValue(this._cachedTemplate);
-							}
-						});
-					}
-				},
-				__disposables: new Set<() => void>(),
-			};
+    if (!this.hasInitialized) {
+      logger.log("Rendering component ", componentName, props);
+      this.handle = {
+        __dbg_n: componentName,
+        update: () => {
+          this._cachedTemplate = this.$_getTemplate;
+          if (this.handle) {
+            schedule_update(this.handle, () => {
+              if (this.isConnected) {
+                this.setValue(this._cachedTemplate);
+              }
+            });
+          }
+        },
+        __disposables: new Set<() => void>(),
+      };
 
-			// Set current bloom context and call component
-			const prevBloom = active_bloom;
-			active_bloom = this.bloom;
-			const result = untracked(() => C(props));
-			active_bloom = prevBloom;
+      const prev_handle = active_handle;
+      active_handle = this.handle;
+      const result = untracked(() => C(props));
+      active_handle = prev_handle;
 
-			this._rawTemplate = result;
+      this._rawTemplate = result;
 
-			if (typeof this._rawTemplate === "function") {
-				// reactive return
-				bloom_effect(() => {
-					logger.log("(effect) Update component: ", componentName);
-					this.bloom?.update();
-				}, this.bloom);
-			}
+      if (typeof this._rawTemplate === "function") {
+        // reactive return
+        kaoi_effect(() => {
+          logger.log("(effect) Update component: ", componentName);
+          this.handle?.update();
+        }, this.handle);
+      }
 
-			this._cachedTemplate = this.$_getTemplate;
-			this.hasInitialized = true;
-		}
+      this._cachedTemplate = this.$_getTemplate;
+      this.hasInitialized = true;
+    }
 
-		return this._cachedTemplate;
-	}
+    return this._cachedTemplate;
+  }
 
-	protected override disconnected(): void {
-		// Clean up the effect when component unmounts
-		if (this.bloom) {
-			dispose_bloom(this.bloom);
-		}
-	}
+  protected override disconnected(): void {
+    // Clean up the effect when component unmounts
+    if (this.handle) {
+      dispose_handle(this.handle);
+    }
+  }
 
-	protected override reconnected(): void {
-		// we need to do something here :w
-		//
-	}
+  protected override reconnected(): void {
+    // we need to do something here :w
+    //
+  }
 }
 
 interface ComponentDirectiveFn {
-	<Props>(C: Component<Props>, props: Props): unknown;
+  <Props>(C: Component<Props>, props: Props): unknown;
 }
 
 export const component = directive(ComponentDirective) as ComponentDirectiveFn;
@@ -213,25 +214,29 @@ export { For, Show } from "./helpers";
 export type { ForProps, ShowProps } from "./helpers";
 
 export {
-	get_bloom as getBloom,
-	bloom_effect as effect,
-	on_mount as onMount,
-	on_cleanup as onCleanup,
-	html,
+  /**
+   * @deprecated use `getHandle` instead
+   */
+  get_handle as getBloom,
+  get_handle as getHandle,
+  kaoi_effect as effect,
+  on_mount as onMount,
+  on_cleanup as onCleanup,
+  html,
 };
 export { render } from "lit-html";
 
 export * from "./types";
 
 export {
-	signal,
-	type Signal,
-	type Effect,
-	type Computed,
-	batch,
-	computed,
-	effect as syncEffect,
-	untracked,
+  signal,
+  type Signal,
+  type Effect,
+  type Computed,
+  batch,
+  computed,
+  effect as syncEffect,
+  untracked,
 } from "@preact/signals-core";
 
 export { nothing } from "lit-html";

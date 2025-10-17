@@ -1,20 +1,20 @@
 import { describe, it, expect } from "vitest";
 import babel from "@babel/core";
-import jsxToLitHtmlPlugin from "../babel-plugin.js";
+import { KaoriCompiler } from "../babel-plugin.js";
 
 async function transformJSX(jsxCode: string) {
-	const result = await babel.transformAsync(jsxCode, {
-		plugins: [["@babel/plugin-syntax-jsx"], [jsxToLitHtmlPlugin]],
-		parserOpts: {
-			plugins: ["jsx", "typescript"],
-		},
-	});
-	return result?.code || "";
+  const result = await babel.transformAsync(jsxCode, {
+    plugins: [["@babel/plugin-syntax-jsx"], [KaoriCompiler]],
+    parserOpts: {
+      plugins: ["jsx", "typescript"],
+    },
+  });
+  return result?.code || "";
 }
 
 describe("JSX to lit-html transformation", () => {
-	it("should transform basic nested elements", async () => {
-		const input = `
+  it("should transform basic nested elements", async () => {
+    const input = `
 function Basic() {
   return (
     <div className="container">
@@ -32,12 +32,12 @@ function Basic() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should transform mixed children (text, expressions, elements)", async () => {
-		const input = `
+  it("should transform mixed children (text, expressions, elements)", async () => {
+    const input = `
 function MixedChildren() {
   const name = "World";
   const count = 42;
@@ -52,12 +52,12 @@ function MixedChildren() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should transform components with children", async () => {
-		const input = `
+  it("should transform components with children", async () => {
+    const input = `
 function ComponentChildren() {
   return (
     <Layout>
@@ -73,12 +73,12 @@ function ComponentChildren() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should transform fragments", async () => {
-		const input = `
+  it("should transform fragments", async () => {
+    const input = `
 function FragmentTest() {
   return (
     <>
@@ -89,18 +89,18 @@ function FragmentTest() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should transform complex nesting with all attribute types", async () => {
-		const input = `
+  it("should transform complex nesting with all attribute types", async () => {
+    const input = `
 function ComplexNesting() {
   return (
     <div className="outer">
-      <input 
-        type="text" 
-        prop:value={getValue()} 
+      <input
+        type="text"
+        prop:value={getValue()}
         bool:disabled={isDisabled()}
         onChange={handleChange}
       />
@@ -123,12 +123,12 @@ function ComplexNesting() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should transform self-closing elements", async () => {
-		const input = `
+  it("should transform self-closing elements", async () => {
+    const input = `
 function SelfClosing() {
   return (
     <div>
@@ -141,43 +141,43 @@ function SelfClosing() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should transform empty children and whitespace", async () => {
-		const input = `
+  it("should transform empty children and whitespace", async () => {
+    const input = `
 function EmptyChildren() {
   return (
     <div>
       <Empty />
-      
+
       <WithChildren>
-        
+
       </WithChildren>
-      
+
       <p></p>
     </div>
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should handle import thing", async () => {
-		const input = `
+  it("should handle import thing", async () => {
+    const input = `
 function ImportThing() {
 return <div><ImportThing/></div>;
 }
 `;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 
-	it("should handle getter wrapping for complex expressions", async () => {
-		const input = `
+  it("should handle getter wrapping for complex expressions", async () => {
+    const input = `
 function GetterWrapping() {
   const count = { value: 5 };
   return (
@@ -194,7 +194,7 @@ function GetterWrapping() {
   );
 }`;
 
-		const output = await transformJSX(input);
-		expect(output).toMatchSnapshot();
-	});
+    const output = await transformJSX(input);
+    expect(output).toMatchSnapshot();
+  });
 });
