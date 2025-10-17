@@ -1,16 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import babel from '@babel/core';
-import { KaoriCompiler } from '../babel-plugin.js';
-
-async function transformJSX(jsxCode: string) {
-  const result = await babel.transformAsync(jsxCode, {
-    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
-    parserOpts: {
-      plugins: ['jsx', 'typescript'],
-    },
-  });
-  return result?.code || '';
-}
+import { compile } from './utils';
 
 describe('Ref directive with naming conflicts', () => {
   it('should handle simple ref variable conflict', async () => {
@@ -21,7 +10,7 @@ function App() {
   return <div ref={myRef}>{ref}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -36,7 +25,7 @@ function App() {
   return <div ref={divRef}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -49,7 +38,7 @@ function App() {
   return <div ref={myRef}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -63,7 +52,7 @@ function App() {
   return <div ref={myRef}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -74,7 +63,7 @@ function App({ ref }) {
   return <div ref={myRef}>{ref}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -86,7 +75,7 @@ function App() {
   return <div ref={myRef}>{ref}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -101,7 +90,7 @@ class App {
   }
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -118,7 +107,7 @@ function App() {
   return <div ref={myRef}>{innerFunc()}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -132,7 +121,7 @@ function App() {
   return <div ref={myRef}>{otherRef}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -152,7 +141,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -163,7 +152,7 @@ const App = ({ ref }) => {
   return <div ref={myRef}>{ref}</div>;
 };`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -176,7 +165,7 @@ function App() {
   return <div ref={myRef}>{ref}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -197,7 +186,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -209,7 +198,7 @@ function App() {
   return <div ref={myRef}>{config.ref}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -238,7 +227,7 @@ function App({ ref: propRef }) {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 });

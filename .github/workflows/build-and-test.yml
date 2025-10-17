@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   build:
-    name: Build
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,14 +21,5 @@ jobs:
       - name: Build Packages
         run: pnpm run build:packages
 
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ./.github/actions/setup
-
-      - name: Run Tests
-        run: pnpm -r run test
+      - name: Test Packages
+        run: pnpm run test

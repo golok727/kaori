@@ -1,16 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import babel from '@babel/core';
-import { KaoriCompiler } from '../babel-plugin.js';
-
-async function transformJSX(jsxCode: string) {
-  const result = await babel.transformAsync(jsxCode, {
-    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
-    parserOpts: {
-      plugins: ['jsx', 'typescript'],
-    },
-  });
-  return result?.code || '';
-}
+import { compile } from './utils';
 
 describe('Ref directive transformation', () => {
   it('should transform basic ref usage', async () => {
@@ -22,7 +11,7 @@ function App() {
   return <div ref={myRef}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -35,7 +24,7 @@ function App() {
   return <div ref={myRef}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -47,7 +36,7 @@ function App() {
   return <div ref={myRef}>Hello {ref}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -70,7 +59,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -94,7 +83,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -115,7 +104,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -134,7 +123,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -146,7 +135,7 @@ function App() {
   return <div ref={createRef()}>Inline ref</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -165,7 +154,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -185,7 +174,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -198,7 +187,7 @@ function App() {
   return <div ref={myRef}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -211,7 +200,7 @@ function App() {
   return <div ref={myRef}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 });

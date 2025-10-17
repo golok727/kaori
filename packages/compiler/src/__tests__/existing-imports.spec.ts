@@ -1,16 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import babel from '@babel/core';
-import { KaoriCompiler } from '../babel-plugin.js';
-
-async function transformJSX(jsxCode: string) {
-  const result = await babel.transformAsync(jsxCode, {
-    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
-    parserOpts: {
-      plugins: ['jsx', 'typescript'],
-    },
-  });
-  return result?.code || '';
-}
+import { compile } from './utils';
 
 describe('JSX transformation with existing imports', () => {
   it('should handle existing kaori.js imports', async () => {
@@ -32,7 +21,7 @@ function App() {
     );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -55,7 +44,7 @@ function App() {
     );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -72,7 +61,7 @@ function App() {
     );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -89,7 +78,7 @@ function App() {
     );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -106,7 +95,7 @@ function App() {
     );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 });

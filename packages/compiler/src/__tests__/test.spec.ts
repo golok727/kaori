@@ -1,16 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import babel from '@babel/core';
-import { KaoriCompiler } from '../babel-plugin.js';
-
-async function transformJSX(jsxCode: string) {
-  const result = await babel.transformAsync(jsxCode, {
-    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
-    parserOpts: {
-      plugins: ['jsx', 'typescript'],
-    },
-  });
-  return result?.code || '';
-}
+import { compile } from './utils';
 
 describe('JSX to lit-html transformation', () => {
   it('should transform basic nested elements', async () => {
@@ -32,7 +21,7 @@ function Basic() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -52,7 +41,7 @@ function MixedChildren() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -73,7 +62,7 @@ function ComponentChildren() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -89,7 +78,7 @@ function FragmentTest() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -123,7 +112,7 @@ function ComplexNesting() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -141,7 +130,7 @@ function SelfClosing() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -161,7 +150,7 @@ function EmptyChildren() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -172,7 +161,7 @@ return <div><ImportThing/></div>;
 }
 `;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 
@@ -194,7 +183,7 @@ function GetterWrapping() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
 });

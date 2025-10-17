@@ -1,16 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import babel from '@babel/core';
-import { KaoriCompiler } from '../babel-plugin.js';
-
-async function transformJSX(jsxCode: string) {
-  const result = await babel.transformAsync(jsxCode, {
-    plugins: [['@babel/plugin-syntax-jsx'], [KaoriCompiler]],
-    parserOpts: {
-      plugins: ['jsx', 'typescript'],
-    },
-  });
-  return result?.code || '';
-}
+import { compile } from './utils';
 
 describe('styleMap transformation', () => {
   it('should wrap style with object variable in styleMap', async () => {
@@ -20,7 +9,7 @@ function TestStyle() {
   return <div style={styles}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap(styles)}');
     expect(output).toContain('import { html, styleMap } from "kaori.js"');
@@ -32,7 +21,7 @@ function TestInlineStyle() {
   return <div style={{ color: 'blue', margin: '10px' }}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap({');
     expect(output).toContain('import { html, styleMap } from "kaori.js"');
@@ -44,7 +33,7 @@ function TestStringStyle() {
   return <div style="color: green;">Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style="color: green;"');
     expect(output).not.toContain('styleMap');
@@ -59,7 +48,7 @@ function TestComplexStyle() {
   return <div style={getStyles()}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap(getStyles())}');
   });
@@ -73,7 +62,7 @@ function TestMemberStyle() {
   return <div style={theme.primary}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap(theme.primary)}');
   });
@@ -87,7 +76,7 @@ function TestConditionalStyle() {
   return <div style={isActive ? activeStyles : inactiveStyles}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain(
       'style=${styleMap(isActive ? activeStyles : inactiveStyles)}'
@@ -102,7 +91,7 @@ function TestLogicalStyle() {
   return <div style={showStyles && styles}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap(showStyles && styles)}');
   });
@@ -114,7 +103,7 @@ function TestSpreadStyle() {
   return <div style={{ ...baseStyles, color: 'red' }}>Content</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap({');
     expect(output).toContain('...baseStyles');
@@ -129,7 +118,7 @@ function App() {
   return <div style={styles}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap(styles)}');
   });
@@ -142,7 +131,7 @@ function App() {
   return <div style={styles}>{styleMap}</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('styleMap1(styles)');
     expect(output).toContain(
@@ -159,7 +148,7 @@ function App() {
   return <div style={styles}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${sm(styles)}');
   });
@@ -174,7 +163,7 @@ function App() {
   return <div ref={divRef} style={styles}>Hello</div>;
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('${ref(divRef)} style=${styleMap(styles)}');
   });
@@ -195,7 +184,7 @@ function App() {
   );
 }`;
 
-    const output = await transformJSX(input);
+    const output = await compile(input);
     expect(output).toMatchSnapshot();
     expect(output).toContain('style=${styleMap(headerStyles)}');
     expect(output).toContain('style=${styleMap(contentStyles)}');
