@@ -2,13 +2,20 @@
 import type { PluginObj, PluginPass } from '@babel/core';
 import * as t from '@babel/types';
 
+/*
+Todo
+- Spread attributes
+- Should not allow both classMap and class in an element
+- prop destructuring ??
+*/
+
 const KAORI_PACKAGE_NAME = 'kaori.js';
 
 // ============================================================================
 // Import Manager - Handles all import-related logic
 // ============================================================================
 
-type ImportType = 'component' | 'html' | 'ref' | 'styleMap';
+type ImportType = 'component' | 'html' | 'ref' | 'styleMap' | 'classMap';
 
 interface ImportInfo {
   name: string; // The name to use in generated code
@@ -30,6 +37,11 @@ class ImportManager {
     this.imports.set('ref', { name: 'ref', exists: false, needed: false });
     this.imports.set('styleMap', {
       name: 'styleMap',
+      exists: false,
+      needed: false,
+    });
+    this.imports.set('classMap', {
+      name: 'classMap',
       exists: false,
       needed: false,
     });
@@ -261,6 +273,30 @@ class AttributeProcessor {
           name: 'style',
           expression: t.callExpression(
             t.identifier(this.importManager.getName('styleMap')),
+            [attrValue]
+          ),
+        };
+      }
+    }
+
+    // Handle classMap attribute with object expressions
+    if (attrName === 'classMap' && !t.isStringLiteral(attrValue)) {
+      // Check if it's an object expression or identifier (object variable)
+      // Also handle member expressions, call expressions, conditional expressions, and logical expressions
+      if (
+        t.isObjectExpression(attrValue) ||
+        t.isIdentifier(attrValue) ||
+        t.isMemberExpression(attrValue) ||
+        t.isCallExpression(attrValue) ||
+        t.isConditionalExpression(attrValue) ||
+        t.isLogicalExpression(attrValue)
+      ) {
+        this.importManager.markNeeded('classMap');
+        return {
+          type: 'dynamic',
+          name: 'class',
+          expression: t.callExpression(
+            t.identifier(this.importManager.getName('classMap')),
             [attrValue]
           ),
         };

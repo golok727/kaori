@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`styleMap transformation > should transform classMap to class attribute with classMap function wrapped 1`] = `
+"import { html, classMap } from "kaori.js";
+function ClassMap() {
+  return html\`<div class=\${classMap({
+    active: true,
+    disabled: false
+  })}>Hello</div>\`;
+}"
+`;
