@@ -97,7 +97,7 @@ function List(props: { items: string[] }) {
 Show lets you conditionally render content without causing the Parent component to rerender unnecessarily. Using if statements or ternary operators directly will trigger a rerender of the App if the condition changes.
 
 Example: Using Show (No App rerender)
-
+```tsx
 import { signal } from 'preact/signals';
 import { Show } from 'kaori.js';
 
@@ -115,9 +115,9 @@ function App() {
     </div>
   );
 }
-
+```
 Example: Using if or ternary (App rerenders)
-
+```tsx
 function App() {
   const count = signal(0);
   const isVisible = signal(true);
@@ -130,7 +130,8 @@ function App() {
     </div>
   );
 }
-- This works because the Kaori compiler automatically wraps the Show condition in a getter. The isVisible signal is accessed inside Show, not while rendering the App Component, so updating it does not rerender App Component.
+```
+- This works because the compiler automatically wraps the Show condition in a getter. The isVisible signal is accessed inside Show, not while rendering the App Component, so updating it does not rerender App Component.
   
 > Tip: Use Show for conditional content if parent doesn’t need to rerender when the condition changes.
 
@@ -233,10 +234,10 @@ function EffectComponent() {
 import { onMount } from "kaori.js";
 
 function CleanupComponent() {
-  let id:
+
 
   onMount(() => {
-    id = setInterval(() => {
+    let interval = setInterval(() => {
       console.log("Interval running");
     }, 1000);
      return () => {
