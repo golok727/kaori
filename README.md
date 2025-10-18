@@ -64,14 +64,21 @@ render(<App name={'ayana'} />, root);
 
 
 ## Special attributes for elements
-- `prop:value={val}` → sets a property on the element (equivalent to `.value=${val}` in Lit).
+- `prop:value={val}` → bind to a node's JavaScript properties using the prop:<propname> namespaced attribute and the property name:(equivalent to `.value=${val}` in Lit).
 
 - `bool:checked={val}` → toggles a boolean attribute (equivalent to `?checked=${val}` in Lit).
 
-- `onClick={val}` → any attribute starting with `on` adds an event listener (equivalent to `@click=${val}` in Lit).
+- `onClick={val}` → any attribute starting with `on` adds an event listener (equivalent to `@click=${val}` in Lit). Value can be the event listener or an object eith a `handleEvent` method with optional event options. This is equivalent of calling `addEventListener` on the element [Read More](https://lit.dev/docs/v1/lit-html/writing-templates/#add-event-listeners)
+```tsx
+<button onClick={(ev) => {}}>
+<button onClick={{ handleEvent(ev) {}}}>
+```
 
 
 ## For Component
+In most cases, using loops or `Array.map` is an efficient way to build repeating templates. However, if you want to reorder a large list, or mutate it by adding and removing individual entries, this approach can involve recreating a large number of DOM nodes.
+More [here](https://lit.dev/docs/v1/lit-html/writing-templates/#repeating-templates-with-the-repeat-directive)
+
 
 ```tsx
 import { For } from 'kaori.js';
@@ -86,18 +93,46 @@ function List(props: { items: string[] }) {
 
 ## Show Component
 
-```tsx
+
+Show lets you conditionally render content without causing the Parent component to rerender unnecessarily. Using if statements or ternary operators directly will trigger a rerender of the App if the condition changes.
+
+Example: Using Show (No App rerender)
+
+import { signal } from 'preact/signals';
 import { Show } from 'kaori.js';
-function Conditional(props: { isVisible: boolean }) {
+
+function App() {
+  const count = signal(0);
+  const isVisible = signal(true);
+
   return () => (
     <div>
-      <Show when={props.isVisible}>
-        <p>This content is visible!</p>
+      <button onClick={() => count.value++}>Increment: {count.value}</button>
+
+      <Show when={isVisible.value} fallback={...}>
+        <p>This content updates without rerendering App</p>
       </Show>
     </div>
   );
 }
-```
+
+Example: Using if or ternary (App rerenders)
+
+function App() {
+  const count = signal(0);
+  const isVisible = signal(true);
+
+  return () => (
+    <div>
+      <button onClick={() => count.value++}>Increment: {count.value}</button>
+
+      {isVisible.value && <p>This will trigger App rerender!</p>}
+    </div>
+  );
+}
+- This works because the Kaori compiler automatically wraps the Show condition in a getter. The isVisible signal is accessed inside Show, not while rendering the App Component, so updating it does not rerender App Component.
+  
+> Tip: Use Show for conditional content if parent doesn’t need to rerender when the condition changes.
 
 ## Once render
 
