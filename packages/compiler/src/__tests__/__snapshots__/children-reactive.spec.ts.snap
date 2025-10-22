@@ -1,0 +1,119 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Children prop reactivity > should NOT make children reactive when containing only static content 1`] = `
+"import { component, html } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    children: html\`<p>Static text</p>\`
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should handle nested reactive children correctly 1`] = `
+"import { component } from "kaori.js";
+function Parent() {
+  return component(Outer, {
+    get children() {
+      return component(Middle, {
+        get children() {
+          return component(Inner, {
+            get prop() {
+              return getValue();
+            }
+          });
+        }
+      });
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive even with static component props (component call is dynamic) 1`] = `
+"import { component } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    get children() {
+      return component(Child, {
+        title: "static"
+      });
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive when containing component with function call props 1`] = `
+"import { component } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    get children() {
+      return component(Child, {
+        get title() {
+          return getTitle();
+        }
+      });
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive when containing function calls 1`] = `
+"import { component } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    get children() {
+      return getMessage();
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive when containing html template with member access 1`] = `
+"import { component, html } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    get children() {
+      return html\`<p>\${user.name}</p>\`;
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive when containing member access 1`] = `
+"import { component } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    get children() {
+      return user.name;
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive with arrow function children 1`] = `
+"import { component, html } from "kaori.js";
+function Parent() {
+  return component(For, {
+    get items() {
+      return getItems();
+    },
+    get children() {
+      return item => html\`<div>\${item.name}</div>\`;
+    }
+  });
+}"
+`;
+
+exports[`Children prop reactivity > should make children reactive with mixed static and dynamic content 1`] = `
+"import { component, html } from "kaori.js";
+function Parent() {
+  return component(Container, {
+    get children() {
+      return [html\`<p>Static</p>\`, getDynamic(), component(Child, {
+        get prop() {
+          return getValue();
+        }
+      })];
+    }
+  });
+}"
+`;

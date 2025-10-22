@@ -524,9 +524,19 @@ function createComponentCall(
       children.length === 1 ? children[0] : t.arrayExpression(children);
 
     if (t.isObjectExpression(props)) {
-      props.properties.push(
-        t.objectProperty(t.identifier('children'), childrenValue)
-      );
+      if (needsGetterWrapping(childrenValue)) {
+        const getter = t.objectMethod(
+          'get',
+          t.identifier('children'),
+          [],
+          t.blockStatement([t.returnStatement(childrenValue)])
+        );
+        props.properties.push(getter);
+      } else {
+        props.properties.push(
+          t.objectProperty(t.identifier('children'), childrenValue)
+        );
+      }
     }
   }
 
