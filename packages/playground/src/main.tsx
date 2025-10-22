@@ -1,4 +1,6 @@
 import './style.css';
+import Eye from './eye';
+
 import {
   computed,
   render,
@@ -157,6 +159,7 @@ function App() {
       </button>
       <StyleThing />
       <RefTest />
+      <Eye />
       <ClassMapThing />
       <h1 class="text-xl font-bold">Kaori Playground</h1>
       {query.loading ? <p>Loading todos...</p> : nothing}

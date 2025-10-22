@@ -1,3 +1,4 @@
+import { untracked } from '@preact/signals-core';
 import { html, nothing } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
 
@@ -33,14 +34,11 @@ export type ShowProps = {
 
 export function Show(props: ShowProps) {
   return () => {
-    const fallback = props.fallback;
-    const children = props.children;
     const when = props.when;
 
     if (when) {
-      return children;
+      return untracked(() => props.children);
     }
-
-    return fallback ? fallback() : nothing;
+    return untracked(() => props.fallback ?? nothing);
   };
 }

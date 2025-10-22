@@ -1,6 +1,6 @@
 {
   "name": "kaori.js",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A fragrant TS framework",
   "type": "module",
   "exports": {
