@@ -85,7 +85,7 @@ import { For } from 'kaori.js';
 function List(props: { items: string[] }) {
   return () => (
     <ul>
-      <For each={props.items}>{item => <li>{item}</li>}</For>
+      <For items={props.items}>{item => <li>{item}</li>}</For>
     </ul>
   );
 }
