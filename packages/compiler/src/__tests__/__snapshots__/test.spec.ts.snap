@@ -65,17 +65,23 @@ function ComplexNesting() {
     get when() {
       return showContent();
     },
-    children: html\`<div class="inner">\${component(For, {
-      get items() {
-        return items();
-      },
-      children: item => component(Card, {
-        get key() {
-          return item.id;
+    get children() {
+      return html\`<div class="inner">\${component(For, {
+        get items() {
+          return items();
         },
-        children: [html\`<h3>\${item.title}</h3>\`, html\`<p>\${item.description}</p>\`, html\`<button @click=\${() => handleClick(item.id)}>\${item.completed ? "Undo" : "Complete"}</button>\`]
-      })
-    })}</div>\`
+        get children() {
+          return item => component(Card, {
+            get key() {
+              return item.id;
+            },
+            get children() {
+              return [html\`<h3>\${item.title}</h3>\`, html\`<p>\${item.description}</p>\`, html\`<button @click=\${() => handleClick(item.id)}>\${item.completed ? "Undo" : "Complete"}</button>\`];
+            }
+          });
+        }
+      })}</div>\`;
+    }
   })}</div>\`;
 }"
 `;
@@ -84,20 +90,26 @@ exports[`JSX to lit-html transformation > should transform components with child
 "import { component, html } from "kaori.js";
 function ComponentChildren() {
   return component(Layout, {
-    children: [component(Header, {
-      title: "My App"
-    }), component(Content, {
-      children: component(Article, {
-        get title() {
-          return getTitle();
-        },
-        children: [html\`<p>Article content</p>\`, component(Comments, {
-          get comments() {
-            return getComments();
-          }
-        })]
-      })
-    }), component(Footer, {})]
+    get children() {
+      return [component(Header, {
+        title: "My App"
+      }), component(Content, {
+        get children() {
+          return component(Article, {
+            get title() {
+              return getTitle();
+            },
+            get children() {
+              return [html\`<p>Article content</p>\`, component(Comments, {
+                get comments() {
+                  return getComments();
+                }
+              })];
+            }
+          });
+        }
+      }), component(Footer, {})];
+    }
   });
 }"
 `;
