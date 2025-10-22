@@ -386,9 +386,28 @@ class AttributeProcessor {
 // Plugin State
 // ============================================================================
 
+interface CompilerWarning {
+  message: string;
+  line?: number;
+  column?: number;
+}
+
 interface PluginState extends PluginPass {
   importManager?: ImportManager;
   attributeProcessor?: AttributeProcessor;
+  warnings?: CompilerWarning[];
+}
+
+function addWarning(state: PluginState, message: string, node?: t.Node): void {
+  if (!state.warnings) {
+    state.warnings = [];
+  }
+  state.warnings.push({
+    message,
+    line: node?.loc?.start.line,
+    column: node?.loc?.start.column,
+  });
+  console.warn(`[Kaori Compiler Warning]: ${message}`);
 }
 
 // ============================================================================
@@ -407,12 +426,18 @@ export function KaoriCompiler(): PluginObj<PluginState> {
           state.attributeProcessor = new AttributeProcessor(
             state.importManager
           );
+          state.warnings = [];
         },
         exit(path, state) {
           // Add any needed imports
           const importDecl = state.importManager!.generateImports();
           if (importDecl) {
             path.unshiftContainer('body', importDecl);
+          }
+          // Export warnings for external tools (ESLint, etc.)
+          if (state.warnings && state.warnings.length > 0) {
+            (state.file as any).metadata = (state.file as any).metadata || {};
+            (state.file as any).metadata.kaoriWarnings = state.warnings;
           }
         },
       },
@@ -515,8 +540,39 @@ function createComponentCall(
   componentName: string,
   state: PluginState
 ): t.Expression {
-  const props = createPropsObject(element.openingElement.attributes);
+  const props = createPropsObject(
+    element.openingElement.attributes,
+    state,
+    element
+  );
   const children = processChildren(element.children, state);
+
+  // Check if both children prop and children content exist (Issue #2)
+  if (children.length > 0 && t.isObjectExpression(props)) {
+    const hasChildrenProp = props.properties.some(
+      prop =>
+        (t.isObjectProperty(prop) || t.isObjectMethod(prop)) &&
+        t.isIdentifier(prop.key) &&
+        prop.key.name === 'children'
+    );
+
+    if (hasChildrenProp) {
+      addWarning(
+        state,
+        `Component has both 'children' prop and children content. Children content will take priority.`,
+        element
+      );
+      // Remove the children prop, let children content take priority
+      props.properties = props.properties.filter(
+        prop =>
+          !(
+            (t.isObjectProperty(prop) || t.isObjectMethod(prop)) &&
+            t.isIdentifier(prop.key) &&
+            prop.key.name === 'children'
+          )
+      );
+    }
+  }
 
   // Add children to props if they exist
   if (children.length > 0) {
@@ -547,10 +603,36 @@ function createComponentCall(
 }
 
 function createPropsObject(
-  attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[]
+  attributes: (t.JSXAttribute | t.JSXSpreadAttribute)[],
+  state?: PluginState,
+  element?: t.JSXElement
 ): t.ObjectExpression {
   const properties: (t.ObjectProperty | t.ObjectMethod | t.SpreadElement)[] =
     [];
+
+  // Check for both class and classMap attributes (Issue #3)
+  if (state && element) {
+    const hasClass = attributes.some(
+      attr =>
+        t.isJSXAttribute(attr) &&
+        t.isJSXIdentifier(attr.name) &&
+        (attr.name.name === 'class' || attr.name.name === 'className')
+    );
+    const hasClassMap = attributes.some(
+      attr =>
+        t.isJSXAttribute(attr) &&
+        t.isJSXIdentifier(attr.name) &&
+        attr.name.name === 'classMap'
+    );
+
+    if (hasClass && hasClassMap) {
+      addWarning(
+        state,
+        `Element has both 'class' and 'classMap' attributes. Both will be converted to the 'class' attribute and may conflict.`,
+        element
+      );
+    }
+  }
 
   for (const attr of attributes) {
     if (t.isJSXSpreadAttribute(attr)) {
@@ -606,32 +688,74 @@ function getAttributeValue(attr: t.JSXAttribute): t.Expression | null {
 }
 
 function needsGetterWrapping(expression: t.Expression): boolean {
+  // Issue #1: Inline functions don't need getter wrapping
+  // Arrow functions and function expressions are static values themselves
+  // The reactivity happens when they're called, not when they're defined
+  if (
+    t.isArrowFunctionExpression(expression) ||
+    t.isFunctionExpression(expression)
+  ) {
+    return false;
+  }
+
+  // Arrays of functions also don't need wrapping if all elements are static
+  if (t.isArrayExpression(expression)) {
+    // If the array contains only literals, identifiers, or functions, no wrapping needed
+    const allStatic = expression.elements.every(elem => {
+      if (!elem || t.isSpreadElement(elem)) return false;
+      return (
+        t.isLiteral(elem) ||
+        t.isIdentifier(elem) ||
+        t.isArrowFunctionExpression(elem) ||
+        t.isFunctionExpression(elem)
+      );
+    });
+    if (allStatic) return false;
+  }
+
   let hasDynamicAccess = false;
 
-  function traverse(node: t.Node) {
+  function traverse(node: t.Node, depth: number = 0) {
     if (hasDynamicAccess) return;
 
+    // Don't traverse into nested function bodies - they're evaluated later
+    if (
+      depth > 0 &&
+      (t.isArrowFunctionExpression(node) || t.isFunctionExpression(node))
+    ) {
+      return;
+    }
+
+    // These indicate reactive access that needs getter wrapping
     if (t.isMemberExpression(node) || t.isCallExpression(node)) {
       hasDynamicAccess = true;
       return;
     }
 
-    if (t.isArrowFunctionExpression(node) || t.isFunctionExpression(node)) {
-      hasDynamicAccess = true;
+    // Conditionals and logical expressions might access reactive values
+    if (t.isConditionalExpression(node) || t.isLogicalExpression(node)) {
+      // Traverse their parts
+      for (const key in node) {
+        const child = (node as any)[key];
+        if (child && typeof child === 'object' && child.type) {
+          traverse(child, depth + 1);
+        }
+      }
       return;
     }
 
+    // Traverse children
     for (const key in node) {
       const child = (node as any)[key];
       if (child && typeof child === 'object') {
         if (Array.isArray(child)) {
           for (const item of child) {
             if (item && typeof item === 'object' && item.type) {
-              traverse(item);
+              traverse(item, depth + 1);
             }
           }
         } else if (child.type) {
-          traverse(child);
+          traverse(child, depth + 1);
         }
       }
     }
@@ -655,10 +779,32 @@ function createHTMLElement(
   // Start opening tag
   builder.addStatic(`<${tagName}`);
 
-  // Process attributes
-  const processedAttrs = state.attributeProcessor!.processAttributes(
-    element.openingElement.attributes
+  // Check for both class and classMap attributes (Issue #3)
+  const attributes = element.openingElement.attributes;
+  const hasClass = attributes.some(
+    attr =>
+      t.isJSXAttribute(attr) &&
+      t.isJSXIdentifier(attr.name) &&
+      (attr.name.name === 'class' || attr.name.name === 'className')
   );
+  const hasClassMap = attributes.some(
+    attr =>
+      t.isJSXAttribute(attr) &&
+      t.isJSXIdentifier(attr.name) &&
+      attr.name.name === 'classMap'
+  );
+
+  if (hasClass && hasClassMap) {
+    addWarning(
+      state,
+      `Element has both 'class' and 'classMap' attributes. Both will be converted to the 'class' attribute and may conflict.`,
+      element
+    );
+  }
+
+  // Process attributes
+  const processedAttrs =
+    state.attributeProcessor!.processAttributes(attributes);
 
   for (const attr of processedAttrs) {
     if (attr.type === 'static') {

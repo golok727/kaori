@@ -70,16 +70,14 @@ function ComplexNesting() {
         get items() {
           return items();
         },
-        get children() {
-          return item => component(Card, {
-            get key() {
-              return item.id;
-            },
-            get children() {
-              return [html\`<h3>\${item.title}</h3>\`, html\`<p>\${item.description}</p>\`, html\`<button @click=\${() => handleClick(item.id)}>\${item.completed ? "Undo" : "Complete"}</button>\`];
-            }
-          });
-        }
+        children: item => component(Card, {
+          get key() {
+            return item.id;
+          },
+          get children() {
+            return [html\`<h3>\${item.title}</h3>\`, html\`<p>\${item.description}</p>\`, html\`<button @click=\${() => handleClick(item.id)}>\${item.completed ? "Undo" : "Complete"}</button>\`];
+          }
+        })
       })}</div>\`;
     }
   })}</div>\`;

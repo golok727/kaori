@@ -1,5 +1,17 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`Children prop reactivity > should NOT make arrow function children reactive (functions are static) 1`] = `
+"import { component, html } from "kaori.js";
+function Parent() {
+  return component(For, {
+    get items() {
+      return getItems();
+    },
+    children: item => html\`<div>\${item.name}</div>\`
+  });
+}"
+`;
+
 exports[`Children prop reactivity > should NOT make children reactive when containing only static content 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
@@ -84,20 +96,6 @@ function Parent() {
   return component(Container, {
     get children() {
       return user.name;
-    }
-  });
-}"
-`;
-
-exports[`Children prop reactivity > should make children reactive with arrow function children 1`] = `
-"import { component, html } from "kaori.js";
-function Parent() {
-  return component(For, {
-    get items() {
-      return getItems();
-    },
-    get children() {
-      return item => html\`<div>\${item.name}</div>\`;
     }
   });
 }"

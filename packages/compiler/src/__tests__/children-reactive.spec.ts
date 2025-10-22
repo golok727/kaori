@@ -113,7 +113,7 @@ function Parent() {
     expect(output).toMatchSnapshot();
   });
 
-  it('should make children reactive with arrow function children', async () => {
+  it('should NOT make arrow function children reactive (functions are static)', async () => {
     const input = `
 function Parent() {
   return (
@@ -124,7 +124,9 @@ function Parent() {
 }`;
 
     const output = await compile(input);
-    expect(output).toContain('get children()');
+    // Arrow functions are static values - no getter needed
+    expect(output).not.toContain('get children()');
+    expect(output).toContain('children: item =>');
     expect(output).toContain('item.name');
     expect(output).toMatchSnapshot();
   });
