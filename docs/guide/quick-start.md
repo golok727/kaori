@@ -1,6 +1,6 @@
 # Quick Start
 
-Learn the basics of Kaori in 5 minutes! 🎯
+Learn the basics of Kaori in 5 minutes!
 
 ## Basic Example
 
@@ -38,7 +38,7 @@ function App() {
       <p>Double: {double.value}</p>
       
       <Show when={isEven.value} fallback={() => <p>Odd number</p>}>
-        <p>Even number! ✨</p>
+        <p>Even number!</p>
       </Show>
     </div>
   );
@@ -166,7 +166,7 @@ function Toggle() {
         Toggle
       </button>
       <Show when={isOpen.value}>
-        <p>I'm visible! 👀</p>
+        <p>I'm visible!</p>
       </Show>
     </div>
   );
@@ -290,4 +290,4 @@ splitProps(props, ['a', 'b'])  // Split props
 mergeProps(a, b)                // Merge props
 ```
 
-Happy coding with Kaori! 💖✨
+Happy coding with Kaori!

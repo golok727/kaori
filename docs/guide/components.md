@@ -10,7 +10,7 @@ Every Kaori component is a function:
 
 ```tsx
 function Greeting() {
-  return () => <h1>Hello Kaori! ✨</h1>;
+  return () => <h1>Hello Kaori!</h1>;
 }
 ```
 

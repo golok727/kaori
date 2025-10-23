@@ -1,6 +1,6 @@
 # Getting Started
 
-Get up and running with Kaori in minutes! 🚀
+Get up and running with Kaori in minutes!
 
 ## Prerequisites
 
@@ -112,7 +112,7 @@ function App() {
   
   return () => (
     <div>
-      <h1>Hello Kaori! ✨</h1>
+      <h1>Hello Kaori!</h1>
       <p>Count: {count.value}</p>
       <button onClick={increment}>
         Increment
@@ -133,7 +133,7 @@ Start your development server:
 pnpm dev
 ```
 
-Your app will be running at `http://localhost:5173` 🎉
+Your app will be running at `http://localhost:5173`
 
 ## What's Next?
 

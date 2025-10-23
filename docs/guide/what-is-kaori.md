@@ -4,17 +4,17 @@ Kaori is a TypeScript library for building reactive user interfaces with familia
 
 ## Why Kaori?
 
-### 🎯 Simple Yet Powerful
+### Simple Yet Powerful
 
 Kaori's API is intentionally small and focused. You can learn the entire framework in an afternoon, yet it's powerful enough to build complex applications.
 
-### ⚡ Performance First
+### Performance First
 
 Built on two battle-tested libraries:
 - **lit-html** - Efficient template rendering using native browser features
 - **@preact/signals-core** - Fine-grained reactivity that updates only what changed
 
-### 🔄 Familiar Patterns
+### Familiar Patterns
 
 If you've used React or Solid.js, you'll feel right at home:
 
@@ -30,7 +30,7 @@ function Counter() {
 }
 ```
 
-### 📦 Lightweight
+### Lightweight
 
 Kaori has a minimal footprint with only essential dependencies. The core library is just a few kilobytes gzipped.
 

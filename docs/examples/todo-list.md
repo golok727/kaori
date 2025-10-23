@@ -50,7 +50,7 @@ function TodoApp() {
   
   return () => (
     <div class="todo-app">
-      <h1>My Todos ✨</h1>
+      <h1>My Todos</h1>
       
       <div class="input-section">
         <input

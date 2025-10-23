@@ -76,7 +76,7 @@ function Counter() {
       <button onClick={() => count.value++}>+</button>
       
       <Show when={isBig.value}>
-        <p class="alert">Count is getting big! 🎉</p>
+        <p class="alert">Count is getting big!</p>
       </Show>
     </div>
   );
