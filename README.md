@@ -62,23 +62,23 @@ render(<App name={'ayana'} />, root);
 - You can use `For` and `Show` for conditional rendering and list rendering.
 - You can pass props to components and access them inside the component function.
 
-
 ## Special attributes for elements
+
 - `prop:value={val}` → bind to a node's JavaScript properties using the prop:<propname> namespaced attribute and the property name:(equivalent to `.value=${val}` in Lit).
 
 - `bool:checked={val}` → toggles a boolean attribute (equivalent to `?checked=${val}` in Lit).
 
 - `onClick={val}` → any attribute starting with `on` adds an event listener (equivalent to `@click=${val}` in Lit). Value can be the event listener or an object eith a `handleEvent` method with optional event options. This is equivalent of calling `addEventListener` on the element [Read More](https://lit.dev/docs/v1/lit-html/writing-templates/#add-event-listeners)
+
 ```tsx
 <button onClick={(ev) => {}}>
 <button onClick={{ handleEvent(ev) {}}}>
 ```
 
-
 ## For Component
+
 In most cases, using loops or `Array.map` is an efficient way to build repeating templates. However, if you want to reorder a large list, or mutate it by adding and removing individual entries, this approach can involve recreating a large number of DOM nodes.
 More [here](https://lit.dev/docs/v1/lit-html/writing-templates/#repeating-templates-with-the-repeat-directive)
-
 
 ```tsx
 import { For } from 'kaori.js';
@@ -93,10 +93,10 @@ function List(props: { items: string[] }) {
 
 ## Show Component
 
-
 Show lets you conditionally render content without causing the Parent component to rerender unnecessarily. Using if statements or ternary operators directly will trigger a rerender of the App if the condition changes.
 
 Example: Using Show (No App rerender)
+
 ```tsx
 import { signal } from 'preact/signals';
 import { Show } from 'kaori.js';
@@ -116,7 +116,9 @@ function App() {
   );
 }
 ```
+
 Example: Using if or ternary (App rerenders)
+
 ```tsx
 function App() {
   const count = signal(0);
@@ -131,6 +133,7 @@ function App() {
   );
 }
 ```
+
 - This works because the compiler automatically wraps the Show condition in a getter. The isVisible signal is accessed inside Show, not while rendering the App Component, so updating it does not rerender App Component.
 
 > Tip: Use Show for conditional content if parent doesn’t need to rerender when the condition changes.
@@ -147,9 +150,10 @@ function OnceComponent() {
 }
 ```
 
-
 ## classMap attribute
+
 `classMap` attribute lets you dynamically apply CSS classes based on a truthy value.
+
 ```tsx
 function MoodBadge(props: { mood: 'happy' | 'sad' | 'angry' }) {
   return () => (
@@ -167,8 +171,8 @@ function MoodBadge(props: { mood: 'happy' | 'sad' | 'angry' }) {
 }
 ```
 
-
 ### Props
+
 Since Kaori is a reactive framework, props can’t be destructured directly.
 However, Kaori provides an elegant and flexible way to work around this limitation using the splitProps helper — making it easy to separate, spread, or forward props to other elements or components.
 
@@ -190,10 +194,11 @@ function Button(initialProps) {
   );
 }
 ```
+
 `splitProps` helps you keep your components clean and expressive — especially when you need to forward props or manage a mix of reactive and static attributes.
 
-
 ## Manually trigger updates
+
 ```tsx
 import { getHandle } from 'kaori.js';
 function Thing() {
@@ -257,25 +262,23 @@ function EffectComponent() {
 ## onCleanup
 
 ```tsx
-import { onMount } from "kaori.js";
+import { onMount } from 'kaori.js';
 
 function CleanupComponent() {
-
-
   onMount(() => {
     let interval = setInterval(() => {
-      console.log("Interval running");
+      console.log('Interval running');
     }, 1000);
-     return () => {
-     clearInterval(interval);
-console.log("Interval cleared");
-  }
+    return () => {
+      clearInterval(interval);
+      console.log('Interval cleared');
+    };
   });
 
   return () => (
-      <div>
-        <p>This component sets up an interval and cleans it up on unmount!</p>
-      </div>
-    );
+    <div>
+      <p>This component sets up an interval and cleans it up on unmount!</p>
+    </div>
+  );
 }
 ```
