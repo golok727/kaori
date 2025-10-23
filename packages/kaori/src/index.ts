@@ -1,4 +1,4 @@
-import { html } from 'lit-html';
+import { html, type Part } from 'lit-html';
 import { AsyncDirective, directive } from 'lit-html/async-directive.js';
 import { effect as syncEffect, untracked } from '@preact/signals-core';
 import type { Component } from './types.js';
@@ -23,17 +23,29 @@ export const NoopLogger: Logger = {
 let logger: Logger = NoopLogger;
 
 export function _kaori_internal_set_logger_use_at_your_own_risk(
-  logger: Logger
+  newLogger: Logger
 ) {
-  logger = logger;
+  logger = newLogger;
 }
 
 // a handle to a component
 export type ComponentHandle = {
   update(): void;
+  provide<T>(context: Context<T>, value: T): void;
+};
+
+export const KaoriContextSymbol = Symbol.for('kaori.context');
+
+export type Context<T> = { _fvr: typeof KaoriContextSymbol; __T__: T };
+
+type ContextInternal = Context<any> & {
+  __dbg_n: string;
+  __key: symbol;
+  __default: any;
 };
 
 type ComponentHandleInternal = ComponentHandle & {
+  __directive: ComponentDirective;
   __disposables: Set<() => void>;
   __dbg_n: string;
 };
@@ -120,7 +132,7 @@ function on_cleanup(fn: () => void) {
   handle.__disposables.add(fn);
 }
 
-function kaoi_effect(fn: () => void, handle = active_handle) {
+function kaori_effect(fn: () => void, handle = active_handle) {
   invariant(
     handle !== null,
     'effect() should be called during component setup (not in render functions or effects)'
@@ -154,65 +166,145 @@ function dispose_handle(handle: ComponentHandleInternal) {
   handle.__disposables.clear();
 }
 
+function create_context<T>(defaultValue: T, options?: { label?: string }) {
+  const contextKey = Symbol();
+
+  const context: ContextInternal = {
+    _fvr: KaoriContextSymbol,
+    __dbg_n: options?.label || 'AnonymousContext',
+    __key: contextKey,
+    __default: defaultValue,
+    __T__: undefined as any,
+  };
+
+  return context as Context<T>;
+}
+
+function provide_context<T>(context: Context<T>, value: T) {
+  invariant(
+    active_handle !== null,
+    'provideContext() should be called during component setup (not in render functions or effects)'
+  );
+
+  const cx = context as ContextInternal;
+
+  const handle = active_handle;
+  const directive = handle.__directive as any;
+  directive.__c = directive.__c ?? new Map();
+  directive.__c.set(cx.__key, value);
+}
+
+function get_context<T>(context: Context<T>): T {
+  invariant(
+    active_handle !== null,
+    'getContext() should be called during component setup (not in render functions or effects)'
+  );
+
+  const cx = context as ContextInternal;
+  const handle = active_handle;
+  let directive = handle.__directive;
+
+  // if lit changes this we are cooked :D
+  while (directive) {
+    const c_map = (directive as any).__c as Map<symbol, any> | undefined;
+    if (c_map && c_map.has(cx.__key)) {
+      return c_map.get(cx.__key)!;
+    }
+
+    let part = (directive as any).__part as Part | undefined;
+    while (part) {
+      const parent = (part as any)._$parent as Part | undefined;
+      if (
+        parent &&
+        '__directive' in parent &&
+        parent.__directive instanceof ComponentDirective
+      ) {
+        directive = parent.__directive;
+        break;
+      }
+      part = parent;
+    }
+  }
+
+  return cx.__default;
+}
+
 class ComponentDirective<Props = any> extends AsyncDirective {
   private _rawTemplate: (() => unknown) | unknown = null;
-  private handle: ComponentHandleInternal | null = null;
-  private hasInitialized = false;
+  private _template_cache: unknown = null;
+  private ready = false;
 
-  private _cachedTemplate: unknown = null;
+  /**
+   * @internal Context
+   */
+  __h: ComponentHandleInternal | null = null;
+  /**
+   * @internal Context
+   */
+  __c?: Map<any, any>;
 
-  private get $_getTemplate() {
-    return typeof this._rawTemplate === 'function'
-      ? this._rawTemplate()
-      : this._rawTemplate;
+  private $template() {
+    const res =
+      typeof this._rawTemplate === 'function'
+        ? this._rawTemplate()
+        : this._rawTemplate;
+    return res;
   }
 
   render(C: Component<Props>, props: Props): unknown {
     const componentName = C.name || 'Anonymous';
 
-    if (!this.hasInitialized) {
+    if (!this.ready) {
       logger.log('Initial render for component', componentName, props);
-      this.handle = {
+      this.__h = {
+        __directive: this,
         __dbg_n: componentName,
         update: () => {
-          this._cachedTemplate = this.$_getTemplate;
-          if (this.handle) {
-            schedule_update(this.handle, () => {
+          this._template_cache = this.$template();
+          if (this.__h) {
+            schedule_update(this.__h, () => {
               if (this.isConnected) {
-                this.setValue(this._cachedTemplate);
+                console.log('Update component', componentName);
+                this.setValue(this._template_cache);
               }
             });
           }
+        },
+        provide(context, value) {
+          provide_context(context as ContextInternal, value);
         },
         __disposables: new Set<() => void>(),
       };
 
       const prev_handle = active_handle;
-      active_handle = this.handle;
+      active_handle = this.__h;
       const result = untracked(() => C(props));
+      this._template_cache = this.$template();
       active_handle = prev_handle;
 
       this._rawTemplate = result;
 
       if (typeof this._rawTemplate === 'function') {
         // reactive return
-        kaoi_effect(() => {
+        kaori_effect(() => {
           logger.log('(effect) Update component: ', componentName);
-          this.handle?.update();
-        }, this.handle);
+          this.__h?.update();
+        }, this.__h);
       }
 
-      this._cachedTemplate = this.$_getTemplate;
-      this.hasInitialized = true;
+      this.ready = true;
     }
 
-    return this._cachedTemplate;
+    console.log('Here', componentName);
+    return this._template_cache;
   }
 
   protected override disconnected(): void {
     // Clean up the effect when component unmounts
-    if (this.handle) {
-      dispose_handle(this.handle);
+    if (this.__h) {
+      dispose_handle(this.__h);
+      this.__h = null;
+      this.__c = undefined;
     }
   }
 
@@ -238,9 +330,12 @@ export {
    */
   get_handle as getBloom,
   get_handle as getHandle,
-  kaoi_effect as effect,
+  kaori_effect as effect,
   on_mount as onMount,
   on_cleanup as onCleanup,
+  get_context as useContext,
+  create_context as createContext,
+  provide_context as provideContext,
   html,
 };
 export { render } from 'lit-html';

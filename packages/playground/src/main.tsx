@@ -15,6 +15,10 @@ import {
   splitProps,
   type RefOrCallback,
   ref,
+  createContext,
+  type Signal,
+  useContext,
+  provideContext,
 } from 'kaori.js';
 
 const root = document.querySelector<HTMLDivElement>('#root')!;
@@ -142,6 +146,8 @@ function SpreadProps(p: {
   return () => <button {...rest}>{props.children}</button>;
 }
 
+const ThemeContext = createContext<Signal<'light' | 'dark'> | null>(null);
+
 function App() {
   const showThing = useToggle(true);
 
@@ -179,9 +185,12 @@ function App() {
     }
   });
 
+  provideContext(ThemeContext, signal('light'));
+
   return () => (
     <div>
       <h1 class="text-xl font-bold">Kaori Playground</h1>
+      <ContextExample />
       <SpreadProps
         ref={spreadPropsRef}
         class="p-2 bg-black text-white rounded-md"
@@ -213,6 +222,13 @@ function App() {
       />
     </div>
   );
+}
+
+function ContextExample() {
+  const theme = useContext(ThemeContext);
+  if (!theme) throw new Error('No theme context found');
+
+  return () => <p>Current theme is {theme.value}</p>;
 }
 
 function RefTest() {
