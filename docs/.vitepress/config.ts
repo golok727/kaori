@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Kaori',
   description: 'A fragrant TypeScript framework for building reactive UIs ✨',
+  base: '/kaori/',
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
   ],

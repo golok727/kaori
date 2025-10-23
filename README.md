@@ -10,6 +10,15 @@ If you find any bugs or have suggestions, please open an issue or a PR.
 
 Its my playground for now so expect breaking changes.
 
+## 📚 Documentation
+
+Full documentation is available at [https://golok727.github.io/kaori/](https://golok727.github.io/kaori/)
+
+Or run locally:
+```bash
+pnpm docs:dev
+```
+
 ## Installation
 
 ```bash
