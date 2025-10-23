@@ -120,7 +120,7 @@ function Good(props: { name: string; age: number }) {
 }
 ```
 
-Read more about them [here](guides/props)
+Read more about them [here](/guide/props)
 
 
 ### Children
