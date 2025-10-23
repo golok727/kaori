@@ -186,4 +186,86 @@ function GetterWrapping() {
     const output = await compile(input);
     expect(output).toMatchSnapshot();
   });
+
+  it('should handle component props with colons (namespaced attributes)', async () => {
+    const input = `
+function NamespacedProps(props) {
+  return (
+    <Input
+      prop:value={props.value}
+      prop:checked={props.checked}
+      bind:value={state.value}
+    />
+  );
+}`;
+
+    const output = await compile(input);
+    expect(output).toMatchSnapshot();
+    expect(output).toContain('get ["prop:value"]()');
+    expect(output).toContain('get ["prop:checked"]()');
+    expect(output).toContain('get ["bind:value"]()');
+  });
+
+  it('should handle component props with hyphens (data attributes)', async () => {
+    const input = `
+function DataAttributes(props) {
+  return (
+    <Input
+      data-thing="asd"
+      data-value={props.value}
+      aria-label="Input field"
+      custom-attr={getValue()}
+    />
+  );
+}`;
+
+    const output = await compile(input);
+    expect(output).toMatchSnapshot();
+    expect(output).toContain('"data-thing": "asd"');
+    expect(output).toContain('get ["data-value"]()');
+    expect(output).toContain('"aria-label": "Input field"');
+    expect(output).toContain('get ["custom-attr"]()');
+  });
+
+  it('should handle mixed valid and invalid identifier props', async () => {
+    const input = `
+function MixedProps(props) {
+  return (
+    <Input
+      thing={props.value}
+      prop:value={props.value}
+      data-thing="asd"
+      validName={props.name}
+      another-invalid={getStuff()}
+    />
+  );
+}`;
+
+    const output = await compile(input);
+    expect(output).toMatchSnapshot();
+    expect(output).toContain('get thing()');
+    expect(output).toContain('get ["prop:value"]()');
+    expect(output).toContain('"data-thing": "asd"');
+    expect(output).toContain('get validName()');
+    expect(output).toContain('get ["another-invalid"]()');
+  });
+
+  it('should handle HTML elements with invalid identifier attributes', async () => {
+    const input = `
+function HtmlWithDataAttrs() {
+  return (
+    <div
+      data-test-id="container"
+      data-value={getValue()}
+      aria-label="Main container"
+      className="box"
+    >
+      <input data-input="text" type="text" />
+    </div>
+  );
+}`;
+
+    const output = await compile(input);
+    expect(output).toMatchSnapshot();
+  });
 });

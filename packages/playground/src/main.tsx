@@ -11,6 +11,8 @@ import {
   nothing,
   onMount,
   createRef,
+  html,
+  splitProps,
 } from 'kaori.js';
 
 const root = document.querySelector<HTMLDivElement>('#root')!;
@@ -109,6 +111,7 @@ function ClassMapThing() {
       <button class="button-primary" onClick={() => count.value++}>
         Click
       </button>
+      {html`<input type="checkbox">Span</span>`}
     </div>
   );
 }
@@ -126,6 +129,16 @@ function StyleThing() {
     </p>
   );
 }
+
+function SpreadProps(p: {
+  onClick: () => void;
+  class?: string;
+  children: JSX.JSXElement;
+}) {
+  const [props, rest] = splitProps(p, ['children']);
+  return () => <button {...rest}>{props.children}</button>;
+}
+
 function App() {
   const showThing = useToggle(true);
 
@@ -148,9 +161,19 @@ function App() {
     );
   }
 
+  const spreadClickedTimes = signal(0);
+
   return () => (
     <div>
       <h1 class="text-xl font-bold">Kaori Playground</h1>
+      <SpreadProps
+        class="p-2 bg-black text-white rounded-md"
+        onClick={() =>
+          (spreadClickedTimes.value = spreadClickedTimes.value + 1)
+        }
+      >
+        Spread props clicked {spreadClickedTimes.value}
+      </SpreadProps>
       <Show when={showThing.show}>
         <KaoriThing />
       </Show>

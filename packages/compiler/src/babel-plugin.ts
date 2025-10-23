@@ -15,7 +15,14 @@ const KAORI_PACKAGE_NAME = 'kaori.js';
 // Import Manager - Handles all import-related logic
 // ============================================================================
 
-type ImportType = 'component' | 'html' | 'ref' | 'styleMap' | 'classMap';
+type ImportType =
+  | 'component'
+  | 'html'
+  | 'ref'
+  | 'styleMap'
+  | 'classMap'
+  | 'spread'
+  | 'mergeProps';
 
 interface ImportInfo {
   name: string; // The name to use in generated code
@@ -42,6 +49,16 @@ class ImportManager {
     });
     this.imports.set('classMap', {
       name: 'classMap',
+      exists: false,
+      needed: false,
+    });
+    this.imports.set('spread', {
+      name: 'spread',
+      exists: false,
+      needed: false,
+    });
+    this.imports.set('mergeProps', {
+      name: 'mergeProps',
       exists: false,
       needed: false,
     });
@@ -223,13 +240,22 @@ class AttributeProcessor {
     const results: ProcessedAttribute[] = [];
 
     for (const attr of attributes) {
-      if (t.isJSXAttribute(attr)) {
+      if (t.isJSXSpreadAttribute(attr)) {
+        // Handle spread attributes for HTML elements
+        this.importManager.markNeeded('spread');
+        results.push({
+          type: 'directive',
+          expression: t.callExpression(
+            t.identifier(this.importManager.getName('spread')),
+            [attr.argument]
+          ),
+        });
+      } else if (t.isJSXAttribute(attr)) {
         const processed = this.processAttribute(attr);
         if (processed) {
           results.push(processed);
         }
       }
-      // TODO: Handle spread attributes if needed
     }
 
     return results;
@@ -540,66 +566,164 @@ function createComponentCall(
   componentName: string,
   state: PluginState
 ): t.Expression {
-  const props = createPropsObject(
-    element.openingElement.attributes,
-    state,
-    element
-  );
+  const attributes = element.openingElement.attributes;
   const children = processChildren(element.children, state);
 
-  // Check if both children prop and children content exist (Issue #2)
-  if (children.length > 0 && t.isObjectExpression(props)) {
-    const hasChildrenProp = props.properties.some(
-      prop =>
-        (t.isObjectProperty(prop) || t.isObjectMethod(prop)) &&
-        t.isIdentifier(prop.key) &&
-        prop.key.name === 'children'
-    );
+  // Check if we have spreads
+  const hasSpread = attributes.some(attr => t.isJSXSpreadAttribute(attr));
 
-    if (hasChildrenProp) {
-      addWarning(
-        state,
-        `Component has both 'children' prop and children content. Children content will take priority.`,
-        element
-      );
-      // Remove the children prop, let children content take priority
-      props.properties = props.properties.filter(
-        prop =>
-          !(
-            (t.isObjectProperty(prop) || t.isObjectMethod(prop)) &&
-            t.isIdentifier(prop.key) &&
-            prop.key.name === 'children'
-          )
+  let propsArg: t.Expression;
+
+  if (hasSpread) {
+    // Check for optimization: single spread with no other props and no children
+    const onlySpread =
+      attributes.length === 1 &&
+      t.isJSXSpreadAttribute(attributes[0]) &&
+      children.length === 0;
+
+    if (onlySpread) {
+      // Optimization: <Component {...props}/> becomes component(Component, props)
+      propsArg = (attributes[0] as t.JSXSpreadAttribute).argument;
+    } else {
+      // Use mergeProps for multiple spreads or spreads with other props
+      state.importManager!.markNeeded('mergeProps');
+
+      const mergePropsArgs: t.Expression[] = [];
+      let currentObjectProps: (t.ObjectProperty | t.ObjectMethod)[] = [];
+
+      // Process attributes in order
+      for (const attr of attributes) {
+        if (t.isJSXSpreadAttribute(attr)) {
+          // Flush accumulated object props before adding spread
+          if (currentObjectProps.length > 0) {
+            mergePropsArgs.push(t.objectExpression(currentObjectProps));
+            currentObjectProps = [];
+          }
+          mergePropsArgs.push(attr.argument);
+        } else if (t.isJSXAttribute(attr)) {
+          const propName = getAttributeName(attr);
+          const propValue = getAttributeValue(attr);
+
+          if (propName && propValue) {
+            const isValidId = isValidIdentifier(propName);
+
+            if (needsGetterWrapping(propValue)) {
+              const key = isValidId
+                ? t.identifier(propName)
+                : t.stringLiteral(propName);
+              const getter = t.objectMethod(
+                'get',
+                key,
+                [],
+                t.blockStatement([t.returnStatement(propValue)]),
+                !isValidId
+              );
+              currentObjectProps.push(getter);
+            } else {
+              const key = isValidId
+                ? t.identifier(propName)
+                : t.stringLiteral(propName);
+              currentObjectProps.push(t.objectProperty(key, propValue));
+            }
+          }
+        }
+      }
+
+      // Flush any remaining object props
+      if (currentObjectProps.length > 0) {
+        mergePropsArgs.push(t.objectExpression(currentObjectProps));
+      }
+
+      // Add children if they exist
+      if (children.length > 0) {
+        const childrenValue =
+          children.length === 1 ? children[0] : t.arrayExpression(children);
+
+        const childrenObj = needsGetterWrapping(childrenValue)
+          ? t.objectExpression([
+              t.objectMethod(
+                'get',
+                t.identifier('children'),
+                [],
+                t.blockStatement([t.returnStatement(childrenValue)])
+              ),
+            ])
+          : t.objectExpression([
+              t.objectProperty(t.identifier('children'), childrenValue),
+            ]);
+
+        mergePropsArgs.push(childrenObj);
+      }
+
+      propsArg = t.callExpression(
+        t.identifier(state.importManager!.getName('mergeProps')),
+        mergePropsArgs
       );
     }
-  }
+  } else {
+    // No spreads, use original logic
+    const props = createPropsObject(attributes, state, element);
 
-  // Add children to props if they exist
-  if (children.length > 0) {
-    const childrenValue =
-      children.length === 1 ? children[0] : t.arrayExpression(children);
+    // Check if both children prop and children content exist (Issue #2)
+    if (children.length > 0 && t.isObjectExpression(props)) {
+      const hasChildrenProp = props.properties.some(
+        prop =>
+          (t.isObjectProperty(prop) || t.isObjectMethod(prop)) &&
+          t.isIdentifier(prop.key) &&
+          prop.key.name === 'children'
+      );
 
-    if (t.isObjectExpression(props)) {
-      if (needsGetterWrapping(childrenValue)) {
-        const getter = t.objectMethod(
-          'get',
-          t.identifier('children'),
-          [],
-          t.blockStatement([t.returnStatement(childrenValue)])
+      if (hasChildrenProp) {
+        addWarning(
+          state,
+          `Component has both 'children' prop and children content. Children content will take priority.`,
+          element
         );
-        props.properties.push(getter);
-      } else {
-        props.properties.push(
-          t.objectProperty(t.identifier('children'), childrenValue)
+        // Remove the children prop, let children content take priority
+        props.properties = props.properties.filter(
+          prop =>
+            !(
+              (t.isObjectProperty(prop) || t.isObjectMethod(prop)) &&
+              t.isIdentifier(prop.key) &&
+              prop.key.name === 'children'
+            )
         );
       }
     }
+
+    // Add children to props if they exist
+    if (children.length > 0) {
+      const childrenValue =
+        children.length === 1 ? children[0] : t.arrayExpression(children);
+
+      if (t.isObjectExpression(props)) {
+        if (needsGetterWrapping(childrenValue)) {
+          const getter = t.objectMethod(
+            'get',
+            t.identifier('children'),
+            [],
+            t.blockStatement([t.returnStatement(childrenValue)])
+          );
+          props.properties.push(getter);
+        } else {
+          props.properties.push(
+            t.objectProperty(t.identifier('children'), childrenValue)
+          );
+        }
+      }
+    }
+
+    propsArg = props;
   }
 
   return t.callExpression(
     t.identifier(state.importManager!.getName('component')),
-    [t.identifier(componentName), props]
+    [t.identifier(componentName), propsArg]
   );
+}
+
+function isValidIdentifier(name: string): boolean {
+  return /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(name);
 }
 
 function createPropsObject(
@@ -642,17 +766,26 @@ function createPropsObject(
       const propValue = getAttributeValue(attr);
 
       if (propName && propValue) {
+        const isValidId = isValidIdentifier(propName);
+
         // Check if value needs getter wrapping (function calls, member access)
         if (needsGetterWrapping(propValue)) {
+          const key = isValidId
+            ? t.identifier(propName)
+            : t.stringLiteral(propName);
           const getter = t.objectMethod(
             'get',
-            t.identifier(propName),
+            key,
             [],
-            t.blockStatement([t.returnStatement(propValue)])
+            t.blockStatement([t.returnStatement(propValue)]),
+            !isValidId
           );
           properties.push(getter);
         } else {
-          properties.push(t.objectProperty(t.identifier(propName), propValue));
+          const key = isValidId
+            ? t.identifier(propName)
+            : t.stringLiteral(propName);
+          properties.push(t.objectProperty(key, propValue));
         }
       }
     }

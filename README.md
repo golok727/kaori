@@ -132,7 +132,7 @@ function App() {
 }
 ```
 - This works because the compiler automatically wraps the Show condition in a getter. The isVisible signal is accessed inside Show, not while rendering the App Component, so updating it does not rerender App Component.
-  
+
 > Tip: Use Show for conditional content if parent doesn’t need to rerender when the condition changes.
 
 ## Once render
@@ -166,6 +166,32 @@ function MoodBadge(props: { mood: 'happy' | 'sad' | 'angry' }) {
   );
 }
 ```
+
+
+### Props
+Since Kaori is a reactive framework, props can’t be destructured directly.
+However, Kaori provides an elegant and flexible way to work around this limitation using the splitProps helper — making it easy to separate, spread, or forward props to other elements or components.
+
+Using `splitProps` to organize your props
+
+```ts
+import { cn } from 'your-library';
+import { splitProps } from 'kaori.js';
+
+function Button(initialProps) {
+  // `props` will contain { children: ..., class: ... }
+  // `rest` will include all remaining props
+  const [props, rest] = splitProps(initialProps, ['children', 'class']);
+
+  return () => (
+    <button class={cn("your-class", props.class)} {...rest}>
+      {props.children}
+    </button>
+  );
+}
+```
+`splitProps` helps you keep your components clean and expressive — especially when you need to forward props or manage a mix of reactive and static attributes.
+
 
 ## Manually trigger updates
 ```tsx

@@ -4,11 +4,29 @@ import { effect as syncEffect, untracked } from '@preact/signals-core';
 import type { Component } from './types.js';
 import { invariant } from './utils.js';
 
-const logger = {
+export interface Logger {
+  log: (...args: any[]) => void;
+}
+
+export const KaoriLogger: Logger = {
   log: (...args: any[]) => {
     console.log('[Kaori:DEV]', ...args);
   },
 };
+
+export const NoopLogger: Logger = {
+  log: () => {
+    // No operation
+  },
+};
+
+let logger: Logger = NoopLogger;
+
+export function _kaori_internal_set_logger_use_at_your_own_risk(
+  logger: Logger
+) {
+  logger = logger;
+}
 
 // a handle to a component
 export type ComponentHandle = {
@@ -210,8 +228,9 @@ interface ComponentDirectiveFn {
 
 export const component = directive(ComponentDirective) as ComponentDirectiveFn;
 
-export { For, Show } from './helpers';
-export type { ForProps, ShowProps } from './helpers';
+export { For, Show } from './flow.js';
+export { spread } from './helpers/spread.js';
+export type { ForProps, ShowProps } from './flow.js';
 
 export {
   /**
@@ -239,6 +258,9 @@ export {
   untracked,
 } from '@preact/signals-core';
 
+export { mergeProps } from './helpers/merge-props.js';
+export { splitProps } from './helpers/split-props.js';
+export { ifDefined } from 'lit-html/directives/if-defined.js';
 export { nothing } from 'lit-html';
 export { when } from 'lit-html/directives/when.js';
 export { choose } from 'lit-html/directives/choose.js';

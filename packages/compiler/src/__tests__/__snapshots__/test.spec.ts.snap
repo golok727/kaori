@@ -1,5 +1,45 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
+exports[`JSX to lit-html transformation > should handle HTML elements with invalid identifier attributes 1`] = `
+"import { html } from "kaori.js";
+function HtmlWithDataAttrs() {
+  return html\`<div data-test-id="container" data-value=\${getValue()} aria-label="Main container" class="box"><input data-input="text" type="text" /></div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should handle component props with colons (namespaced attributes) 1`] = `
+"import { component } from "kaori.js";
+function NamespacedProps(props) {
+  return component(Input, {
+    get ["prop:value"]() {
+      return props.value;
+    },
+    get ["prop:checked"]() {
+      return props.checked;
+    },
+    get ["bind:value"]() {
+      return state.value;
+    }
+  });
+}"
+`;
+
+exports[`JSX to lit-html transformation > should handle component props with hyphens (data attributes) 1`] = `
+"import { component } from "kaori.js";
+function DataAttributes(props) {
+  return component(Input, {
+    "data-thing": "asd",
+    get ["data-value"]() {
+      return props.value;
+    },
+    "aria-label": "Input field",
+    get ["custom-attr"]() {
+      return getValue();
+    }
+  });
+}"
+`;
+
 exports[`JSX to lit-html transformation > should handle getter wrapping for complex expressions 1`] = `
 "import { component, html } from "kaori.js";
 function GetterWrapping() {
@@ -40,6 +80,27 @@ exports[`JSX to lit-html transformation > should handle import thing 1`] = `
 "import { component, html } from "kaori.js";
 function ImportThing() {
   return html\`<div>\${component(ImportThing, {})}</div>\`;
+}"
+`;
+
+exports[`JSX to lit-html transformation > should handle mixed valid and invalid identifier props 1`] = `
+"import { component } from "kaori.js";
+function MixedProps(props) {
+  return component(Input, {
+    get thing() {
+      return props.value;
+    },
+    get ["prop:value"]() {
+      return props.value;
+    },
+    "data-thing": "asd",
+    get validName() {
+      return props.name;
+    },
+    get ["another-invalid"]() {
+      return getStuff();
+    }
+  });
 }"
 `;
 

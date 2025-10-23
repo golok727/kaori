@@ -9,10 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "kaori.js": "^0.0.7"
+    "kaori.js": "^0.0.8"
   },
   "devDependencies": {
-    "kaori-compiler": "^0.0.7",
+    "kaori-compiler": "^0.0.8",
     "typescript": "~5.9.3",
     "vite": "^7.1.7"
   }

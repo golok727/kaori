@@ -65,6 +65,10 @@ importers:
       lit-html:
         specifier: ^3.3.1
         version: 3.3.1
+    devDependencies:
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.4(@vitest/ui@3.2.4)(jiti@2.6.1)(lightningcss@1.30.1)
 
   packages/playground:
     dependencies:
