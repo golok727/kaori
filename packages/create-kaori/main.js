@@ -15,21 +15,29 @@ async function main() {
   console.log('\n🌸 Welcome to Kaori - A fragrant TS framework\n');
   console.log(`using create-kaori ${VERSION}\n`);
 
-  const response = await prompts({
-    type: 'text',
-    name: 'projectName',
-    message: 'What is your project name?',
-    initial: 'my-kaori-app',
-    validate: value => {
-      if (!value.trim()) {
-        return 'Project name is required';
-      }
-      if (!/^[a-z0-9-_]+$/i.test(value)) {
-        return 'Project name should only contain letters, numbers, hyphens, and underscores';
-      }
-      return true;
+  const response = await prompts([
+    {
+      type: 'text',
+      name: 'projectName',
+      message: 'What is your project name?',
+      initial: 'my-kaori-app',
+      validate: value => {
+        if (!value.trim()) {
+          return 'Project name is required';
+        }
+        if (!/^[a-z0-9-_]+$/i.test(value)) {
+          return 'Project name should only contain letters, numbers, hyphens, and underscores';
+        }
+        return true;
+      },
     },
-  });
+    {
+      type: 'confirm',
+      name: 'useTailwind',
+      message: 'Would you like to use Tailwind CSS?',
+      initial: false,
+    },
+  ]);
 
   if (!response.projectName) {
     console.log('Project creation cancelled.');
@@ -37,8 +45,10 @@ async function main() {
   }
 
   const projectName = response.projectName.trim();
+  const useTailwind = response.useTailwind;
   const targetDir = path.resolve(process.cwd(), projectName);
-  const templateDir = path.resolve(__dirname, 'templates', 'basic');
+  const templateName = useTailwind ? 'tailwind' : 'basic';
+  const templateDir = path.resolve(__dirname, 'templates', templateName);
 
   // Check if target directory already exists
   if (fs.existsSync(targetDir)) {
