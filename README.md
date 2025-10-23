@@ -12,7 +12,7 @@ Its my playground for now so expect breaking changes.
 
 ## 📚 Documentation
 
-Coming soon...
+Full documentation is available at [https://golok727.github.io/kaori/](https://golok727.github.io/kaori/)
 
 ## Installation
 

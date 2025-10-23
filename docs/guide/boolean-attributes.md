@@ -7,9 +7,9 @@ Use `bool:` prefix for boolean HTML attributes like `disabled`, `checked`, `sele
 ```tsx
 function Checkbox() {
   const checked = signal(false);
-  
+
   return () => (
-    <input 
+    <input
       type="checkbox"
       bool:checked={checked.value}
       onChange={() => checked.value = !checked.value}
@@ -26,7 +26,7 @@ function Examples() {
   const checked = signal(true);
   const readonly = signal(false);
   const required = signal(true);
-  
+
   return () => (
     <div>
       <button bool:disabled={disabled.value}>Button</button>
@@ -59,7 +59,7 @@ Boolean attributes work differently than regular attributes:
 ```tsx
 function ToggleButton() {
   const disabled = signal(false);
-  
+
   return () => (
     <div>
       <button onClick={() => disabled.value = !disabled.value}>

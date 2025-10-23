@@ -13,6 +13,8 @@ import {
   createRef,
   html,
   splitProps,
+  type RefOrCallback,
+  ref,
 } from 'kaori.js';
 
 const root = document.querySelector<HTMLDivElement>('#root')!;
@@ -133,6 +135,7 @@ function StyleThing() {
 function SpreadProps(p: {
   onClick: () => void;
   class?: string;
+  ref?: RefOrCallback<HTMLButtonElement>;
   children: JSX.JSXElement;
 }) {
   const [props, rest] = splitProps(p, ['children']);
@@ -161,18 +164,35 @@ function App() {
     );
   }
 
+  let spreadPropsWidth: number | undefined;
   const spreadClickedTimes = signal(0);
+  const spreadPropsRef = createRef<HTMLButtonElement>();
+
+  const handle = getHandle();
+
+  onMount(() => {
+    if (spreadPropsRef.value) {
+      spreadPropsWidth = Math.floor(
+        spreadPropsRef.value.getBoundingClientRect().width
+      );
+      handle.update();
+    }
+  });
 
   return () => (
     <div>
       <h1 class="text-xl font-bold">Kaori Playground</h1>
       <SpreadProps
+        ref={spreadPropsRef}
         class="p-2 bg-black text-white rounded-md"
         onClick={() =>
           (spreadClickedTimes.value = spreadClickedTimes.value + 1)
         }
       >
         Spread props clicked {spreadClickedTimes.value}
+        {spreadPropsWidth !== undefined
+          ? `My Width is ${spreadPropsWidth}px`
+          : nothing}
       </SpreadProps>
       <Show when={showThing.show}>
         <KaoriThing />

@@ -32,7 +32,7 @@ function TodoList() {
     { id: 1, text: 'Learn Kaori' },
     { id: 2, text: 'Build app' },
   ]);
-  
+
   return () => (
     <ul>
       <For items={todos.value} key={(todo) => todo.id}>
@@ -50,7 +50,7 @@ function TodoList() {
 ```tsx
 function List() {
   const items = signal(['a', 'b', 'c']);
-  
+
   // ❌ Recreates all DOM nodes on reorder
   return () => (
     <ul>
@@ -65,7 +65,7 @@ function List() {
 ```tsx
 function List() {
   const items = signal(['a', 'b', 'c']);
-  
+
   // ✅ Reuses DOM nodes efficiently
   return () => (
     <ul>
@@ -91,53 +91,6 @@ The second parameter is the index:
 </For>
 ```
 
-## Nested For
-
-Render nested lists:
-
-```tsx
-type Group = {
-  name: string;
-  items: string[];
-};
-
-function NestedList(props: { groups: Group[] }) {
-  return () => (
-    <div>
-      <For items={props.groups} key={(g) => g.name}>
-        {(group) => (
-          <div>
-            <h3>{group.name}</h3>
-            <For items={group.items}>
-              {(item) => <div>{item}</div>}
-            </For>
-          </div>
-        )}
-      </For>
-    </div>
-  );
-}
-```
-
-## Empty Lists
-
-Handle empty lists:
-
-```tsx
-function List(props: { items: string[] }) {
-  return () => (
-    <div>
-      {props.items.length === 0 ? (
-        <p>No items</p>
-      ) : (
-        <For items={props.items}>
-          {(item) => <div>{item}</div>}
-        </For>
-      )}
-    </div>
-  );
-}
-```
 
 ## Performance Tips
 
@@ -150,19 +103,12 @@ function List(props: { items: string[] }) {
    ```tsx
    // ✅ Good - stable ID
    key={(item) => item.id}
-   
-   // ❌ Bad - index changes on reorder
+
+   // ❌ Bad - if order changes
    key={(item, index) => index}
    ```
 
-3. **Avoid inline functions in keys**
-   ```tsx
-   // ❌ Bad - creates new function each render
-   <For items={list} key={(item) => String(item.id)}>
-   
-   // ✅ Better - use stable property
-   <For items={list} key={(item) => item.id}>
-   ```
+> You can always use `Array.map` if the iterable is static.
 
 ## Complete Example
 
@@ -178,7 +124,7 @@ type Todo = {
 function TodoApp() {
   const todos = signal<Todo[]>([]);
   const input = signal('');
-  
+
   function addTodo() {
     if (!input.value) return;
     todos.value = [
@@ -187,17 +133,17 @@ function TodoApp() {
     ];
     input.value = '';
   }
-  
+
   function toggleTodo(id: number) {
     todos.value = todos.value.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
   }
-  
+
   function removeTodo(id: number) {
     todos.value = todos.value.filter(todo => todo.id !== id);
   }
-  
+
   return () => (
     <div>
       <input
@@ -206,7 +152,7 @@ function TodoApp() {
         onKeyDown={(e) => e.key === 'Enter' && addTodo()}
       />
       <button onClick={addTodo}>Add</button>
-      
+
       <ul>
         <For items={todos.value} key={(todo) => todo.id}>
           {(todo) => (

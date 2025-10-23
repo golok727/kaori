@@ -266,6 +266,11 @@ export { when } from 'lit-html/directives/when.js';
 export { choose } from 'lit-html/directives/choose.js';
 export { repeat } from 'lit-html/directives/repeat.js';
 export { map } from 'lit-html/directives/map.js';
-export { type Ref, ref, createRef } from 'lit-html/directives/ref.js';
+export {
+  type Ref,
+  type RefOrCallback,
+  ref,
+  createRef,
+} from 'lit-html/directives/ref.js';
 export { styleMap } from 'lit-html/directives/style-map.js';
 export { classMap } from 'lit-html/directives/class-map.js';

@@ -9,8 +9,22 @@ function Button() {
   function handleClick(event: MouseEvent) {
     console.log('Clicked!', event);
   }
-  
+
   return () => <button onClick={handleClick}>Click me</button>;
+}
+```
+This is equivalent to calling `addEventListener('click', clickHandler)` on the button element.
+
+```tsx
+// compiler output
+import { html } from 'kaori.js';
+
+function Button() {
+  function handleClick(event: MouseEvent) {
+    console.log('Clicked!', event);
+  }
+
+  return () => html`<button @click=${handleClick}>Click me</button>`;
 }
 ```
 
@@ -19,7 +33,7 @@ function Button() {
 ```tsx
 function Counter() {
   const count = signal(0);
-  
+
   return () => (
     <button onClick={() => count.value++}>
       Count: {count.value}
@@ -46,23 +60,6 @@ function Form() {
 }
 ```
 
-## Event Object
-
-Event handlers receive the native DOM event:
-
-```tsx
-function Input() {
-  const value = signal('');
-  
-  function handleInput(event: InputEvent) {
-    const target = event.target as HTMLInputElement;
-    value.value = target.value;
-  }
-  
-  return () => <input onInput={handleInput} />;
-}
-```
-
 ## Event Options
 
 Pass an object with `handleEvent` method and options:
@@ -86,7 +83,7 @@ function Link() {
     e.preventDefault();
     console.log('Link clicked but not navigating');
   }
-  
+
   return () => <a href="/page" onClick={handleClick}>Click</a>;
 }
 ```
@@ -103,7 +100,7 @@ function List() {
       console.log('Item clicked:', target.textContent);
     }
   }
-  
+
   return () => (
     <ul onClick={handleListClick}>
       <li>Item 1</li>

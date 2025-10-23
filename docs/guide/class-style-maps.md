@@ -12,7 +12,7 @@ import { signal } from 'kaori.js';
 function Button() {
   const isActive = signal(false);
   const isDisabled = signal(false);
-  
+
   return () => (
     <button
       classMap={{
@@ -38,7 +38,7 @@ import { signal } from 'kaori.js';
 function ColorBox() {
   const color = signal('#ff69b4');
   const size = signal(100);
-  
+
   return () => (
     <div
       style={{
@@ -57,7 +57,7 @@ function ColorBox() {
 ```tsx
 function Component() {
   const active = signal(false);
-  
+
   return () => (
     <button
       class="btn btn-primary"
@@ -94,7 +94,7 @@ function ProgressBar(props: { progress: number }) {
 ```tsx
 function ThemedComponent() {
   const theme = signal<'light' | 'dark'>('light');
-  
+
   return () => (
     <div
       classMap={{
@@ -123,9 +123,8 @@ classMap={{ 'active': isActive.value }}
 // ✅ Use style for dynamic values
 style={{ width: `${width.value}px` }}
 
-// ✅ Combine both when needed
+// ❌ Dont use `class` and `className` together (in future we will support both)
 <div class="base" classMap={{ 'modified': condition }} style={{ ... }}>
-
-// ❌ Don't use string concatenation for classes
-class={`btn ${active ? 'active' : ''}`}  // Use classMap instead
+// do this indtead
+<div classMap={{ 'base': true, 'modified': condition }} style={{ ... }}>
 ```

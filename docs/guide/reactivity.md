@@ -1,6 +1,6 @@
 # Reactivity
 
-Kaori's reactivity system is built on signals from `@preact/signals-core`. This provides fine-grained, automatic updates without manual optimization.
+Kaori's reactivity system is built on signals from `@preact/signals-core`. This provides automatic updates without manual update calls.
 
 ## Signals
 
@@ -121,7 +121,7 @@ effect(() => {
   const timer = setTimeout(() => {
     console.log('Timer!', count.value);
   }, 1000);
-  
+
   return () => clearTimeout(timer);
 });
 ```
@@ -135,11 +135,11 @@ import { signal, effect } from 'kaori.js';
 
 function Component() {
   const count = signal(0);
-  
+
   effect(() => {
     document.title = `Count: ${count.value}`;
   });
-  
+
   return () => <button onClick={() => count.value++}>+</button>;
 }
 ```
@@ -190,7 +190,7 @@ When you access signals in the render function, Kaori automatically tracks them:
 ```tsx
 function Counter() {
   const count = signal(0);
-  
+
   // ✅ Automatically reactive
   return () => <div>{count.value}</div>;
 }
@@ -205,12 +205,12 @@ function Component(props) {
   // SETUP PHASE - Runs once
   const state = signal(0);
   const derived = computed(() => state.value * 2);
-  
+
   // Effects and lifecycle hooks here
   effect(() => {
     console.log('State:', state.value);
   });
-  
+
   // RENDER PHASE - Runs on updates
   return () => (
     <div>
@@ -247,12 +247,12 @@ import { getHandle } from 'kaori.js';
 function Manual() {
   const handle = getHandle();
   let count = 0; // Not a signal!
-  
+
   function increment() {
     count++;
     handle.update(); // Manually trigger render
   }
-  
+
   return () => (
     <button onClick={increment}>
       Count: {count}
@@ -331,11 +331,11 @@ const result = computed(() => {
 ```tsx
 function createDerivedSignal<T>(source: Signal<T>, transform: (value: T) => T) {
   const derived = signal(transform(source.value));
-  
+
   effect(() => {
     derived.value = transform(source.value);
   });
-  
+
   return derived;
 }
 
@@ -392,9 +392,9 @@ effect(() => {
 
 ```tsx
 effect(() => {
-  console.log('Dependencies:', { 
-    count: count.value, 
-    name: name.value 
+  console.log('Dependencies:', {
+    count: count.value,
+    name: name.value
   });
 });
 ```

@@ -23,8 +23,18 @@ SOFTWARE.
 */
 
 import { nothing } from 'lit-html';
-import { directive, type ElementPart, type Part } from 'lit-html/directive.js';
+import {
+  directive,
+  type ElementPart,
+  type Part,
+  type PartInfo,
+} from 'lit-html/directive.js';
 import { AsyncDirective } from 'lit-html/async-directive.js';
+import {
+  ref,
+  type RefDirective,
+  type RefOrCallback,
+} from 'lit-html/directives/ref.js';
 
 type EventListenerWithOptions = EventListenerOrEventListenerObject &
   Partial<AddEventListenerOptions>;
@@ -37,6 +47,7 @@ export class SpreadPropsDirective extends AsyncDirective {
   render(_spreadData: { [key: string]: unknown }) {
     return nothing;
   }
+
   override update(part: Part, [spreadData]: Parameters<this['render']>) {
     if (this.element !== (part as ElementPart).element) {
       this.element = (part as ElementPart).element;
@@ -194,7 +205,7 @@ export class SpreadEventsDirective extends SpreadPropsDirective {
  */
 export const spreadEvents = directive(SpreadEventsDirective);
 
-export class SpreadDirective extends SpreadEventsDirective {
+export class LitSpreadDirective extends SpreadEventsDirective {
   override apply(data: { [key: string]: unknown }) {
     if (!data) return;
     const { prevData, element } = this;
@@ -281,9 +292,11 @@ export class SpreadDirective extends SpreadEventsDirective {
  *      document.body,
  *    );
  */
-export const litSpread = directive(SpreadDirective);
+export const litSpread = directive(LitSpreadDirective);
 
 export class KaoriSpreadDirective extends SpreadEventsDirective {
+  private _refDirective?: RefDirective;
+
   override apply(data: { [key: string]: unknown }) {
     if (!data) return;
     const { prevData, element } = this;
@@ -292,9 +305,19 @@ export class KaoriSpreadDirective extends SpreadEventsDirective {
       if (value === prevData[key]) {
         continue;
       }
-
+      if (key === 'ref') {
+        const result = ref(value as RefOrCallback) as {
+          values: unknown[];
+          _$litDirective$: typeof RefDirective;
+        };
+        this._refDirective = new (result[
+          '_$litDirective$'
+        ] as typeof RefDirective)((this as any).__part as PartInfo);
+        this._refDirective.isConnected = true;
+        this._refDirective.update((this as any).__part, result.values as never);
+      }
       // Check for prop: prefix
-      if (key.startsWith('prop:')) {
+      else if (key.startsWith('prop:')) {
         const name = key.slice(5); // Remove 'prop:' prefix
         // @ts-ignore
         element[name] = value;
@@ -335,8 +358,15 @@ export class KaoriSpreadDirective extends SpreadEventsDirective {
     if (!prevData) return;
     for (const key in prevData) {
       if (!data || !(key in data)) {
+        // Handle ref cleanup
+        if (key === 'ref' && this._refDirective) {
+          this._refDirective.isConnected = false;
+          this._refDirective.disconnected();
+          this._refDirective = undefined;
+        }
+
         // Check for prop: prefix
-        if (key.startsWith('prop:')) {
+        else if (key.startsWith('prop:')) {
           const name = key.slice(5);
           if (element[name as keyof Element] === prevData[key]) {
             // @ts-ignore
@@ -364,12 +394,28 @@ export class KaoriSpreadDirective extends SpreadEventsDirective {
       }
     }
   }
+
+  override disconnected() {
+    super.disconnected();
+    if (this._refDirective) {
+      this._refDirective.isConnected = false;
+      this._refDirective.disconnected();
+      this._refDirective = undefined;
+    }
+  }
+
+  override reconnected() {
+    super.reconnected();
+  }
 }
 
 /**
  * Usage:
  *    import { html, render } from 'kaori';
  *    import { spread } from 'kaori/helpers';
+ *
+ *    const myRef = { value: undefined };
+ *    const callbackRef = (el) => console.log('Element:', el);
  *
  *    render(
  *      html`
@@ -379,6 +425,7 @@ export class KaoriSpreadDirective extends SpreadEventsDirective {
  *            'bool:my-boolean-attribute': true,
  *            'prop:myProperty': { foo: 'bar' },
  *            'onClick': () => console.log('click event fired'),
+ *            'ref': myRef, // or callbackRef
  *          })}
  *        ></div>
  *      `,

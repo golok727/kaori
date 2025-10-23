@@ -3,10 +3,6 @@
  * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
  */
 
-/**
- * Colors - Kawaii Pink & Purple Theme 💖✨
- */
-
 :root {
   /* Brand colors - Soft pink and purple */
   --vp-c-brand-1: #ff6b9d;
@@ -183,7 +179,8 @@
 }
 
 @keyframes sparkle {
-  0%, 100% {
+  0%,
+  100% {
     filter: brightness(1);
   }
   50% {
@@ -203,24 +200,21 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, var(--vp-c-brand-1), var(--vp-c-purple-1));
+  background: linear-gradient(
+    180deg,
+    var(--vp-c-brand-1),
+    var(--vp-c-purple-1)
+  );
   border-radius: 10px;
   border: 2px solid var(--vp-c-bg-soft);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, var(--vp-c-brand-2), var(--vp-c-purple-2));
-}
-
-/* Add cute emoji decorations */
-.vp-doc h1::before {
-  content: '✨ ';
-}
-
-.vp-doc h2::before {
-  content: '💖 ';
-  font-size: 0.8em;
-  margin-right: 0.2em;
+  background: linear-gradient(
+    180deg,
+    var(--vp-c-brand-2),
+    var(--vp-c-purple-2)
+  );
 }
 
 /* Make code blocks more kawaii */

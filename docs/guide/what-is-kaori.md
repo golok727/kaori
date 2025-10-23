@@ -21,7 +21,7 @@ If you've used React or Solid.js, you'll feel right at home:
 ```tsx
 function Counter() {
   const count = signal(0);
-  
+
   return () => (
     <button onClick={() => count.value++}>
       Count: {count.value}
@@ -53,7 +53,7 @@ Components in Kaori follow a simple pattern:
 function Component(props) {
   // Setup phase - runs once
   const state = signal(0);
-  
+
   // Render phase - runs on every update
   return () => <div>{state.value}</div>;
 }
@@ -75,7 +75,6 @@ Kaori is great for:
 - ✅ Building interactive web applications
 - ✅ Projects where bundle size matters
 - ✅ Teams familiar with React or Solid.js
-- ✅ Applications that need fine-grained reactivity
 
 Kaori might not be ideal for:
 - ❌ Server-side rendering (not supported yet)

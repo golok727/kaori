@@ -1,12 +1,11 @@
 # Getting Started
 
-Get up and running with Kaori in minutes! 🚀
+Get up and running with Kaori in seconds! 🚀
 
 ## Prerequisites
 
 Before you begin, make sure you have:
 - Node.js 18 or higher
-- pnpm, npm, or yarn package manager
 
 ## Creating a New Project
 
@@ -72,13 +71,10 @@ Add the Kaori Vite plugin to your `vite.config.ts`:
 
 ```ts
 import { defineConfig } from 'vite';
-import { kaoriVitePlugin } from 'kaori-compiler';
+import { kaori } from 'kaori-compiler/vite';
 
 export default defineConfig({
-  plugins: [kaoriVitePlugin()],
-  esbuild: {
-    jsx: 'preserve',
-  },
+  plugins: [kaori()],
 });
 ```
 
@@ -91,7 +87,6 @@ Update your `tsconfig.json`:
   "compilerOptions": {
     "jsx": "preserve",
     "jsxImportSource": "kaori.js",
-    "types": ["kaori.js/jsx"]
   }
 }
 ```
@@ -105,11 +100,11 @@ import { signal, render } from 'kaori.js';
 
 function App() {
   const count = signal(0);
-  
+
   function increment() {
     count.value++;
   }
-  
+
   return () => (
     <div>
       <h1>Hello Kaori! ✨</h1>
@@ -161,43 +156,5 @@ my-kaori-app/
 ├── tsconfig.json
 └── vite.config.ts
 ```
-
-## Editor Setup
-
-For the best development experience, we recommend:
-
-### VS Code
-
-Install these extensions:
-- [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) - For JSX support
-- [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-- [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
-
-### WebStorm
-
-WebStorm has built-in support for TypeScript and JSX. Just make sure JSX support is enabled in your project settings.
-
-## Troubleshooting
-
-### JSX Not Transforming
-
-Make sure:
-1. The Kaori Vite plugin is properly configured
-2. Your `tsconfig.json` has `"jsx": "preserve"`
-3. Files use `.tsx` extension
-
-### Type Errors
-
-If you see type errors with JSX:
-1. Ensure `kaori.js/jsx` is in your `tsconfig.json` types
-2. Restart your TypeScript server
-3. Check that you're importing from `kaori.js`
-
-### Hot Module Replacement Issues
-
-If HMR isn't working:
-1. Make sure you're using Vite 5+
-2. Check your Vite configuration
-3. Try clearing the `.vite` cache directory
 
 Need more help? Check out our [GitHub Issues](https://github.com/golok727/kaori/issues) or join the community!
