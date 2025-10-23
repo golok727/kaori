@@ -11,13 +11,17 @@
     "test": "pnpm -r test",
     "build:packages": "pnpm -r --filter \"!./packages/playground\" run build",
     "format": "prettier --write .",
-    "ci:publish": "pnpm build:packages && pnpm -r publish --access public --no-git-checks"
+    "ci:publish": "pnpm build:packages && pnpm -r publish --access public --no-git-checks",
+    "docs:dev": "cd docs && pnpm vitepress dev",
+    "docs:build": "cd docs && pnpm vitepress build",
+    "docs:preview": "cd docs && pnpm vitepress preview"
   },
   "license": "MIT",
   "packageManager": "pnpm@10.12.4",
   "devDependencies": {
     "prettier": "^3.6.2",
-    "typescript": "~5.9.3"
+    "typescript": "~5.9.3",
+    "vitepress": "^1.6.4"
   },
   "dependencies": {
     "kaori-monorepo": "link:"

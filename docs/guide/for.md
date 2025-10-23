@@ -1,0 +1,234 @@
+# For Component
+
+The `For` component efficiently renders lists with proper keying and minimal DOM updates.
+
+## Basic Usage
+
+```tsx
+import { For } from 'kaori.js';
+
+function TodoList(props: { todos: string[] }) {
+  return () => (
+    <ul>
+      <For items={props.todos}>
+        {(item, index) => <li>{item}</li>}
+      </For>
+    </ul>
+  );
+}
+```
+
+## With Keys
+
+Use keys for efficient list updates when items can be reordered:
+
+```tsx
+import { signal, For } from 'kaori.js';
+
+type Todo = { id: number; text: string };
+
+function TodoList() {
+  const todos = signal<Todo[]>([
+    { id: 1, text: 'Learn Kaori' },
+    { id: 2, text: 'Build app' },
+  ]);
+  
+  return () => (
+    <ul>
+      <For items={todos.value} key={(todo) => todo.id}>
+        {(todo) => <li>{todo.text}</li>}
+      </For>
+    </ul>
+  );
+}
+```
+
+## Why Use For?
+
+### Without For (Array.map)
+
+```tsx
+function List() {
+  const items = signal(['a', 'b', 'c']);
+  
+  // ❌ Recreates all DOM nodes on reorder
+  return () => (
+    <ul>
+      {items.value.map(item => <li>{item}</li>)}
+    </ul>
+  );
+}
+```
+
+### With For
+
+```tsx
+function List() {
+  const items = signal(['a', 'b', 'c']);
+  
+  // ✅ Reuses DOM nodes efficiently
+  return () => (
+    <ul>
+      <For items={items.value} key={(item) => item}>
+        {(item) => <li>{item}</li>}
+      </For>
+    </ul>
+  );
+}
+```
+
+## Access Index
+
+The second parameter is the index:
+
+```tsx
+<For items={items.value}>
+  {(item, index) => (
+    <li>
+      {index + 1}. {item}
+    </li>
+  )}
+</For>
+```
+
+## Nested For
+
+Render nested lists:
+
+```tsx
+type Group = {
+  name: string;
+  items: string[];
+};
+
+function NestedList(props: { groups: Group[] }) {
+  return () => (
+    <div>
+      <For items={props.groups} key={(g) => g.name}>
+        {(group) => (
+          <div>
+            <h3>{group.name}</h3>
+            <For items={group.items}>
+              {(item) => <div>{item}</div>}
+            </For>
+          </div>
+        )}
+      </For>
+    </div>
+  );
+}
+```
+
+## Empty Lists
+
+Handle empty lists:
+
+```tsx
+function List(props: { items: string[] }) {
+  return () => (
+    <div>
+      {props.items.length === 0 ? (
+        <p>No items</p>
+      ) : (
+        <For items={props.items}>
+          {(item) => <div>{item}</div>}
+        </For>
+      )}
+    </div>
+  );
+}
+```
+
+## Performance Tips
+
+1. **Always use keys for dynamic lists**
+   ```tsx
+   <For items={list} key={(item) => item.id}>
+   ```
+
+2. **Use stable keys**
+   ```tsx
+   // ✅ Good - stable ID
+   key={(item) => item.id}
+   
+   // ❌ Bad - index changes on reorder
+   key={(item, index) => index}
+   ```
+
+3. **Avoid inline functions in keys**
+   ```tsx
+   // ❌ Bad - creates new function each render
+   <For items={list} key={(item) => String(item.id)}>
+   
+   // ✅ Better - use stable property
+   <For items={list} key={(item) => item.id}>
+   ```
+
+## Complete Example
+
+```tsx
+import { signal, For } from 'kaori.js';
+
+type Todo = {
+  id: number;
+  text: string;
+  completed: boolean;
+};
+
+function TodoApp() {
+  const todos = signal<Todo[]>([]);
+  const input = signal('');
+  
+  function addTodo() {
+    if (!input.value) return;
+    todos.value = [
+      ...todos.value,
+      { id: Date.now(), text: input.value, completed: false }
+    ];
+    input.value = '';
+  }
+  
+  function toggleTodo(id: number) {
+    todos.value = todos.value.map(todo =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    );
+  }
+  
+  function removeTodo(id: number) {
+    todos.value = todos.value.filter(todo => todo.id !== id);
+  }
+  
+  return () => (
+    <div>
+      <input
+        prop:value={input.value}
+        onChange={(e) => input.value = e.target.value}
+        onKeyDown={(e) => e.key === 'Enter' && addTodo()}
+      />
+      <button onClick={addTodo}>Add</button>
+      
+      <ul>
+        <For items={todos.value} key={(todo) => todo.id}>
+          {(todo) => (
+            <li classMap={{ completed: todo.completed }}>
+              <input
+                type="checkbox"
+                bool:checked={todo.completed}
+                onChange={() => toggleTodo(todo.id)}
+              />
+              {todo.text}
+              <button onClick={() => removeTodo(todo.id)}>×</button>
+            </li>
+          )}
+        </For>
+      </ul>
+    </div>
+  );
+}
+```
+
+## Next Steps
+
+- Learn about [Show Component](/guide/show)
+- Explore [Event Handlers](/guide/events)
+- Check out [Examples](/examples/todo-list)
