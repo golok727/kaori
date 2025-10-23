@@ -1,0 +1,295 @@
+/**
+ * Customize default theme styling by overriding CSS variables:
+ * https://github.com/vuejs/vitepress/blob/main/src/client/theme-default/styles/vars.css
+ */
+
+/**
+ * Colors - Kawaii Pink & Purple Theme 💖✨
+ */
+
+:root {
+  /* Brand colors - Soft pink and purple */
+  --vp-c-brand-1: #ff6b9d;
+  --vp-c-brand-2: #ff8eb3;
+  --vp-c-brand-3: #ffa8c5;
+  --vp-c-brand-soft: rgba(255, 107, 157, 0.14);
+
+  /* Accent colors - Purple tones */
+  --vp-c-purple-1: #c084fc;
+  --vp-c-purple-2: #d8b4fe;
+  --vp-c-purple-3: #e9d5ff;
+  --vp-c-purple-soft: rgba(192, 132, 252, 0.14);
+
+  /* Background colors - Soft and clean */
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-soft: #fef3f7;
+  --vp-c-bg-mute: #fce7f0;
+  --vp-c-bg-alt: #fff5fa;
+
+  /* Text colors */
+  --vp-c-text-1: #2c3e50;
+  --vp-c-text-2: #476582;
+  --vp-c-text-3: #90a4b7;
+
+  /* Border colors */
+  --vp-c-divider: #ffc2da;
+  --vp-c-border: #ffd6e5;
+
+  /* Shadows - Soft and kawaii */
+  --vp-shadow-1: 0 1px 2px rgba(255, 107, 157, 0.04);
+  --vp-shadow-2: 0 3px 12px rgba(255, 107, 157, 0.07);
+  --vp-shadow-3: 0 12px 32px rgba(255, 107, 157, 0.1);
+  --vp-shadow-4: 0 14px 44px rgba(255, 107, 157, 0.12);
+  --vp-shadow-5: 0 18px 56px rgba(255, 107, 157, 0.16);
+}
+
+.dark {
+  /* Brand colors for dark mode */
+  --vp-c-brand-1: #ff8eb3;
+  --vp-c-brand-2: #ff6b9d;
+  --vp-c-brand-3: #ff4d88;
+  --vp-c-brand-soft: rgba(255, 142, 179, 0.16);
+
+  /* Purple tones for dark mode */
+  --vp-c-purple-1: #d8b4fe;
+  --vp-c-purple-2: #c084fc;
+  --vp-c-purple-3: #a855f7;
+  --vp-c-purple-soft: rgba(216, 180, 254, 0.16);
+
+  /* Background colors - Dark mode */
+  --vp-c-bg: #1a1a1a;
+  --vp-c-bg-soft: #252525;
+  --vp-c-bg-mute: #2f2f2f;
+  --vp-c-bg-alt: #232323;
+
+  /* Text colors for dark mode */
+  --vp-c-text-1: #f5f5f5;
+  --vp-c-text-2: #d4d4d4;
+  --vp-c-text-3: #a3a3a3;
+
+  /* Border colors for dark mode */
+  --vp-c-divider: #3d3d3d;
+  --vp-c-border: #4a4a4a;
+
+  /* Shadows for dark mode */
+  --vp-shadow-1: 0 1px 2px rgba(0, 0, 0, 0.24);
+  --vp-shadow-2: 0 3px 12px rgba(0, 0, 0, 0.32);
+  --vp-shadow-3: 0 12px 32px rgba(0, 0, 0, 0.4);
+  --vp-shadow-4: 0 14px 44px rgba(0, 0, 0, 0.48);
+  --vp-shadow-5: 0 18px 56px rgba(0, 0, 0, 0.56);
+}
+
+/**
+ * Component: Button
+ */
+
+:root {
+  --vp-button-brand-border: transparent;
+  --vp-button-brand-text: var(--vp-c-white);
+  --vp-button-brand-bg: var(--vp-c-brand-1);
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-brand-hover-text: var(--vp-c-white);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-2);
+  --vp-button-brand-active-border: transparent;
+  --vp-button-brand-active-text: var(--vp-c-white);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+}
+
+/**
+ * Component: Home
+ */
+
+:root {
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(
+    135deg,
+    #ff6b9d 0%,
+    #c084fc 50%,
+    #ffa8c5 100%
+  );
+
+  --vp-home-hero-image-background-image: linear-gradient(
+    135deg,
+    rgba(255, 107, 157, 0.3) 0%,
+    rgba(192, 132, 252, 0.3) 100%
+  );
+  --vp-home-hero-image-filter: blur(44px);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --vp-home-hero-image-filter: blur(56px);
+  }
+}
+
+@media (min-width: 960px) {
+  :root {
+    --vp-home-hero-image-filter: blur(68px);
+  }
+}
+
+/**
+ * Component: Custom Block
+ */
+
+:root {
+  --vp-custom-block-tip-border: var(--vp-c-brand-1);
+  --vp-custom-block-tip-text: var(--vp-c-text-1);
+  --vp-custom-block-tip-bg: var(--vp-c-brand-soft);
+  --vp-custom-block-tip-code-bg: var(--vp-c-brand-soft);
+}
+
+/**
+ * Component: Algolia
+ */
+
+.DocSearch {
+  --docsearch-primary-color: var(--vp-c-brand-1) !important;
+}
+
+/**
+ * Custom styles for kawaii look
+ */
+
+/* Add cute rounded corners everywhere */
+.VPNav,
+.VPSidebar,
+.VPDoc,
+.vp-doc div[class*='language-'],
+.vp-code-group .tabs {
+  border-radius: 12px;
+}
+
+/* Cute buttons with shadows */
+.VPButton {
+  border-radius: 24px;
+  transition: all 0.3s ease;
+}
+
+.VPButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 157, 0.3);
+}
+
+/* Add sparkle effect on hover for brand text */
+.name {
+  position: relative;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.name:hover {
+  animation: sparkle 1s ease-in-out;
+}
+
+@keyframes sparkle {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.3);
+  }
+}
+
+/* Cute scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--vp-c-bg-soft);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--vp-c-brand-1), var(--vp-c-purple-1));
+  border-radius: 10px;
+  border: 2px solid var(--vp-c-bg-soft);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--vp-c-brand-2), var(--vp-c-purple-2));
+}
+
+/* Add cute emoji decorations */
+.vp-doc h1::before {
+  content: '✨ ';
+}
+
+.vp-doc h2::before {
+  content: '💖 ';
+  font-size: 0.8em;
+  margin-right: 0.2em;
+}
+
+/* Make code blocks more kawaii */
+.vp-doc div[class*='language-'] {
+  border: 2px solid var(--vp-c-border);
+  box-shadow: var(--vp-shadow-2);
+}
+
+/* Cute focus styles */
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Feature cards with gradient backgrounds */
+.VPFeature {
+  background: linear-gradient(135deg, var(--vp-c-bg-soft), var(--vp-c-bg-mute));
+  border: 2px solid var(--vp-c-border);
+  transition: all 0.3s ease;
+}
+
+.VPFeature:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--vp-shadow-3);
+  border-color: var(--vp-c-brand-1);
+}
+
+/* Add cute animations for the logo */
+.VPNavBarTitle .logo {
+  transition: transform 0.3s ease;
+}
+
+.VPNavBarTitle .logo:hover {
+  transform: rotate(10deg) scale(1.1);
+}
+
+/* Make links more kawaii */
+.vp-doc a {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.vp-doc a::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background: linear-gradient(90deg, var(--vp-c-brand-1), var(--vp-c-purple-1));
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.vp-doc a:hover::after {
+  transform: scaleX(1);
+}
+
+/* Cute badges */
+.vp-doc .custom-block {
+  border-radius: 12px;
+  border-width: 2px;
+}
+
+/* Add heart decorations to the footer */
+.VPFooter {
+  background: linear-gradient(180deg, transparent, var(--vp-c-bg-soft));
+}
