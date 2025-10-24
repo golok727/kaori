@@ -46,9 +46,9 @@ exports[`Ref directive transformation > should transform ref on component 1`] = 
 import { createRef } from "kaori.js";
 function App() {
   const myRef = createRef();
-  return [html\`\${component(MyComponent, {
+  return [component(MyComponent, {
     ref: myRef
-  })}\`, html\`<div \${ref(myRef)}>HTML element</div>\`];
+  }), html\`<div \${ref(myRef)}>HTML element</div>\`];
 }"
 `;
 

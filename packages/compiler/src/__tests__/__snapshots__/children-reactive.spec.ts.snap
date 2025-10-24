@@ -26,15 +26,15 @@ exports[`Children prop reactivity > should handle nested reactive children corre
 function Parent() {
   return html\`\${component(Outer, {
     get children() {
-      return html\`\${component(Middle, {
+      return component(Middle, {
         get children() {
-          return html\`\${component(Inner, {
+          return component(Inner, {
             get prop() {
               return getValue();
             }
-          })}\`;
+          });
         }
-      })}\`;
+      });
     }
   })}\`;
 }"
@@ -45,9 +45,9 @@ exports[`Children prop reactivity > should make children reactive even with stat
 function Parent() {
   return html\`\${component(Container, {
     get children() {
-      return html\`\${component(Child, {
+      return component(Child, {
         title: "static"
-      })}\`;
+      });
     }
   })}\`;
 }"
@@ -58,11 +58,11 @@ exports[`Children prop reactivity > should make children reactive when containin
 function Parent() {
   return html\`\${component(Container, {
     get children() {
-      return html\`\${component(Child, {
+      return component(Child, {
         get title() {
           return getTitle();
         }
-      })}\`;
+      });
     }
   })}\`;
 }"
@@ -106,11 +106,11 @@ exports[`Children prop reactivity > should make children reactive with mixed sta
 function Parent() {
   return html\`\${component(Container, {
     get children() {
-      return [html\`<p>Static</p>\`, getDynamic(), html\`\${component(Child, {
+      return [html\`<p>Static</p>\`, getDynamic(), component(Child, {
         get prop() {
           return getValue();
         }
-      })}\`];
+      })];
     }
   })}\`;
 }"

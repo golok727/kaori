@@ -276,7 +276,7 @@ exports[`Spread Props > Mixed Scenarios > should handle complex real-world examp
 "import { component, html, spread, mergeProps } from "kaori.js";
 function Button(props) {
   return () => {
-    [html\`\${component(Input, {
+    [component(Input, {
       get thing() {
         return props.value;
       },
@@ -284,9 +284,9 @@ function Button(props) {
         return props.value;
       },
       "data-thing": "asd"
-    })}\`, html\`\${component(Button, mergeProps(props, {
+    }), component(Button, mergeProps(props, {
       onClick: () => {}
-    }, somethingElse))}\`, html\`<button \${spread(props)}></button>\`];
+    }, somethingElse)), html\`<button \${spread(props)}></button>\`];
   };
 }"
 `;
@@ -324,9 +324,9 @@ function Fragment() {
   const props2 = {
     value: "b"
   };
-  return [html\`\${component(Component1, props1)}\`, html\`\${component(Component2, mergeProps(props2, {
+  return [component(Component1, props1), component(Component2, mergeProps(props2, {
     other: "value"
-  }))}\`];
+  }))];
 }"
 `;
 
@@ -353,7 +353,7 @@ function Nested() {
   };
   return html\`\${component(Outer, mergeProps(outerProps, {
     get children() {
-      return html\`\${component(Inner, innerProps)}\`;
+      return component(Inner, innerProps);
     }
   }))}\`;
 }"

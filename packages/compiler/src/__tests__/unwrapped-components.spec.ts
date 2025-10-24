@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { compile } from './utils';
 
-describe('Unwrapped Components - Critical Issue', () => {
-  describe('Single unwrapped component in children', () => {
-    it('should wrap component() call in html template literal when used as children', async () => {
+describe('Unwrapped Components - Optimization', () => {
+  describe('Single component in children', () => {
+    it('should not wrap component() call in html when already in template context', async () => {
       const input = `
 function Parent() {
   return (
@@ -15,16 +15,16 @@ function Parent() {
 
       const output = await compile(input);
 
-      // Should have html template literal wrapping the component call
+      // Should have html template literal for outer component
       expect(output).toContain('html`');
       expect(output).toContain('component(Child');
       expect(output).toContain('get children()');
-      // The component call should be inside an html template literal
-      expect(output).toMatch(/html`\$\{component\(Child/);
+      // The component call should NOT be wrapped in html since it's in template context
+      expect(output).toMatch(/get children\(\)\s*\{\s*return component\(Child/);
       expect(output).toMatchSnapshot();
     });
 
-    it('should wrap component with props in html template literal', async () => {
+    it('should not wrap component with props', async () => {
       const input = `
 function Parent() {
   return (
@@ -37,11 +37,11 @@ function Parent() {
       const output = await compile(input);
 
       expect(output).toContain('html`');
-      expect(output).toMatch(/html`\$\{component\(Child/);
+      expect(output).toMatch(/return component\(Child/);
       expect(output).toMatchSnapshot();
     });
 
-    it('should wrap component with reactive props in html template literal', async () => {
+    it('should not wrap component with reactive props', async () => {
       const input = `
 function Parent() {
   return (
@@ -54,14 +54,14 @@ function Parent() {
       const output = await compile(input);
 
       expect(output).toContain('html`');
-      expect(output).toMatch(/html`\$\{component\(Child/);
+      expect(output).toMatch(/return component\(Child/);
       expect(output).toContain('get title()');
       expect(output).toMatchSnapshot();
     });
   });
 
-  describe('Multiple unwrapped components in children', () => {
-    it('should wrap all sibling components in html template literal', async () => {
+  describe('Multiple components in children', () => {
+    it('should not wrap sibling components individually', async () => {
       const input = `
 function Parent() {
   return (
@@ -79,14 +79,14 @@ function Parent() {
       expect(output).toContain('component(Header');
       expect(output).toContain('component(Body');
       expect(output).toContain('component(Footer');
-      // All components should be wrapped in the same html template
+      // Components should be in an array without individual html wrappers
       expect(output).toMatch(
-        /html`[\s\S]*component\(Header[\s\S]*component\(Body[\s\S]*component\(Footer/
+        /return \[component\(Header[\s\S]*component\(Body[\s\S]*component\(Footer/
       );
       expect(output).toMatchSnapshot();
     });
 
-    it('should wrap components mixed with text in html template literal', async () => {
+    it('should optimize components mixed with text', async () => {
       const input = `
 function Parent() {
   return (
@@ -105,7 +105,7 @@ function Parent() {
       expect(output).toMatchSnapshot();
     });
 
-    it('should wrap components mixed with HTML elements', async () => {
+    it('should optimize components mixed with HTML elements', async () => {
       const input = `
 function Parent() {
   return (
@@ -127,8 +127,8 @@ function Parent() {
     });
   });
 
-  describe('Nested unwrapped components (3+ levels)', () => {
-    it('should wrap nested components at each level', async () => {
+  describe('Nested components (3+ levels)', () => {
+    it('should optimize nested components at each level', async () => {
       const input = `
 function Parent() {
   return (
@@ -142,21 +142,21 @@ function Parent() {
 
       const output = await compile(input);
 
-      // Each level should have html wrapping
+      // Top level should have html wrapping
       const outerMatch = output.match(
-        /component\(Outer[\s\S]*get children\(\)[\s\S]*html`/
+        /component\(Outer[\s\S]*get children\(\)[\s\S]*return component/
       );
       expect(outerMatch).toBeTruthy();
 
       const middleMatch = output.match(
-        /component\(Middle[\s\S]*get children\(\)[\s\S]*html`/
+        /component\(Middle[\s\S]*get children\(\)[\s\S]*return component/
       );
       expect(middleMatch).toBeTruthy();
 
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle deeply nested components (5 levels)', async () => {
+    it('should optimize deeply nested components (5 levels)', async () => {
       const input = `
 function Root() {
   return (
@@ -179,14 +179,14 @@ function Root() {
       expect(output).toContain('component(L3');
       expect(output).toContain('component(L4');
       expect(output).toContain('component(L5');
-      // Each level should wrap its children in html
+      // Should have only one html wrapper at the top level
       expect(
         output.match(/html`\$\{component/g)?.length
-      ).toBeGreaterThanOrEqual(4);
+      ).toBe(1);
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle nested components with reactive props at each level', async () => {
+    it('should optimize nested components with reactive props at each level', async () => {
       const input = `
 function Parent() {
   return (
@@ -208,8 +208,8 @@ function Parent() {
     });
   });
 
-  describe('Unwrapped components in control flow', () => {
-    it('should wrap component in Show conditional', async () => {
+  describe('Components in control flow', () => {
+    it('should optimize component in Show conditional', async () => {
       const input = `
 function Parent() {
   return (
@@ -223,14 +223,14 @@ function Parent() {
 
       expect(output).toContain('component(Show');
       expect(output).toContain('component(Child');
-      // Child should be wrapped in html inside Show's children getter
+      // Child should not be wrapped in html inside Show's children getter
       expect(output).toMatch(
-        /get children\(\)[\s\S]*html`\$\{component\(Child/
+        /get children\(\)\s*\{\s*return component\(Child/
       );
       expect(output).toMatchSnapshot();
     });
 
-    it('should wrap component in For loop', async () => {
+    it('should optimize component in For loop', async () => {
       const input = `
 function Parent() {
   return (
@@ -250,7 +250,7 @@ function Parent() {
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle nested Show with components', async () => {
+    it('should optimize nested Show with components', async () => {
       const input = `
 function Parent() {
   return (
@@ -271,7 +271,7 @@ function Parent() {
   });
 
   describe('Complex component hierarchies', () => {
-    it('should handle component with multiple nested children at different levels', async () => {
+    it('should optimize component with multiple nested children at different levels', async () => {
       const input = `
 function App() {
   return (
@@ -302,12 +302,12 @@ function App() {
       expect(output).toContain('component(Content');
       expect(output).toContain('component(Article');
       expect(output).toContain('component(Footer');
-      // Should have multiple html template literals
-      expect(output.match(/html`/g)?.length).toBeGreaterThan(5);
+      // Should have only one html wrapper at the top level
+      expect(output.match(/html`/g)?.length).toBe(1);
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle components with conditional rendering', async () => {
+    it('should optimize components with conditional rendering', async () => {
       const input = `
 function Parent() {
   return (
@@ -329,7 +329,7 @@ function Parent() {
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle components in arrays/maps', async () => {
+    it('should optimize components in arrays/maps', async () => {
       const input = `
 function Parent() {
   return (
@@ -348,7 +348,7 @@ function Parent() {
   });
 
   describe('Edge cases', () => {
-    it('should handle component as direct return value', async () => {
+    it('should wrap component as direct return value', async () => {
       const input = `
 function Wrapper() {
   return <Child />;
@@ -356,12 +356,13 @@ function Wrapper() {
 
       const output = await compile(input);
 
-      // Direct return of component should also be wrapped
+      // Direct return of component should be wrapped in html
+      expect(output).toContain('html`');
       expect(output).toContain('component(Child');
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle component in fragment', async () => {
+    it('should not wrap components in fragment', async () => {
       const input = `
 function Parent() {
   return (
@@ -376,11 +377,12 @@ function Parent() {
 
       expect(output).toContain('component(Child1');
       expect(output).toContain('component(Child2');
-      expect(output).toContain('html`');
+      // Fragment with multiple children returns array without html wrapper
+      expect(output).not.toContain('html`');
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle self-closing and non-self-closing components', async () => {
+    it('should optimize self-closing and non-self-closing components', async () => {
       const input = `
 function Parent() {
   return (
@@ -400,7 +402,7 @@ function Parent() {
       expect(output).toMatchSnapshot();
     });
 
-    it('should handle component with spread props', async () => {
+    it('should optimize component with spread props', async () => {
       const input = `
 function Parent() {
   return (

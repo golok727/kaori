@@ -150,24 +150,24 @@ exports[`JSX to lit-html transformation > should transform components with child
 function ComponentChildren() {
   return html\`\${component(Layout, {
     get children() {
-      return [html\`\${component(Header, {
+      return [component(Header, {
         title: "My App"
-      })}\`, html\`\${component(Content, {
+      }), component(Content, {
         get children() {
-          return html\`\${component(Article, {
+          return component(Article, {
             get title() {
               return getTitle();
             },
             get children() {
-              return [html\`<p>Article content</p>\`, html\`\${component(Comments, {
+              return [html\`<p>Article content</p>\`, component(Comments, {
                 get comments() {
                   return getComments();
                 }
-              })}\`];
+              })];
             }
-          })}\`;
+          });
         }
-      })}\`, html\`\${component(Footer, {})}\`];
+      }), component(Footer, {})];
     }
   })}\`;
 }"

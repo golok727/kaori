@@ -1023,20 +1023,10 @@ function processChildren(
       const tagName = getJSXElementName(child.openingElement.name);
       if (isComponent(tagName)) {
         state.importManager!.markNeeded('component');
-        state.importManager!.markNeeded('html');
-        // Wrap component call in html template literal
+        // Optimization: Don't wrap component directive in html`` when used as children
+        // The component directive is already renderable by lit-html when used in template context
         const componentCall = createComponentCall(child, tagName, state);
-        const templateLiteral = t.taggedTemplateExpression(
-          t.identifier(state.importManager!.getName('html')),
-          t.templateLiteral(
-            [
-              t.templateElement({ raw: '', cooked: '' }, false),
-              t.templateElement({ raw: '', cooked: '' }, true),
-            ],
-            [componentCall]
-          )
-        );
-        processedChildren.push(templateLiteral);
+        processedChildren.push(componentCall);
       } else {
         state.importManager!.markNeeded('html');
         processedChildren.push(createHTMLElement(child, state));
