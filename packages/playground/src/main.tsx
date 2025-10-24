@@ -18,7 +18,6 @@ import {
   type Signal,
   useContext,
   provideContext,
-  onCleanup,
 } from 'kaori.js';
 
 const root = document.querySelector<HTMLDivElement>('#root')!;

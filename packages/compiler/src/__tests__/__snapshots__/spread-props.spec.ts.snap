@@ -276,7 +276,7 @@ exports[`Spread Props > Mixed Scenarios > should handle complex real-world examp
 "import { component, html, spread, mergeProps } from "kaori.js";
 function Button(props) {
   return () => {
-    [component(Input, {
+    [html\`\${component(Input, {
       get thing() {
         return props.value;
       },
@@ -284,9 +284,9 @@ function Button(props) {
         return props.value;
       },
       "data-thing": "asd"
-    }), component(Button, mergeProps(props, {
+    })}\`, html\`\${component(Button, mergeProps(props, {
       onClick: () => {}
-    }, somethingElse)), html\`<button \${spread(props)}></button>\`];
+    }, somethingElse))}\`, html\`<button \${spread(props)}></button>\`];
   };
 }"
 `;
@@ -324,9 +324,9 @@ function Fragment() {
   const props2 = {
     value: "b"
   };
-  return [component(Component1, props1), component(Component2, mergeProps(props2, {
+  return [html\`\${component(Component1, props1)}\`, html\`\${component(Component2, mergeProps(props2, {
     other: "value"
-  }))];
+  }))}\`];
 }"
 `;
 
@@ -343,7 +343,7 @@ function Member() {
 `;
 
 exports[`Spread Props > Mixed Scenarios > should handle nested components with spreads 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Nested() {
   const outerProps = {
     class: "outer"
@@ -353,7 +353,7 @@ function Nested() {
   };
   return component(Outer, mergeProps(outerProps, {
     get children() {
-      return component(Inner, innerProps);
+      return html\`\${component(Inner, innerProps)}\`;
     }
   }));
 }"

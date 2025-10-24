@@ -19,6 +19,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.12.4",
   "devDependencies": {
+    "jsdom": "^27.0.1",
     "prettier": "^3.6.2",
     "typescript": "~5.9.3",
     "vitepress": "^1.6.4"
