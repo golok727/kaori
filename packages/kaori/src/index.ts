@@ -172,9 +172,6 @@ function dispose_handle(handle: ComponentHandleInternal) {
 
   handle.f |= DISPOSED;
 
-  let directive = handle.d;
-  console.log('Here', directive);
-
   handle.t?.forEach(dispose => {
     try {
       dispose();
@@ -224,7 +221,6 @@ function get_context<T>(context: Context<T>): T {
   let directive: ComponentDirective | null = handle.d;
 
   while (directive) {
-    console.log(directive);
     const c_map = (directive as any).__c as Map<symbol, any> | undefined;
     if (c_map && c_map.has(cx.__key)) {
       return c_map.get(cx.__key)!;
@@ -318,8 +314,6 @@ class ComponentDirective<Props = any> extends AsyncDirective {
   }
 
   protected override disconnected(): void {
-    console.log('disconnect', this.__h?.dbg_n);
-    // Clean up the effect when component unmounts
     if (this.__h) {
       dispose_handle(this.__h);
       this.__h = null;
