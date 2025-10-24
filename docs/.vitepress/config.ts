@@ -1,12 +1,10 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   title: 'Kaori',
   description: 'A fragrant TypeScript framework for building reactive UIs ✨',
   base: '/kaori/',
-  head: [
-    ['link', { rel: 'icon', href: '/favicon.ico' }],
-  ],
+  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
   themeConfig: {
     logo: '/logo.svg',
     nav: [
@@ -22,7 +20,7 @@ export default defineConfig({
             { text: 'What is Kaori?', link: '/guide/what-is-kaori' },
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Quick Start', link: '/guide/quick-start' },
-          ]
+          ],
         },
         {
           text: 'Core Concepts',
@@ -31,14 +29,14 @@ export default defineConfig({
             { text: 'Components', link: '/guide/components' },
             { text: 'Props', link: '/guide/props' },
             { text: 'Lifecycle', link: '/guide/lifecycle' },
-          ]
+          ],
         },
         {
           text: 'Control Flow',
           items: [
             { text: 'For Component', link: '/guide/for' },
             { text: 'Show Component', link: '/guide/show' },
-          ]
+          ],
         },
         {
           text: 'Special Attributes',
@@ -47,8 +45,8 @@ export default defineConfig({
             { text: 'Property Binding', link: '/guide/property-binding' },
             { text: 'Boolean Attributes', link: '/guide/boolean-attributes' },
             { text: 'Class & Style Maps', link: '/guide/class-style-maps' },
-          ]
-        }
+          ],
+        },
       ],
       '/api/': [
         {
@@ -59,8 +57,8 @@ export default defineConfig({
             { text: 'Components', link: '/api/components' },
             { text: 'Helpers', link: '/api/helpers' },
             { text: 'Directives', link: '/api/directives' },
-          ]
-        }
+          ],
+        },
       ],
       '/examples/': [
         {
@@ -70,19 +68,19 @@ export default defineConfig({
             { text: 'Todo List', link: '/examples/todo-list' },
             { text: 'Custom Hooks', link: '/examples/custom-hooks' },
             { text: 'Eye Widget', link: '/examples/eye-widget' },
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/golok727/kaori' }
+      { icon: 'github', link: 'https://github.com/golok727/kaori' },
     ],
     footer: {
       message: 'Made with 💖 by golok',
-      copyright: 'MIT Licensed'
+      copyright: 'MIT Licensed',
     },
     search: {
-      provider: 'local'
-    }
-  }
-})
+      provider: 'local',
+    },
+  },
+});

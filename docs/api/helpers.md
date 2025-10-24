@@ -26,7 +26,7 @@ function Button(allProps: ButtonProps & HTMLAttributes) {
 function splitProps<T extends Record<string, any>, K extends keyof T>(
   props: T,
   keys: readonly K[]
-): [Pick<T, K>, Omit<T, K>]
+): [Pick<T, K>, Omit<T, K>];
 ```
 
 ### Parameters
@@ -56,7 +56,7 @@ function Component(userProps: Props) {
 ### Type Signature
 
 ```ts
-function mergeProps(...props: any[]): any
+function mergeProps(...props: any[]): any;
 ```
 
 ### Parameters
@@ -81,7 +81,7 @@ function Component(props: any) {
 ### Type Signature
 
 ```ts
-function spread(props: Record<string, any>): Directive
+function spread(props: Record<string, any>): Directive;
 ```
 
 ::: tip
@@ -109,7 +109,7 @@ function Component() {
 ### Type Signature
 
 ```ts
-function createRef<T = Element>(): Ref<T>
+function createRef<T = Element>(): Ref<T>;
 
 interface Ref<T = Element> {
   value?: T;

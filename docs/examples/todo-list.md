@@ -16,60 +16,57 @@ type Todo = {
 function TodoApp() {
   const todos = signal<Todo[]>([]);
   const input = signal('');
-  
+
   const remaining = computed(
     () => todos.value.filter(t => !t.completed).length
   );
-  
+
   function addTodo() {
     const text = input.value.trim();
     if (!text) return;
-    
-    todos.value = [
-      ...todos.value,
-      { id: Date.now(), text, completed: false }
-    ];
+
+    todos.value = [...todos.value, { id: Date.now(), text, completed: false }];
     input.value = '';
   }
-  
+
   function toggleTodo(id: number) {
     todos.value = todos.value.map(todo =>
       todo.id === id ? { ...todo, completed: !todo.completed } : todo
     );
   }
-  
+
   function removeTodo(id: number) {
     todos.value = todos.value.filter(todo => todo.id !== id);
   }
-  
+
   function handleKeyDown(e: KeyboardEvent) {
     if (e.key === 'Enter') {
       addTodo();
     }
   }
-  
+
   return () => (
     <div class="todo-app">
       <h1>My Todos ✨</h1>
-      
+
       <div class="input-section">
         <input
           type="text"
           prop:value={input.value}
-          onChange={(e) => input.value = e.target.value}
+          onChange={e => (input.value = e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="What needs to be done?"
         />
         <button onClick={addTodo}>Add</button>
       </div>
-      
+
       <Show
         when={todos.value.length > 0}
         fallback={() => <p class="empty">No todos yet!</p>}
       >
         <ul class="todo-list">
-          <For items={todos.value} key={(todo) => todo.id}>
-            {(todo) => (
+          <For items={todos.value} key={todo => todo.id}>
+            {todo => (
               <li classMap={{ completed: todo.completed }}>
                 <input
                   type="checkbox"
@@ -77,17 +74,14 @@ function TodoApp() {
                   onChange={() => toggleTodo(todo.id)}
                 />
                 <span class="todo-text">{todo.text}</span>
-                <button 
-                  class="delete-btn"
-                  onClick={() => removeTodo(todo.id)}
-                >
+                <button class="delete-btn" onClick={() => removeTodo(todo.id)}>
                   ×
                 </button>
               </li>
             )}
           </For>
         </ul>
-        
+
         <div class="footer">
           <span>{remaining.value} items left</span>
         </div>

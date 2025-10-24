@@ -9,7 +9,7 @@ import { signal, Show } from 'kaori.js';
 
 function Component() {
   const visible = signal(true);
-  
+
   return () => (
     <div>
       <Show when={visible.value}>
@@ -25,10 +25,7 @@ function Component() {
 Render alternative content when condition is false:
 
 ```tsx
-<Show 
-  when={user.value !== null} 
-  fallback={() => <div>Please log in</div>}
->
+<Show when={user.value !== null} fallback={() => <div>Please log in</div>}>
   <div>Welcome, {user.value.name}!</div>
 </Show>
 ```
@@ -42,13 +39,9 @@ Using ternary or `&&` directly causes the parent to re-render:
 ```tsx
 function App() {
   const visible = signal(true);
-  
+
   // ❌ App re-renders when visible changes
-  return () => (
-    <div>
-      {visible.value && <p>Content</p>}
-    </div>
-  );
+  return () => <div>{visible.value && <p>Content</p>}</div>;
 }
 ```
 
@@ -59,7 +52,7 @@ function App() {
 ```tsx
 function App() {
   const visible = signal(true);
-  
+
   // ✅ Only Show updates, not App
   return () => (
     <div>
@@ -95,14 +88,17 @@ Chain multiple conditions:
 function Auth() {
   const user = signal(null);
   const loading = signal(true);
-  
+
   return () => (
     <div>
-      <Show when={loading.value} fallback={() => (
-        <Show when={user.value} fallback={() => <Login />}>
-          <Dashboard user={user.value} />
-        </Show>
-      )}>
+      <Show
+        when={loading.value}
+        fallback={() => (
+          <Show when={user.value} fallback={() => <Login />}>
+            <Dashboard user={user.value} />
+          </Show>
+        )}
+      >
         <Spinner />
       </Show>
     </div>
@@ -117,11 +113,11 @@ Pass data to children when condition is met:
 ```tsx
 function UserProfile() {
   const user = signal<User | null>(null);
-  
+
   onMount(async () => {
     user.value = await fetchUser();
   });
-  
+
   return () => (
     <Show when={user.value} fallback={() => <div>Loading...</div>}>
       <div>
@@ -141,7 +137,7 @@ Handle complex conditional rendering:
 function Content() {
   const auth = signal(false);
   const premium = signal(false);
-  
+
   return () => (
     <Show when={auth.value} fallback={() => <Login />}>
       <Show when={premium.value} fallback={() => <Upgrade />}>
@@ -158,18 +154,16 @@ function Content() {
 function Parent() {
   const count = signal(0);
   const show = signal(true);
-  
+
   return () => {
     console.log('Parent render'); // Only logs on count change
-    
+
     return (
       <div>
         <p>Count: {count.value}</p>
         <button onClick={() => count.value++}>+</button>
-        <button onClick={() => show.value = !show.value}>
-          Toggle
-        </button>
-        
+        <button onClick={() => (show.value = !show.value)}>Toggle</button>
+
         {/* Show isolates its updates */}
         <Show when={show.value}>
           <ExpensiveComponent />
@@ -185,6 +179,7 @@ function Parent() {
 Use regular conditionals when:
 
 1. **The parent already updates anyway**
+
    ```tsx
    return () => (
      <div>
@@ -197,11 +192,7 @@ Use regular conditionals when:
 2. **Simple static conditions**
    ```tsx
    // No signals involved
-   return () => (
-     <div>
-       {props.showFooter && <Footer />}
-     </div>
-   );
+   return () => <div>{props.showFooter && <Footer />}</div>;
    ```
 
 ## Best Practices
@@ -249,7 +240,7 @@ function Dashboard() {
   const user = signal<User | null>(null);
   const loading = signal(true);
   const error = signal<Error | null>(null);
-  
+
   onMount(async () => {
     try {
       user.value = await fetchUser();
@@ -259,23 +250,29 @@ function Dashboard() {
       loading.value = false;
     }
   });
-  
+
   return () => (
     <div>
-      <Show when={loading.value} fallback={() => (
-        <Show when={error.value} fallback={() => (
-          <Show when={user.value}>
-            <div>
-              <h1>Welcome, {user.value!.name}!</h1>
-              <Show when={user.value!.role === 'admin'}>
-                <AdminPanel />
+      <Show
+        when={loading.value}
+        fallback={() => (
+          <Show
+            when={error.value}
+            fallback={() => (
+              <Show when={user.value}>
+                <div>
+                  <h1>Welcome, {user.value!.name}!</h1>
+                  <Show when={user.value!.role === 'admin'}>
+                    <AdminPanel />
+                  </Show>
+                </div>
               </Show>
-            </div>
+            )}
+          >
+            <ErrorMessage error={error.value!} />
           </Show>
-        )}>
-          <ErrorMessage error={error.value!} />
-        </Show>
-      )}>
+        )}
+      >
         <LoadingSpinner />
       </Show>
     </div>

@@ -48,6 +48,7 @@ VitePress supports extended markdown features:
 ### Custom Theme
 
 The kawaii theme is defined in `.vitepress/theme/custom.css`. It features:
+
 - Pink and purple gradient colors
 - Cute emoji decorations
 - Smooth animations

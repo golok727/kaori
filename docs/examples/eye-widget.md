@@ -11,42 +11,42 @@ function EyeWidget() {
   const pupilX = signal(0);
   const pupilY = signal(0);
   const eyeContainerRef = createRef<HTMLDivElement>();
-  
+
   onMount(() => {
     const eyeElement = eyeContainerRef.value;
     if (!eyeElement) return;
-    
+
     const IRIS_DIAMETER = 112;
     const PUPIL_DIAMETER = 48;
     const irisRadius = IRIS_DIAMETER / 2;
     const pupilRadius = PUPIL_DIAMETER / 2;
     const maxPupilMovement = irisRadius - pupilRadius;
-    
+
     function handleMouseMove(event: MouseEvent) {
       const eyeRect = eyeElement.getBoundingClientRect();
       const eyeCenterX = eyeRect.left + eyeRect.width / 2;
       const eyeCenterY = eyeRect.top + eyeRect.height / 2;
-      
+
       const deltaX = event.clientX - eyeCenterX;
       const deltaY = event.clientY - eyeCenterY;
-      
+
       const angle = Math.atan2(deltaY, deltaX);
       const distance = Math.min(
         Math.sqrt(deltaX * deltaX + deltaY * deltaY),
         maxPupilMovement
       );
-      
+
       pupilX.value = Math.cos(angle) * distance;
       pupilY.value = Math.sin(angle) * distance;
     }
-    
+
     window.addEventListener('mousemove', handleMouseMove);
-    
+
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
     };
   });
-  
+
   return () => (
     <div class="eye-container">
       <div ref={eyeContainerRef} class="eye">
@@ -149,16 +149,16 @@ Add blinking:
 function EyeWidget() {
   // ... existing code ...
   const isBlinking = signal(false);
-  
+
   onMount(() => {
     const blinkInterval = setInterval(() => {
       isBlinking.value = true;
-      setTimeout(() => isBlinking.value = false, 150);
+      setTimeout(() => (isBlinking.value = false), 150);
     }, 3000);
-    
+
     return () => clearInterval(blinkInterval);
   });
-  
+
   return () => (
     <div class="eye" classMap={{ blinking: isBlinking.value }}>
       {/* ... */}
@@ -173,7 +173,12 @@ function EyeWidget() {
 }
 
 @keyframes blink {
-  0%, 100% { transform: scaleY(1); }
-  50% { transform: scaleY(0.1); }
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.1);
+  }
 }
 ```

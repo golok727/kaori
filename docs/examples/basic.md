@@ -9,19 +9,19 @@ import { signal, render } from 'kaori.js';
 
 function Counter() {
   const count = signal(0);
-  
+
   function increment() {
     count.value++;
   }
-  
+
   function decrement() {
     count.value--;
   }
-  
+
   function reset() {
     count.value = 0;
   }
-  
+
   return () => (
     <div class="counter">
       <h1>Counter: {count.value}</h1>
@@ -49,7 +49,7 @@ function Counter() {
   const count = signal(0);
   const double = computed(() => count.value * 2);
   const isEven = computed(() => count.value % 2 === 0);
-  
+
   return () => (
     <div>
       <h1>Count: {count.value}</h1>
@@ -69,12 +69,12 @@ import { signal, computed, Show } from 'kaori.js';
 function Counter() {
   const count = signal(0);
   const isBig = computed(() => count.value > 10);
-  
+
   return () => (
     <div>
       <h1>Count: {count.value}</h1>
       <button onClick={() => count.value++}>+</button>
-      
+
       <Show when={isBig.value}>
         <p class="alert">Count is getting big! 🎉</p>
       </Show>

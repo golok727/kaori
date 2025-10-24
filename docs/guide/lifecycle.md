@@ -11,12 +11,12 @@ import { signal, onMount } from 'kaori.js';
 
 function Component() {
   const data = signal(null);
-  
+
   onMount(() => {
     console.log('Component mounted!');
     data.value = fetchData();
   });
-  
+
   return () => <div>{data.value}</div>;
 }
 ```
@@ -30,19 +30,19 @@ import { onMount } from 'kaori.js';
 
 function Timer() {
   const count = signal(0);
-  
+
   onMount(() => {
     const interval = setInterval(() => {
       count.value++;
     }, 1000);
-    
+
     // Cleanup - called when component unmounts
     return () => {
       clearInterval(interval);
       console.log('Timer cleaned up');
     };
   });
-  
+
   return () => <div>Time: {count.value}s</div>;
 }
 ```
@@ -56,15 +56,15 @@ import { onMount, onCleanup } from 'kaori.js';
 
 function Component() {
   let subscription;
-  
+
   onMount(() => {
     subscription = subscribe();
   });
-  
+
   onCleanup(() => {
     subscription.unsubscribe();
   });
-  
+
   return () => <div>Subscribed</div>;
 }
 ```
@@ -78,17 +78,13 @@ import { signal, effect } from 'kaori.js';
 
 function Logger() {
   const count = signal(0);
-  
+
   effect(() => {
     console.log('Count changed to:', count.value);
     document.title = `Count: ${count.value}`;
   });
-  
-  return () => (
-    <button onClick={() => count.value++}>
-      Increment
-    </button>
-  );
+
+  return () => <button onClick={() => count.value++}>Increment</button>;
 }
 ```
 
@@ -109,16 +105,15 @@ function Logger() {
 function UserProfile(props: { userId: string }) {
   const user = signal(null);
   const loading = signal(true);
-  
+
   onMount(async () => {
     loading.value = true;
     user.value = await fetchUser(props.userId);
     loading.value = false;
   });
-  
-  return () => (
-    loading.value ? <div>Loading...</div> : <div>{user.value.name}</div>
-  );
+
+  return () =>
+    loading.value ? <div>Loading...</div> : <div>{user.value.name}</div>;
 }
 ```
 
@@ -127,14 +122,14 @@ function UserProfile(props: { userId: string }) {
 ```tsx
 function ClickTracker() {
   const clicks = signal(0);
-  
+
   onMount(() => {
     const handleClick = () => clicks.value++;
     window.addEventListener('click', handleClick);
-    
+
     return () => window.removeEventListener('click', handleClick);
   });
-  
+
   return () => <div>Global clicks: {clicks.value}</div>;
 }
 ```
@@ -144,17 +139,17 @@ function ClickTracker() {
 ```tsx
 function Countdown(props: { seconds: number }) {
   const remaining = signal(props.seconds);
-  
+
   onMount(() => {
     const interval = setInterval(() => {
       if (remaining.value > 0) {
         remaining.value--;
       }
     }, 1000);
-    
+
     return () => clearInterval(interval);
   });
-  
+
   return () => <div>{remaining.value}s remaining</div>;
 }
 ```

@@ -22,7 +22,7 @@ function Button(props: ButtonProps) {
 }
 
 // Usage
-<Button text="Click me" onClick={() => console.log('clicked')} />
+<Button text="Click me" onClick={() => console.log('clicked')} />;
 ```
 
 ## Props are Reactive
@@ -41,7 +41,6 @@ function Good(props: { count: number }) {
 }
 ```
 
-
 ## Props (Demystified)
 
 Props in Kaori may look like a simple object, but they are more than that. You might think props create a proxy for handling reactivity—but not exactly. While similar in behavior, props are **not** a JavaScript `Proxy`.
@@ -52,25 +51,28 @@ Suppose we have a component with some reactive state:
 
 ```tsx
 <Thing name={name.value} count={getCount()} something={thing} num={12} />
-````
+```
 
 The compiler transforms it into:
 
 ```tsx
-import { component } from "kaori.js"
+import { component } from 'kaori.js';
 
 component(Thing, {
-  get name() { return name.value },
-  get count() { return getCount() },
+  get name() {
+    return name.value;
+  },
+  get count() {
+    return getCount();
+  },
   something: thing,
-  num: 12
-})
+  num: 12,
+});
 ```
 
 Here’s the magic: whenever a prop expression involves a **function call** or **member access**, the compiler converts it into a getter.
 
 When this prop is accessed inside a **reactive scope** (e.g., a render function or an effect), it gets **automatically tracked**, enabling reactivity without explicit proxies.
-
 
 ## splitProps Helper
 
@@ -123,7 +125,7 @@ function Container(props: ContainerProps) {
 <Container>
   <h1>Title</h1>
   <p>Content</p>
-</Container>
+</Container>;
 ```
 
 ## Spread Props
@@ -146,7 +148,7 @@ function CustomButton(initialProps: ComponentProps<'button'>) {
 // Usage - all extra props passed to button
 <CustomButton variant="primary" onClick={() => {}} disabled={false}>
   Click
-</CustomButton>
+</CustomButton>;
 ```
 
 ## Next Steps

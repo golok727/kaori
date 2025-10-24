@@ -12,7 +12,7 @@ function Checkbox() {
     <input
       type="checkbox"
       bool:checked={checked.value}
-      onChange={() => checked.value = !checked.value}
+      onChange={() => (checked.value = !checked.value)}
     />
   );
 }
@@ -62,12 +62,8 @@ function ToggleButton() {
 
   return () => (
     <div>
-      <button onClick={() => disabled.value = !disabled.value}>
-        Toggle
-      </button>
-      <button bool:disabled={disabled.value}>
-        Action Button
-      </button>
+      <button onClick={() => (disabled.value = !disabled.value)}>Toggle</button>
+      <button bool:disabled={disabled.value}>Action Button</button>
     </div>
   );
 }

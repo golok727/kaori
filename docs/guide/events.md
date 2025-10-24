@@ -13,6 +13,7 @@ function Button() {
   return () => <button onClick={handleClick}>Click me</button>;
 }
 ```
+
 This is equivalent to calling `addEventListener('click', clickHandler)` on the button element.
 
 ```tsx
@@ -35,9 +36,7 @@ function Counter() {
   const count = signal(0);
 
   return () => (
-    <button onClick={() => count.value++}>
-      Count: {count.value}
-    </button>
+    <button onClick={() => count.value++}>Count: {count.value}</button>
   );
 }
 ```
@@ -48,13 +47,15 @@ function Counter() {
 function Form() {
   return () => (
     <div>
-      <button onClick={(e) => console.log('click')}>Click</button>
-      <input onChange={(e) => console.log('change')} />
-      <input onInput={(e) => console.log('input')} />
-      <form onSubmit={(e) => e.preventDefault()}>Submit</form>
-      <div onMouseEnter={() => {}} onMouseLeave={() => {}}>Hover</div>
+      <button onClick={e => console.log('click')}>Click</button>
+      <input onChange={e => console.log('change')} />
+      <input onInput={e => console.log('input')} />
+      <form onSubmit={e => e.preventDefault()}>Submit</form>
+      <div onMouseEnter={() => {}} onMouseLeave={() => {}}>
+        Hover
+      </div>
       <input onFocus={() => {}} onBlur={() => {}} />
-      <input onKeyDown={(e) => {}} onKeyUp={(e) => {}} />
+      <input onKeyDown={e => {}} onKeyUp={e => {}} />
     </div>
   );
 }
@@ -65,12 +66,14 @@ function Form() {
 Pass an object with `handleEvent` method and options:
 
 ```tsx
-<button onClick={{
-  handleEvent: (e) => console.log('clicked'),
-  capture: true,
-  passive: true,
-  once: true
-}}>
+<button
+  onClick={{
+    handleEvent: e => console.log('clicked'),
+    capture: true,
+    passive: true,
+    once: true,
+  }}
+>
   Click me
 </button>
 ```
@@ -84,7 +87,11 @@ function Link() {
     console.log('Link clicked but not navigating');
   }
 
-  return () => <a href="/page" onClick={handleClick}>Click</a>;
+  return () => (
+    <a href="/page" onClick={handleClick}>
+      Click
+    </a>
+  );
 }
 ```
 
@@ -115,10 +122,10 @@ function List() {
 
 ```tsx
 // ✅ Extract handlers for reusability
-function handleClick() { }
+function handleClick() {}
 
 // ✅ Use event types
-function handleChange(e: ChangeEvent) { }
+function handleChange(e: ChangeEvent) {}
 
 // ✅ Prevent default when needed
 function handleSubmit(e: Event) {
@@ -130,5 +137,5 @@ return () => {
   // Creates new function each render
   const handler = () => {};
   return <button onClick={handler}>Bad</button>;
-}
+};
 ```

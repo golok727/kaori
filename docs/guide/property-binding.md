@@ -7,11 +7,11 @@ Use `prop:` prefix to bind directly to DOM element properties instead of attribu
 ```tsx
 function Input() {
   const value = signal('');
-  
+
   return () => (
-    <input 
+    <input
       prop:value={value.value}
-      onChange={(e) => value.value = e.target.value}
+      onChange={e => (value.value = e.target.value)}
     />
   );
 }
@@ -20,6 +20,7 @@ function Input() {
 ## Why prop:?
 
 Attributes vs Properties:
+
 - **Attributes** - Set on HTML elements, appear in markup
 - **Properties** - Set on JavaScript DOM objects
 
@@ -39,7 +40,7 @@ Attributes vs Properties:
 function Form() {
   const text = signal('');
   const checked = signal(false);
-  
+
   return () => (
     <form>
       <input prop:value={text.value} />
@@ -73,17 +74,14 @@ import { signal } from 'kaori.js';
 function VideoPlayer() {
   const time = signal(0);
   const playing = signal(false);
-  
+
   return () => (
     <div>
-      <video 
-        prop:currentTime={time.value}
-        prop:muted={true}
-      />
-      <input 
+      <video prop:currentTime={time.value} prop:muted={true} />
+      <input
         type="range"
         prop:value={time.value}
-        onChange={(e) => time.value = e.target.value}
+        onChange={e => (time.value = e.target.value)}
       />
     </div>
   );

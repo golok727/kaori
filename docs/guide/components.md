@@ -26,9 +26,7 @@ function Counter() {
 
   // This function runs on every update
   return () => (
-    <button onClick={() => count.value++}>
-      Count: {count.value}
-    </button>
+    <button onClick={() => count.value++}>Count: {count.value}</button>
   );
 }
 ```
@@ -101,7 +99,7 @@ function Greeting(props: GreetingProps) {
 }
 
 // Usage
-<Greeting name="Kaori" age={25} />
+<Greeting name="Kaori" age={25} />;
 ```
 
 ### Props are Reactive
@@ -121,7 +119,6 @@ function Good(props: { name: string; age: number }) {
 ```
 
 Read more about them [here](/guide/props)
-
 
 ### Children
 
@@ -145,7 +142,7 @@ function Card(props: CardProps) {
 // Usage
 <Card title="My Card">
   <p>Card content here</p>
-</Card>
+</Card>;
 ```
 
 ## Composition
@@ -156,9 +153,7 @@ Build complex UIs from simple components:
 
 ```tsx
 function Avatar(props: { src: string; name: string }) {
-  return () => (
-    <img src={props.src} alt={props.name} class="avatar" />
-  );
+  return () => <img src={props.src} alt={props.name} class="avatar" />;
 }
 
 function UserCard(props: { user: User }) {
@@ -184,14 +179,11 @@ function ExpensiveComponent(props: { data: any[] }) {
 
   return () => (
     <div>
-      <For items={processed.value}>
-        {item => <div>{item}</div>}
-      </For>
+      <For items={processed.value}>{item => <div>{item}</div>}</For>
     </div>
   );
 }
 ```
-
 
 ## Best Practices
 

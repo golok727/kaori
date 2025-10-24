@@ -16,11 +16,11 @@ function Button() {
   return () => (
     <button
       classMap={{
-        'btn': true,                    // Always applied
-        'btn-active': isActive.value,   // Conditional
-        'btn-disabled': isDisabled.value
+        btn: true, // Always applied
+        'btn-active': isActive.value, // Conditional
+        'btn-disabled': isDisabled.value,
       }}
-      onClick={() => isActive.value = !isActive.value}
+      onClick={() => (isActive.value = !isActive.value)}
     >
       Click me
     </button>
@@ -45,7 +45,7 @@ function ColorBox() {
         backgroundColor: color.value,
         width: `${size.value}px`,
         height: `${size.value}px`,
-        borderRadius: '8px'
+        borderRadius: '8px',
       }}
     />
   );
@@ -62,7 +62,7 @@ function Component() {
     <button
       class="btn btn-primary"
       classMap={{
-        'active': active.value
+        active: active.value,
       }}
     >
       Button
@@ -81,7 +81,7 @@ function ProgressBar(props: { progress: number }) {
         class="progress-bar"
         style={{
           width: `${props.progress}%`,
-          backgroundColor: props.progress === 100 ? 'green' : 'blue'
+          backgroundColor: props.progress === 100 ? 'green' : 'blue',
         }}
       />
     </div>
@@ -99,14 +99,18 @@ function ThemedComponent() {
     <div
       classMap={{
         'theme-light': theme.value === 'light',
-        'theme-dark': theme.value === 'dark'
+        'theme-dark': theme.value === 'dark',
       }}
       style={{
         backgroundColor: theme.value === 'light' ? '#fff' : '#000',
-        color: theme.value === 'light' ? '#000' : '#fff'
+        color: theme.value === 'light' ? '#000' : '#fff',
       }}
     >
-      <button onClick={() => theme.value = theme.value === 'light' ? 'dark' : 'light'}>
+      <button
+        onClick={() =>
+          (theme.value = theme.value === 'light' ? 'dark' : 'light')
+        }
+      >
         Toggle Theme
       </button>
     </div>
