@@ -14,7 +14,6 @@ import {
   html,
   splitProps,
   type RefOrCallback,
-  ref,
   createContext,
   type Signal,
   useContext,
@@ -186,50 +185,53 @@ function App() {
     }
   });
 
-  provideContext(ThemeContext, signal('light'));
+  // provideContext(ThemeContext, signal('light'));
 
-  return () => (
-    <div>
-      <h1 class="text-xl font-bold">Kaori Playground</h1>
-      <ContextExample />
-      <SpreadProps
-        ref={spreadPropsRef}
-        class="p-2 bg-black text-white rounded-md"
-        onClick={() =>
-          (spreadClickedTimes.value = spreadClickedTimes.value + 1)
-        }
-      >
-        Spread props clicked {spreadClickedTimes.value}
-        {spreadPropsWidth !== undefined
-          ? `My Width is ${spreadPropsWidth}px`
-          : nothing}
-      </SpreadProps>
-      <Show when={showThing.show}>
-        <KaoriThing />
-      </Show>
-      <button class="button-primary" onClick={() => showThing.toggle()}>
-        {showThing.show ? 'Hide' : 'Show'} Test Life
-      </button>
-      <StyleThing />
-      <RefTest />
-      <Eye />
-      <ClassMapThing />
-      <h1 class="text-xl font-bold">Kaori Playground</h1>
-      {query.loading ? <p>Loading todos...</p> : nothing}
-      <Todos
-        todos={query.data!}
-        addTodo={addTodo}
-        toggleCompleted={toggleCompleted}
-      />
-    </div>
-  );
+  return () =>
+    html`${(
+      <ThemeProvider>
+        <div>
+          <h1 class="text-xl font-bold">Kaori Playground</h1>
+          {<ContextExample />}
+          <SpreadProps
+            ref={spreadPropsRef}
+            class="p-2 bg-black text-white rounded-md"
+            onClick={() =>
+              (spreadClickedTimes.value = spreadClickedTimes.value + 1)
+            }
+          >
+            Spread props clicked {spreadClickedTimes.value}
+            {spreadPropsWidth !== undefined
+              ? `My Width is ${spreadPropsWidth}px`
+              : nothing}
+          </SpreadProps>
+          <Show when={showThing.show}>
+            <KaoriThing />
+          </Show>
+          <button class="button-primary" onClick={() => showThing.toggle()}>
+            {showThing.show ? 'Hide' : 'Show'} Test Life
+          </button>
+          <StyleThing />
+          <RefTest />
+          <Eye />
+          <ClassMapThing />
+          <h1 class="text-xl font-bold">Kaori Playground</h1>
+          {query.loading ? <p>Loading todos...</p> : nothing}
+          <Todos
+            todos={query.data!}
+            addTodo={addTodo}
+            toggleCompleted={toggleCompleted}
+          />
+        </div>
+      </ThemeProvider>
+    )}`;
 }
 
 function ThemeProvider(props: { children: JSX.Element }) {
   const theme = signal<'light' | 'dark'>('light');
   provideContext(ThemeContext, theme);
 
-  return () => props.children;
+  return () => <div>{props.children}</div>;
 }
 
 function ContextExample() {
@@ -360,43 +362,69 @@ function Todos(props: {
     </div>
   );
 }
-function Child() {
-  onMount(() => {
-    console.log('Child mounted');
-  });
-  onCleanup(() => {
-    console.log('Child unmounted');
-  });
-  return <div>Child</div>;
-}
+// function Child() {
+//   onMount(() => {
+//     console.log('Child mounted');
+//   });
+//   onCleanup(() => {
+//     console.log('Child unmounted');
+//   });
+//   return (
+//     <div>
+//       Child
+//       <GrandChild />
+//     </div>
+//   );
+// }
 
-function Parent() {
-  onMount(() => {
-    console.log('Parent mounted');
-  });
-  onCleanup(() => {
-    console.log('Parent unmounted');
-  });
-  return () => (
-    <div>
-      <span>Parent</span>
-      <Child />
-    </div>
-  );
-}
+// function GrandChild() {
+//   onMount(() => {
+//     console.log('Grand Child mounted');
+//   });
+//   onCleanup(() => {
+//     console.log('Grand Child unmounted');
+//   });
+//   return <div>GrandChild</div>;
+// }
 
-function Container() {
-  const show = signal(true);
-  return () => (
-    <div>
-      <button class="button-primary" onClick={() => (show.value = !show.value)}>
-        Toggle
-      </button>
-      <Show when={show.value}>
-        <Parent />
-      </Show>
-    </div>
-  );
-}
+// function Sibiling() {
+//   onMount(() => {
+//     console.log('Sibiling mounted');
+//   });
+//   onCleanup(() => {
+//     console.log('Sibiling unmounted');
+//   });
+//   return () => <div>Sibiling</div>;
+// }
 
-render(<Container />, root);
+// function Parent() {
+//   onMount(() => {
+//     console.log('Parent mounted');
+//   });
+//   onCleanup(() => {
+//     console.log('Parent unmounted');
+//   });
+//   return () => (
+//     <div>
+//       <span>Parent</span>
+//       <Child />
+//     </div>
+//   );
+// }
+
+// function Container() {
+//   const show = signal(true);
+//   return () => (
+//     <div>
+//       <button class="button-primary" onClick={() => (show.value = !show.value)}>
+//         Toggle {show.value ? 'Hide' : 'Show'}
+//       </button>
+//       <Show when={show.value}>
+//         <Parent />
+//         <Sibiling />
+//       </Show>
+//     </div>
+//   );
+// }
+
+render(html`${(<App />)}`, root);

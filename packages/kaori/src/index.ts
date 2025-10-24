@@ -44,10 +44,14 @@ type ContextInternal = Context<any> & {
   __default: any;
 };
 
+const DISPOSED = 1 << 0;
+
+type TeardownFn = () => void;
 type ComponentHandleInternal = ComponentHandle & {
-  __directive: ComponentDirective;
-  __disposables: Set<() => void>;
-  __dbg_n: string;
+  d: ComponentDirective;
+  t?: Array<TeardownFn>;
+  f: number;
+  dbg_n: string;
 };
 
 /*
@@ -108,6 +112,13 @@ function schedule_update(handle: ComponentHandleInternal, fn: () => void) {
   queued_updates.push([handle, fn]);
 }
 
+function handle_add_teardown(handle: ComponentHandleInternal, fn: TeardownFn) {
+  if (!handle.t) {
+    handle.t = [];
+  }
+  handle.t.push(fn);
+}
+
 function on_mount(fn: () => (() => void) | void) {
   invariant(
     active_handle !== null,
@@ -118,7 +129,7 @@ function on_mount(fn: () => (() => void) | void) {
   queue_microtask(() => {
     const cleanup = fn();
     if (typeof cleanup === 'function') {
-      handle.__disposables.add(cleanup);
+      handle_add_teardown(handle, cleanup);
     }
   });
 }
@@ -129,7 +140,7 @@ function on_cleanup(fn: () => void) {
     handle !== null,
     'onCleanup() should be called during component setup (not in render functions or effects)'
   );
-  handle.__disposables.add(fn);
+  handle_add_teardown(handle, fn);
 }
 
 function kaori_effect(fn: () => void, handle = active_handle) {
@@ -140,7 +151,7 @@ function kaori_effect(fn: () => void, handle = active_handle) {
 
   queue_microtask(() => {
     const dispose = untracked(() => syncEffect(fn));
-    handle.__disposables.add(dispose);
+    handle_add_teardown(handle, dispose);
   });
 }
 
@@ -154,16 +165,24 @@ function get_handle(): ComponentHandle {
 }
 
 function dispose_handle(handle: ComponentHandleInternal) {
-  logger.log(`Disposing component(${handle.__dbg_n}) & running cleanup`);
+  logger.log(`Disposing component(${handle.dbg_n}) & running cleanup`);
+  if ((handle.f & DISPOSED) !== 0) {
+    return;
+  }
 
-  handle.__disposables.forEach(dispose => {
+  handle.f |= DISPOSED;
+
+  let directive = handle.d;
+  console.log('Here', directive);
+
+  handle.t?.forEach(dispose => {
     try {
       dispose();
     } catch (e) {
       console.error('Error during cleanup:', e);
     }
   });
-  handle.__disposables.clear();
+  handle.t = undefined;
 }
 
 function create_context<T>(defaultValue: T, options?: { label?: string }) {
@@ -189,7 +208,7 @@ function provide_context<T>(context: Context<T>, value: T) {
   const cx = context as ContextInternal;
 
   const handle = active_handle;
-  const directive = handle.__directive as any;
+  const directive = handle.d as any;
   directive.__c = directive.__c ?? new Map();
   directive.__c.set(cx.__key, value);
 }
@@ -202,16 +221,17 @@ function get_context<T>(context: Context<T>): T {
 
   const cx = context as ContextInternal;
   const handle = active_handle;
-  let directive = handle.__directive;
+  let directive: ComponentDirective | null = handle.d;
 
-  // if lit changes this we are cooked :D
   while (directive) {
+    console.log(directive);
     const c_map = (directive as any).__c as Map<symbol, any> | undefined;
     if (c_map && c_map.has(cx.__key)) {
       return c_map.get(cx.__key)!;
     }
 
     let part = (directive as any).__part as Part | undefined;
+    let nextDirective = null;
     while (part) {
       const parent = (part as any)._$parent as Part | undefined;
       if (
@@ -219,11 +239,13 @@ function get_context<T>(context: Context<T>): T {
         '__directive' in parent &&
         parent.__directive instanceof ComponentDirective
       ) {
-        directive = parent.__directive;
+        nextDirective = parent.__directive;
         break;
       }
       part = parent;
     }
+
+    directive = nextDirective;
   }
 
   return cx.__default;
@@ -232,7 +254,6 @@ function get_context<T>(context: Context<T>): T {
 class ComponentDirective<Props = any> extends AsyncDirective {
   private _rawTemplate: (() => unknown) | unknown = null;
   private _template_cache: unknown = null;
-  private ready = false;
 
   /**
    * @internal Context
@@ -254,11 +275,12 @@ class ComponentDirective<Props = any> extends AsyncDirective {
   render(C: Component<Props>, props: Props): unknown {
     const componentName = C.name || 'Anonymous';
 
-    if (!this.ready) {
+    if (!this.__h) {
       logger.log('Initial render for component', componentName, props);
       this.__h = {
-        __directive: this,
-        __dbg_n: componentName,
+        f: 0,
+        d: this,
+        dbg_n: componentName,
         update: () => {
           this._template_cache = this.$template();
           if (this.__h) {
@@ -272,7 +294,6 @@ class ComponentDirective<Props = any> extends AsyncDirective {
         provide(context, value) {
           provide_context(context as ContextInternal, value);
         },
-        __disposables: new Set<() => void>(),
       };
 
       const prev_handle = active_handle;
@@ -290,7 +311,6 @@ class ComponentDirective<Props = any> extends AsyncDirective {
         }, this.__h);
       }
 
-      this.ready = true;
       this._template_cache = this.$template();
     }
 
@@ -298,6 +318,7 @@ class ComponentDirective<Props = any> extends AsyncDirective {
   }
 
   protected override disconnected(): void {
+    console.log('disconnect', this.__h?.dbg_n);
     // Clean up the effect when component unmounts
     if (this.__h) {
       dispose_handle(this.__h);
