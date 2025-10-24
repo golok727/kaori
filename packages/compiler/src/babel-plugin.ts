@@ -475,7 +475,20 @@ export function KaoriCompiler(): PluginObj<PluginState> {
         // Check if this is a component (starts with capital letter)
         if (isComponent(tagName)) {
           state.importManager!.markNeeded('component');
-          path.replaceWith(createComponentCall(node, tagName, state));
+          state.importManager!.markNeeded('html');
+          const componentCall = createComponentCall(node, tagName, state);
+          // Wrap component call in html template literal
+          const wrappedComponent = t.taggedTemplateExpression(
+            t.identifier(state.importManager!.getName('html')),
+            t.templateLiteral(
+              [
+                t.templateElement({ raw: '', cooked: '' }, false),
+                t.templateElement({ raw: '', cooked: '' }, true),
+              ],
+              [componentCall]
+            )
+          );
+          path.replaceWith(wrappedComponent);
         } else {
           state.importManager!.markNeeded('html');
           path.replaceWith(createHTMLElement(node, state));
@@ -1010,7 +1023,20 @@ function processChildren(
       const tagName = getJSXElementName(child.openingElement.name);
       if (isComponent(tagName)) {
         state.importManager!.markNeeded('component');
-        processedChildren.push(createComponentCall(child, tagName, state));
+        state.importManager!.markNeeded('html');
+        // Wrap component call in html template literal
+        const componentCall = createComponentCall(child, tagName, state);
+        const templateLiteral = t.taggedTemplateExpression(
+          t.identifier(state.importManager!.getName('html')),
+          t.templateLiteral(
+            [
+              t.templateElement({ raw: '', cooked: '' }, false),
+              t.templateElement({ raw: '', cooked: '' }, true),
+            ],
+            [componentCall]
+          )
+        );
+        processedChildren.push(templateLiteral);
       } else {
         state.importManager!.markNeeded('html');
         processedChildren.push(createHTMLElement(child, state));

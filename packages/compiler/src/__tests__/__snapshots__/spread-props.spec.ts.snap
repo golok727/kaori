@@ -1,12 +1,12 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Spread Props > Components > should handle complex spread scenario with reactive props 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Complex() {
   const props = {
     value: "test"
   };
-  return component(Component, mergeProps(props, {
+  return html\`\${component(Component, mergeProps(props, {
     onClick: () => {},
     get data() {
       return getData();
@@ -14,51 +14,51 @@ function Complex() {
     get count() {
       return state.count;
     }
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should handle spread after attributes 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Wrapper() {
   const overrides = {
     class: "override"
   };
-  return component(Component, mergeProps({
+  return html\`\${component(Component, mergeProps({
     get value() {
       return getValue();
     },
     onClick: handleClick
-  }, overrides));
+  }, overrides))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should handle spread before attributes 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Wrapper() {
   const baseProps = {
     class: "base"
   };
-  return component(Component, mergeProps(baseProps, {
+  return html\`\${component(Component, mergeProps(baseProps, {
     get value() {
       return getValue();
     },
     onClick: handleClick
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should handle spread in the middle of attributes 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Wrapper() {
   const middleProps = {
     value: "middle"
   };
-  return component(Component, mergeProps({
+  return html\`\${component(Component, mergeProps({
     first: "a"
   }, middleProps, {
     last: "z"
-  }));
+  }))}\`;
 }"
 `;
 
@@ -68,41 +68,41 @@ function Wrapper() {
   const props = {
     value: "test"
   };
-  return component(Component, mergeProps(props, {
+  return html\`\${component(Component, mergeProps(props, {
     other: "value"
   }, {
     children: [html\`<div>Child 1</div>\`, html\`<div>Child 2</div>\`]
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should handle spread with data attributes 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Component() {
   const props = {
     value: "test"
   };
-  return component(Input, mergeProps(props, {
+  return html\`\${component(Input, mergeProps(props, {
     "data-test-id": "input1",
     "aria-label": "Field"
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should handle spread with namespaced attributes 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Input() {
   const props = {
     value: "test"
   };
-  return component(Input, mergeProps(props, {
+  return html\`\${component(Input, mergeProps(props, {
     get ["prop:value"]() {
       return getValue();
     },
     get ["bind:checked"]() {
       return state.checked;
     }
-  }));
+  }))}\`;
 }"
 `;
 
@@ -112,24 +112,24 @@ function Wrapper() {
   const props = {
     value: "test"
   };
-  return component(Component, mergeProps(props, {
+  return html\`\${component(Component, mergeProps(props, {
     children: html\`<span>Child</span>\`
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should optimize single spread with no other props 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Wrapper() {
   const props = {
     value: "test"
   };
-  return component(Component, props);
+  return html\`\${component(Component, props)}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should use mergeProps for multiple spreads 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Wrapper() {
   const props1 = {
     value: "test"
@@ -137,24 +137,24 @@ function Wrapper() {
   const props2 = {
     id: "field1"
   };
-  return component(Component, mergeProps(props1, props2));
+  return html\`\${component(Component, mergeProps(props1, props2))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should use mergeProps for single spread with other props 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Wrapper() {
   const props = {
     value: "test"
   };
-  return component(Component, mergeProps(props, {
+  return html\`\${component(Component, mergeProps(props, {
     other: "value"
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Components > should use mergeProps for spreads with multiple other props 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Wrapper() {
   const props = {
     value: "test"
@@ -162,34 +162,34 @@ function Wrapper() {
   const moreProps = {
     id: "field1"
   };
-  return component(Component, mergeProps(props, moreProps, {
+  return html\`\${component(Component, mergeProps(props, moreProps, {
     other: "a",
     something: "b"
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Edge Cases > should handle empty spread object 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Empty() {
-  return component(Component, {});
+  return html\`\${component(Component, {})}\`;
 }"
 `;
 
 exports[`Spread Props > Edge Cases > should handle multiple consecutive spreads 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Multiple() {
-  return component(Component, mergeProps(props1, props2, props3, props4));
+  return html\`\${component(Component, mergeProps(props1, props2, props3, props4))}\`;
 }"
 `;
 
 exports[`Spread Props > Edge Cases > should handle spread with all attribute types 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function AllTypes() {
   const props = {
     base: "value"
   };
-  return component(Component, mergeProps(props, {
+  return html\`\${component(Component, mergeProps(props, {
     onClick: handleClick,
     get ["prop:value"]() {
       return getValue();
@@ -200,17 +200,17 @@ function AllTypes() {
     "data-test": "test",
     "aria-label": "Label",
     ref: ref
-  }));
+  }))}\`;
 }"
 `;
 
 exports[`Spread Props > Edge Cases > should handle spread with inline object 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Inline() {
-  return component(Component, {
+  return html\`\${component(Component, {
     value: "test",
     other: 123
-  });
+  })}\`;
 }"
 `;
 
@@ -276,7 +276,7 @@ exports[`Spread Props > Mixed Scenarios > should handle complex real-world examp
 "import { component, html, spread, mergeProps } from "kaori.js";
 function Button(props) {
   return () => {
-    [component(Input, {
+    [html\`\${component(Input, {
       get thing() {
         return props.value;
       },
@@ -284,15 +284,15 @@ function Button(props) {
         return props.value;
       },
       "data-thing": "asd"
-    }), component(Button, mergeProps(props, {
+    })}\`, html\`\${component(Button, mergeProps(props, {
       onClick: () => {}
-    }, somethingElse)), html\`<button \${spread(props)}></button>\`];
+    }, somethingElse))}\`, html\`<button \${spread(props)}></button>\`];
   };
 }"
 `;
 
 exports[`Spread Props > Mixed Scenarios > should handle conditional expression spreads 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Conditional() {
   const props1 = {
     value: "a"
@@ -301,17 +301,17 @@ function Conditional() {
     value: "b"
   };
   const condition = true;
-  return component(Component, condition ? props1 : props2);
+  return html\`\${component(Component, condition ? props1 : props2)}\`;
 }"
 `;
 
 exports[`Spread Props > Mixed Scenarios > should handle expression spreads 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Dynamic() {
   const getProps = () => ({
     value: "test"
   });
-  return component(Component, getProps());
+  return html\`\${component(Component, getProps())}\`;
 }"
 `;
 
@@ -324,26 +324,26 @@ function Fragment() {
   const props2 = {
     value: "b"
   };
-  return [component(Component1, props1), component(Component2, mergeProps(props2, {
+  return [html\`\${component(Component1, props1)}\`, html\`\${component(Component2, mergeProps(props2, {
     other: "value"
-  }))];
+  }))}\`];
 }"
 `;
 
 exports[`Spread Props > Mixed Scenarios > should handle member expression spreads 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Member() {
   const obj = {
     props: {
       value: "test"
     }
   };
-  return component(Component, obj.props);
+  return html\`\${component(Component, obj.props)}\`;
 }"
 `;
 
 exports[`Spread Props > Mixed Scenarios > should handle nested components with spreads 1`] = `
-"import { component, mergeProps } from "kaori.js";
+"import { component, html, mergeProps } from "kaori.js";
 function Nested() {
   const outerProps = {
     class: "outer"
@@ -351,11 +351,11 @@ function Nested() {
   const innerProps = {
     value: "inner"
   };
-  return component(Outer, mergeProps(outerProps, {
+  return html\`\${component(Outer, mergeProps(outerProps, {
     get children() {
-      return component(Inner, innerProps);
+      return html\`\${component(Inner, innerProps)}\`;
     }
-  }));
+  }))}\`;
 }"
 `;
 

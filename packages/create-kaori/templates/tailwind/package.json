@@ -9,11 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "kaori.js": "^0.0.9"
+    "kaori.js": "^0.0.10"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.16",
-    "kaori-compiler": "^0.0.9",
+    "kaori-compiler": "^0.0.10",
     "tailwindcss": "^4.1.16",
     "typescript": "~5.9.3",
     "vite": "^7.1.7"

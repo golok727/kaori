@@ -3,115 +3,115 @@
 exports[`Children prop reactivity > should NOT make arrow function children reactive (functions are static) 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(For, {
+  return html\`\${component(For, {
     get items() {
       return getItems();
     },
     children: item => html\`<div>\${item.name}</div>\`
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should NOT make children reactive when containing only static content 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     children: html\`<p>Static text</p>\`
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should handle nested reactive children correctly 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Outer, {
+  return html\`\${component(Outer, {
     get children() {
-      return component(Middle, {
+      return html\`\${component(Middle, {
         get children() {
-          return component(Inner, {
+          return html\`\${component(Inner, {
             get prop() {
               return getValue();
             }
-          });
+          })}\`;
         }
-      });
+      })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should make children reactive even with static component props (component call is dynamic) 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
-      return component(Child, {
+      return html\`\${component(Child, {
         title: "static"
-      });
+      })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should make children reactive when containing component with function call props 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
-      return component(Child, {
+      return html\`\${component(Child, {
         get title() {
           return getTitle();
         }
-      });
+      })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should make children reactive when containing function calls 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return getMessage();
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should make children reactive when containing html template with member access 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return html\`<p>\${user.name}</p>\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should make children reactive when containing member access 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return user.name;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Children prop reactivity > should make children reactive with mixed static and dynamic content 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
-      return [html\`<p>Static</p>\`, getDynamic(), component(Child, {
+      return [html\`<p>Static</p>\`, getDynamic(), html\`\${component(Child, {
         get prop() {
           return getValue();
         }
-      })];
+      })}\`];
     }
-  });
+  })}\`;
 }"
 `;

@@ -1,4 +1,3 @@
-import { untracked } from '@preact/signals-core';
 import { html, nothing } from 'lit-html';
 import { repeat } from 'lit-html/directives/repeat.js';
 
@@ -37,8 +36,9 @@ export function Show(props: ShowProps) {
     const when = props.when;
 
     if (when) {
-      return untracked(() => props.children);
+      return props.children;
     }
-    return untracked(() => props.fallback ?? nothing);
+
+    return props.fallback ?? nothing;
   };
 }
