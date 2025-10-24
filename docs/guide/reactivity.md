@@ -186,6 +186,13 @@ const sum = computed(() => {
 ### Automatic Reactivity
 
 When you access signals in the render function, Kaori automatically tracks them:
+This is because the render function is wrapped in a reactive contect (`effect`)
+
+When you access signals inside the render function, Kaori automatically tracks them.
+This happens because the render function runs within a reactive context (effect).
+
+That’s why destructuring props outside the render function breaks reactivity — it disconnects the signal from tracking.
+But you can safely destructure inside the render function, since it re-runs whenever dependencies change.
 
 ```tsx
 function Counter() {
@@ -386,29 +393,6 @@ effect(() => {
    const data = signal(config); // Share reference
    ```
 
-## Debugging Reactivity
-
-### Tracking Dependencies
-
-```tsx
-effect(() => {
-  console.log('Dependencies:', {
-    count: count.value,
-    name: name.value
-  });
-});
-```
-
-### Finding Reactive Leaks
-
-```tsx
-// Check what's triggering updates
-let renderCount = 0;
-return () => {
-  console.log('Render', ++renderCount);
-  return <div>...</div>;
-};
-```
 
 ## Next Steps
 

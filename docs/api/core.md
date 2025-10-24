@@ -36,12 +36,12 @@ import { getHandle } from 'kaori.js';
 function Component() {
   const handle = getHandle();
   let count = 0;
-  
+
   function increment() {
     count++;
     handle.update(); // Manually trigger re-render
   }
-  
+
   return () => <button onClick={increment}>{count}</button>;
 }
 ```
@@ -125,4 +125,51 @@ function component<Props>(
   Component: (props: Props) => unknown,
   props: Props
 ): unknown
+```
+
+
+## createRef
+
+Creates a ref to access DOM elements.
+
+```tsx
+import { createRef } from 'kaori.js';
+
+function Component() {
+  const divRef = createRef<HTMLDivElement>();
+
+  onMount(() => {
+    console.log(divRef.value); // Access DOM element
+  });
+
+  return () => <div ref={divRef}>Content</div>;
+}
+```
+
+### Type Signature
+
+```ts
+function createRef<T = Element>(): Ref<T>
+
+interface Ref<T = Element> {
+  value?: T;
+}
+````
+
+## ref
+ref directive use ref without compiler
+> you dont need to use this if you are using the compiler
+
+```tsx
+import  createRef, ref, html } from 'kaori.js';
+
+const myRef = createRef();
+
+html`<div ${ref(myRef)}>Content</div>`
+```
+
+### Type Signature
+
+```ts
+const ref: Directive
 ```

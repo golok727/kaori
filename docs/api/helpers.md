@@ -11,7 +11,7 @@ import { splitProps } from 'kaori.js';
 
 function Button(allProps: ButtonProps & HTMLAttributes) {
   const [props, rest] = splitProps(allProps, ['children', 'class']);
-  
+
   return () => (
     <button class={`btn ${props.class}`} {...rest}>
       {props.children}
@@ -48,7 +48,7 @@ import { mergeProps } from 'kaori.js';
 function Component(userProps: Props) {
   const defaults = { color: 'blue', size: 'medium' };
   const props = mergeProps(defaults, userProps);
-  
+
   return () => <div style={{ color: props.color }}>{props.size}</div>;
 }
 ```
@@ -97,11 +97,11 @@ import { createRef } from 'kaori.js';
 
 function Component() {
   const divRef = createRef<HTMLDivElement>();
-  
+
   onMount(() => {
     console.log(divRef.value); // Access DOM element
   });
-  
+
   return () => <div ref={divRef}>Content</div>;
 }
 ```
@@ -114,22 +114,4 @@ function createRef<T = Element>(): Ref<T>
 interface Ref<T = Element> {
   value?: T;
 }
-```
-
-## ref
-
-Ref directive (used with createRef).
-
-```tsx
-import { createRef, ref } from 'kaori.js';
-
-const myRef = createRef();
-
-<div ref={myRef}>Content</div>
-```
-
-### Type Signature
-
-```ts
-const ref: Directive
 ```
