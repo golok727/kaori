@@ -398,4 +398,3 @@ function Bad4() {
 
 - Learn about [Lifecycle](/guide/lifecycle) hooks
 - Explore [Components](/guide/components) patterns
-- Check out [API Reference](/api/context) for complete details
