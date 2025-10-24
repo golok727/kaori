@@ -264,7 +264,6 @@ class ComponentDirective<Props = any> extends AsyncDirective {
           if (this.__h) {
             schedule_update(this.__h, () => {
               if (this.isConnected) {
-                console.log('Update component', componentName);
                 this.setValue(this._template_cache);
               }
             });
@@ -279,7 +278,6 @@ class ComponentDirective<Props = any> extends AsyncDirective {
       const prev_handle = active_handle;
       active_handle = this.__h;
       const result = untracked(() => C(props));
-      this._template_cache = this.$template();
       active_handle = prev_handle;
 
       this._rawTemplate = result;
@@ -293,9 +291,9 @@ class ComponentDirective<Props = any> extends AsyncDirective {
       }
 
       this.ready = true;
+      this._template_cache = this.$template();
     }
 
-    console.log('Here', componentName);
     return this._template_cache;
   }
 

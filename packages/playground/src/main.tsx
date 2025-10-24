@@ -19,6 +19,7 @@ import {
   type Signal,
   useContext,
   provideContext,
+  onCleanup,
 } from 'kaori.js';
 
 const root = document.querySelector<HTMLDivElement>('#root')!;
@@ -224,6 +225,13 @@ function App() {
   );
 }
 
+function ThemeProvider(props: { children: JSX.Element }) {
+  const theme = signal<'light' | 'dark'>('light');
+  provideContext(ThemeContext, theme);
+
+  return () => props.children;
+}
+
 function ContextExample() {
   const theme = useContext(ThemeContext);
   if (!theme) throw new Error('No theme context found');
@@ -352,5 +360,43 @@ function Todos(props: {
     </div>
   );
 }
+function Child() {
+  onMount(() => {
+    console.log('Child mounted');
+  });
+  onCleanup(() => {
+    console.log('Child unmounted');
+  });
+  return <div>Child</div>;
+}
 
-render(<App />, root);
+function Parent() {
+  onMount(() => {
+    console.log('Parent mounted');
+  });
+  onCleanup(() => {
+    console.log('Parent unmounted');
+  });
+  return () => (
+    <div>
+      <span>Parent</span>
+      <Child />
+    </div>
+  );
+}
+
+function Container() {
+  const show = signal(true);
+  return () => (
+    <div>
+      <button class="button-primary" onClick={() => (show.value = !show.value)}>
+        Toggle
+      </button>
+      <Show when={show.value}>
+        <Parent />
+      </Show>
+    </div>
+  );
+}
+
+render(<Container />, root);
