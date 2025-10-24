@@ -74,7 +74,11 @@ function App() {
 
   return () => (
     <div>
-      <button onClick={() => theme.value = theme.value === 'dark' ? 'light' : 'dark'}>
+      <button
+        onClick={() =>
+          (theme.value = theme.value === 'dark' ? 'light' : 'dark')
+        }
+      >
         Toggle Theme
       </button>
       <Content />
@@ -86,9 +90,7 @@ function Content() {
   const theme = useContext(ThemeContext);
 
   return () => (
-    <div className={`theme-${theme.value}`}>
-      Current theme: {theme.value}
-    </div>
+    <div className={`theme-${theme.value}`}>Current theme: {theme.value}</div>
   );
 }
 ```
@@ -104,9 +106,7 @@ function Content() {
   const theme = useContext(ThemeContext);
 
   return () => (
-    <div className={`theme-${theme.value}`}>
-      Current theme: {theme.value}
-    </div>
+    <div className={`theme-${theme.value}`}>Current theme: {theme.value}</div>
   );
 }
 ```
@@ -121,7 +121,7 @@ import {
   signal,
   createContext,
   useContext,
-  getHandle
+  getHandle,
 } from 'kaori.js';
 
 // 1. Create context
@@ -133,7 +133,7 @@ function App() {
 
   const theme = signal({
     mode: 'dark',
-    color: '#0066cc'
+    color: '#0066cc',
   });
 
   // Provide the signal directly - only once!
@@ -142,12 +142,14 @@ function App() {
   const toggleMode = () => {
     theme.value = {
       ...theme.value,
-      mode: theme.value.mode === 'dark' ? 'light' : 'dark'
+      mode: theme.value.mode === 'dark' ? 'light' : 'dark',
     };
   };
 
   return () => (
-    <div style={{ backgroundColor: theme.value.mode === 'dark' ? '#222' : '#fff' }}>
+    <div
+      style={{ backgroundColor: theme.value.mode === 'dark' ? '#222' : '#fff' }}
+    >
       <button onClick={toggleMode}>Toggle Theme</button>
       <Header />
       <Content />
@@ -167,9 +169,7 @@ function Header() {
 function Logo() {
   const theme = useContext(ThemeContext);
 
-  return () => (
-    <img src={`/logo-${theme.value.mode}.svg`} alt="Logo" />
-  );
+  return () => <img src={`/logo-${theme.value.mode}.svg`} alt="Logo" />;
 }
 
 function Content() {
@@ -213,7 +213,9 @@ function Dashboard() {
 
   return () => (
     <div className={`theme-${theme.value}`}>
-      <p>{user.value.name} ({locale.value})</p>
+      <p>
+        {user.value.name} ({locale.value})
+      </p>
     </div>
   );
 }
@@ -233,9 +235,7 @@ function Provider() {
 
   return () => (
     <div>
-      <button onClick={() => count.value++}>
-        Increment
-      </button>
+      <button onClick={() => count.value++}>Increment</button>
       <Consumer />
     </div>
   );
@@ -244,9 +244,7 @@ function Provider() {
 function Consumer() {
   const count = useContext(CountContext);
 
-  return () => (
-    <div>Count: {count.value}</div>
-  );
+  return () => <div>Count: {count.value}</div>;
 }
 ```
 
@@ -269,9 +267,7 @@ function useAuth() {
 function ProtectedRoute() {
   const auth = useAuth(); // Throws if no provider
 
-  return () => (
-    <div>Hello {auth.value.user.name}</div>
-  );
+  return () => <div>Hello {auth.value.user.name}</div>;
 }
 ```
 
@@ -287,7 +283,7 @@ function StyleProvider() {
 
   const styles = computed(() => ({
     ...getThemeStyles(theme.value),
-    direction: locale.value === 'ar' ? 'rtl' : 'ltr'
+    direction: locale.value === 'ar' ? 'rtl' : 'ltr',
   }));
 
   handle.provide(StyleContext, styles);
@@ -298,34 +294,58 @@ function StyleProvider() {
 
 ## TypeScript Support
 
-Context is fully type-safe:
+Context is fully type-safe and can pass any data through the component tree. In this example, we pass a `Signal<Theme>`:
 
 ```tsx
+import {
+  createContext,
+  useContext,
+  getHandle,
+  signal,
+  type Signal,
+} from 'kaori.js';
+
 type Theme = {
   mode: 'light' | 'dark';
   color: string;
   fontSize: number;
 };
 
-const ThemeContext = createContext<Theme>({
-  mode: 'light',
-  color: '#000000',
-  fontSize: 16
-});
+// Context can hold any type - here we'll provide a Signal<Theme>
+const ThemeContext = createContext<Signal<Theme> | null>(null);
+
+function Provider() {
+  const handle = getHandle();
+
+  const theme = signal<Theme>({
+    mode: 'light',
+    color: '#000000',
+    fontSize: 16,
+  });
+
+  // Provide the signal
+  handle.provide(ThemeContext, theme);
+
+  return () => <Component />;
+}
 
 function Component() {
-  const theme = useContext(ThemeContext); // Type: Signal<Theme>
+  const theme = useContext(ThemeContext); // Type: Signal<Theme> | null
 
   return () => (
-    <div style={{
-      color: theme.value.color,
-      fontSize: `${theme.value.fontSize}px`
-    }}>
-      Theme: {theme.value.mode}
+    <div
+      style={{
+        color: theme?.value.color,
+        fontSize: `${theme?.value.fontSize}px`,
+      }}
+    >
+      Theme: {theme?.value.mode}
     </div>
   );
 }
 ```
+
+> **Note**: Context can pass any data through the component tree - primitives, objects, signals, computed values, or functions. The type system ensures full type safety for whatever you choose to pass.
 
 ## Best Practices
 
@@ -390,9 +410,6 @@ function Bad4() {
   // Correct: handle.provide(ThemeContext, theme);
 }
 ```
-
-
-
 
 ## Next Steps
 

@@ -5,6 +5,7 @@ Get up and running with Kaori in seconds! 🚀
 ## Prerequisites
 
 Before you begin, make sure you have:
+
 - Node.js 18 or higher
 
 ## Creating a New Project
@@ -37,6 +38,7 @@ yarn dev
 :::
 
 This will scaffold a new Kaori project with:
+
 - Vite for blazing-fast development
 - TypeScript configuration
 - Kaori compiler setup
@@ -86,7 +88,7 @@ Update your `tsconfig.json`:
 {
   "compilerOptions": {
     "jsx": "preserve",
-    "jsxImportSource": "kaori.js",
+    "jsxImportSource": "kaori.js"
   }
 }
 ```
@@ -109,9 +111,7 @@ function App() {
     <div>
       <h1>Hello Kaori! ✨</h1>
       <p>Count: {count.value}</p>
-      <button onClick={increment}>
-        Increment
-      </button>
+      <button onClick={increment}>Increment</button>
     </div>
   );
 }

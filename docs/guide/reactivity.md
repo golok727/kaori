@@ -31,9 +31,9 @@ Update the value by assigning to `.value`:
 
 ```tsx
 const count = signal(0);
-count.value = 5;        // Set new value
-count.value++;          // Increment
-count.value += 10;      // Add
+count.value = 5; // Set new value
+count.value++; // Increment
+count.value += 10; // Add
 ```
 
 ### Peek Without Subscribing
@@ -260,11 +260,7 @@ function Manual() {
     handle.update(); // Manually trigger render
   }
 
-  return () => (
-    <button onClick={increment}>
-      Count: {count}
-    </button>
-  );
+  return () => <button onClick={increment}>Count: {count}</button>;
 }
 ```
 
@@ -313,7 +309,7 @@ function Bad2() {
 // Don't use signals for local UI state that doesn't need to persist
 function Bad3() {
   const hover = signal(false); // ❌ Use local state instead
-  return () => <div onMouseEnter={() => hover.value = true}>...</div>;
+  return () => <div onMouseEnter={() => (hover.value = true)}>...</div>;
 }
 ```
 
@@ -370,11 +366,13 @@ effect(() => {
 ## Performance Tips
 
 1. **Use computed for expensive calculations**
+
    ```tsx
    const expensive = computed(() => heavyCalculation(data.value));
    ```
 
 2. **Batch related updates**
+
    ```tsx
    batch(() => {
      signal1.value = a;
@@ -383,16 +381,18 @@ effect(() => {
    ```
 
 3. **Use peek() to avoid dependencies**
+
    ```tsx
    const current = count.peek(); // Won't track
    ```
 
 4. **Memoize static data**
    ```tsx
-   const config = { /* large object */ };
+   const config = {
+     /* large object */
+   };
    const data = signal(config); // Share reference
    ```
-
 
 ## Next Steps
 

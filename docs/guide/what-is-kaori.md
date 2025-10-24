@@ -11,6 +11,7 @@ Kaori's API is intentionally small and focused. You can learn the entire framewo
 ### ⚡ Performance First
 
 Built on two battle-tested libraries:
+
 - **lit-html** - Efficient template rendering using native browser features
 - **@preact/signals-core** - Fine-grained reactivity that updates only what changed
 
@@ -23,9 +24,7 @@ function Counter() {
   const count = signal(0);
 
   return () => (
-    <button onClick={() => count.value++}>
-      Count: {count.value}
-    </button>
+    <button onClick={() => count.value++}>Count: {count.value}</button>
   );
 }
 ```
@@ -72,11 +71,13 @@ Kaori favors explicit, clear patterns over "magic" behavior. You always know wha
 ## When to Use Kaori
 
 Kaori is great for:
+
 - ✅ Building interactive web applications
 - ✅ Projects where bundle size matters
 - ✅ Teams familiar with React or Solid.js
 
 Kaori might not be ideal for:
+
 - ❌ Server-side rendering (not supported yet)
 - ❌ Projects requiring a large ecosystem of libraries
 - ❌ Static websites with minimal interactivity

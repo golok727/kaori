@@ -10,9 +10,7 @@ import { For } from 'kaori.js';
 function TodoList(props: { todos: string[] }) {
   return () => (
     <ul>
-      <For items={props.todos}>
-        {(item, index) => <li>{item}</li>}
-      </For>
+      <For items={props.todos}>{(item, index) => <li>{item}</li>}</For>
     </ul>
   );
 }
@@ -35,8 +33,8 @@ function TodoList() {
 
   return () => (
     <ul>
-      <For items={todos.value} key={(todo) => todo.id}>
-        {(todo) => <li>{todo.text}</li>}
+      <For items={todos.value} key={todo => todo.id}>
+        {todo => <li>{todo.text}</li>}
       </For>
     </ul>
   );
@@ -54,7 +52,9 @@ function List() {
   // ❌ Recreates all DOM nodes on reorder
   return () => (
     <ul>
-      {items.value.map(item => <li>{item}</li>)}
+      {items.value.map(item => (
+        <li>{item}</li>
+      ))}
     </ul>
   );
 }
@@ -69,8 +69,8 @@ function List() {
   // ✅ Reuses DOM nodes efficiently
   return () => (
     <ul>
-      <For items={items.value} key={(item) => item}>
-        {(item) => <li>{item}</li>}
+      <For items={items.value} key={item => item}>
+        {item => <li>{item}</li>}
       </For>
     </ul>
   );
@@ -91,15 +91,16 @@ The second parameter is the index:
 </For>
 ```
 
-
 ## Performance Tips
 
 1. **Always use keys for dynamic lists**
+
    ```tsx
    <For items={list} key={(item) => item.id}>
    ```
 
 2. **Use stable keys**
+
    ```tsx
    // ✅ Good - stable ID
    key={(item) => item.id}
@@ -129,7 +130,7 @@ function TodoApp() {
     if (!input.value) return;
     todos.value = [
       ...todos.value,
-      { id: Date.now(), text: input.value, completed: false }
+      { id: Date.now(), text: input.value, completed: false },
     ];
     input.value = '';
   }
@@ -148,14 +149,14 @@ function TodoApp() {
     <div>
       <input
         prop:value={input.value}
-        onChange={(e) => input.value = e.target.value}
-        onKeyDown={(e) => e.key === 'Enter' && addTodo()}
+        onChange={e => (input.value = e.target.value)}
+        onKeyDown={e => e.key === 'Enter' && addTodo()}
       />
       <button onClick={addTodo}>Add</button>
 
       <ul>
-        <For items={todos.value} key={(todo) => todo.id}>
-          {(todo) => (
+        <For items={todos.value} key={todo => todo.id}>
+          {todo => (
             <li classMap={{ completed: todo.completed }}>
               <input
                 type="checkbox"

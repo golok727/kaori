@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: "Kaori"
-  text: "A Fragrant Framework"
+  name: 'Kaori'
+  text: 'A Fragrant Framework'
   tagline: Build reactive UIs with familiar syntax and powerful reactivity ✨
   image:
     src: /logo.svg

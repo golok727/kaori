@@ -6,8 +6,7 @@ like a handle you can hold onto.
 They’re useful when you want to do something that’s outside Kaori’s reactive flow,
 such as focusing an input, reading element size, or integrating a third-party library.
 
-In Kaori, refs work a lot like in React
----
+## In Kaori, refs work a lot like in React
 
 ### Basic Usage
 
@@ -15,7 +14,7 @@ You can create a ref using `ref()` and attach it to an element.
 Once the element mounts, `ref.value` will contain the actual DOM node.
 
 ```tsx
-import { createRef, onMount } from "kaori.js";
+import { createRef, onMount } from 'kaori.js';
 
 function App() {
   const el = createRef();
@@ -64,8 +63,8 @@ Kaori calls this function when the element mounts or unmounts.
 function App() {
   return (
     <div
-      ref={(el) => {
-        console.log("mounted:", el);
+      ref={el => {
+        console.log('mounted:', el);
       }}
     >
       hello
@@ -81,10 +80,10 @@ or want to integrate with libraries that expect raw DOM nodes.
 
 ### Summary
 
-* Refs are like **handles** to DOM elements or components
-* You can create them using `ref()` or as a function `(el: Element) => void`
-* They update automatically when elements mount or unmount
-* Fully reactive — works seamlessly with Kaori’s signal system
-* Passable as props, just like in React
+- Refs are like **handles** to DOM elements or components
+- You can create them using `ref()` or as a function `(el: Element) => void`
+- They update automatically when elements mount or unmount
+- Fully reactive — works seamlessly with Kaori’s signal system
+- Passable as props, just like in React
 
 ---

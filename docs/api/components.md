@@ -9,9 +9,9 @@ Efficiently renders lists with proper keying.
 ```tsx
 import { For } from 'kaori.js';
 
-<For items={items} key={(item) => item.id}>
+<For items={items} key={item => item.id}>
   {(item, index) => <li>{item.name}</li>}
-</For>
+</For>;
 ```
 
 ### Props
@@ -21,7 +21,7 @@ type ForProps<Item> = {
   items: Iterable<Item>;
   children: (item: Item, index: number) => JSX.Element;
   key?: (item: Item, index: number) => unknown;
-}
+};
 ```
 
 ### Parameters
@@ -38,7 +38,7 @@ type Todo = { id: number; text: string };
 function TodoList(props: { todos: Todo[] }) {
   return () => (
     <ul>
-      <For items={props.todos} key={(todo) => todo.id}>
+      <For items={props.todos} key={todo => todo.id}>
         {(todo, index) => (
           <li>
             {index + 1}. {todo.text}
@@ -59,7 +59,7 @@ import { Show } from 'kaori.js';
 
 <Show when={condition.value} fallback={() => <div>Else</div>}>
   <div>Then</div>
-</Show>
+</Show>;
 ```
 
 ### Props
@@ -69,7 +69,7 @@ type ShowProps = {
   when: boolean;
   children: JSX.Element;
   fallback?: () => JSX.Element;
-}
+};
 ```
 
 ### Parameters
@@ -83,12 +83,9 @@ type ShowProps = {
 ```tsx
 function UserProfile() {
   const user = signal<User | null>(null);
-  
+
   return () => (
-    <Show 
-      when={user.value !== null}
-      fallback={() => <div>Please log in</div>}
-    >
+    <Show when={user.value !== null} fallback={() => <div>Please log in</div>}>
       <div>Welcome, {user.value!.name}!</div>
     </Show>
   );

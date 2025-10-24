@@ -23,7 +23,7 @@ render(<App />, root);
 function render(
   component: JSX.Element,
   container: HTMLElement | DocumentFragment
-): void
+): void;
 ```
 
 ## getHandle
@@ -49,7 +49,7 @@ function Component() {
 ### Type Signature
 
 ```ts
-function getHandle(): ComponentHandle
+function getHandle(): ComponentHandle;
 
 interface ComponentHandle {
   update(): void;
@@ -82,7 +82,7 @@ function Component() {
 function html(
   strings: TemplateStringsArray,
   ...values: unknown[]
-): TemplateResult
+): TemplateResult;
 ```
 
 ## nothing
@@ -93,14 +93,14 @@ Represents no content to render.
 import { nothing } from 'kaori.js';
 
 function Conditional(props: { show: boolean }) {
-  return () => props.show ? <div>Content</div> : nothing;
+  return () => (props.show ? <div>Content</div> : nothing);
 }
 ```
 
 ### Type Signature
 
 ```ts
-const nothing: symbol
+const nothing: symbol;
 ```
 
 ## component
@@ -112,10 +112,10 @@ Internal directive for components (used by compiler).
 // The compiler transforms JSX to use this
 
 // JSX:
-<MyComponent prop="value" />
+<MyComponent prop="value" />;
 
 // Becomes something like:
-component(MyComponent, { prop: "value" })
+component(MyComponent, { prop: 'value' });
 ```
 
 ### Type Signature
@@ -124,9 +124,8 @@ component(MyComponent, { prop: "value" })
 function component<Props>(
   Component: (props: Props) => unknown,
   props: Props
-): unknown
+): unknown;
 ```
-
 
 ## createRef
 
@@ -149,15 +148,17 @@ function Component() {
 ### Type Signature
 
 ```ts
-function createRef<T = Element>(): Ref<T>
+function createRef<T = Element>(): Ref<T>;
 
 interface Ref<T = Element> {
   value?: T;
 }
-````
+```
 
 ## ref
+
 ref directive use ref without compiler
+
 > you dont need to use this if you are using the compiler
 
 ```tsx
@@ -171,5 +172,5 @@ html`<div ${ref(myRef)}>Content</div>`
 ### Type Signature
 
 ```ts
-const ref: Directive
+const ref: Directive;
 ```

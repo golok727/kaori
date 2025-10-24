@@ -10,15 +10,15 @@ Creates a reactive signal.
 import { signal } from 'kaori.js';
 
 const count = signal(0);
-console.log(count.value);  // Read: 0
-count.value = 5;           // Write: 5
+console.log(count.value); // Read: 0
+count.value = 5; // Write: 5
 console.log(count.peek()); // Read without subscribing: 5
 ```
 
 ### Type Signature
 
 ```ts
-function signal<T>(initialValue: T): Signal<T>
+function signal<T>(initialValue: T): Signal<T>;
 
 interface Signal<T> {
   value: T;
@@ -44,7 +44,7 @@ console.log(double.value); // 30
 ### Type Signature
 
 ```ts
-function computed<T>(compute: () => T): Computed<T>
+function computed<T>(compute: () => T): Computed<T>;
 
 interface Computed<T> {
   readonly value: T;
@@ -61,12 +61,12 @@ import { signal, effect } from 'kaori.js';
 
 function Component() {
   const count = signal(0);
-  
+
   effect(() => {
     console.log('Count:', count.value);
     document.title = `Count: ${count.value}`;
   });
-  
+
   return () => <button onClick={() => count.value++}>+</button>;
 }
 ```
@@ -74,7 +74,7 @@ function Component() {
 ### Type Signature
 
 ```ts
-function effect(fn: () => void): void
+function effect(fn: () => void): void;
 ```
 
 ## batch
@@ -96,7 +96,7 @@ batch(() => {
 ### Type Signature
 
 ```ts
-function batch(fn: () => void): void
+function batch(fn: () => void): void;
 ```
 
 ## untracked
@@ -117,7 +117,7 @@ const sum = computed(() => {
 ### Type Signature
 
 ```ts
-function untracked<T>(fn: () => T): T
+function untracked<T>(fn: () => T): T;
 ```
 
 ## syncEffect
@@ -140,7 +140,7 @@ dispose();
 ### Type Signature
 
 ```ts
-function syncEffect(fn: () => void): () => void
+function syncEffect(fn: () => void): () => void;
 ```
 
 ::: tip

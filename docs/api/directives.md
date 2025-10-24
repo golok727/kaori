@@ -35,7 +35,7 @@ Only sets attribute if value is defined.
 ```tsx
 import { ifDefined } from 'kaori.js';
 
-<img src={ifDefined(imageUrl.value)} alt="Image" />
+<img src={ifDefined(imageUrl.value)} alt="Image" />;
 ```
 
 ## when
@@ -48,10 +48,14 @@ import { when } from 'kaori.js';
 <div>
   {when(
     condition.value,
-    () => <div>True</div>,
-    () => <div>False</div>
+    () => (
+      <div>True</div>
+    ),
+    () => (
+      <div>False</div>
+    )
   )}
-</div>
+</div>;
 ```
 
 ## choose
@@ -62,11 +66,17 @@ Multi-way conditional.
 import { choose } from 'kaori.js';
 
 <div>
-  {choose(value.value, [
-    [0, () => <div>Zero</div>],
-    [1, () => <div>One</div>]
-  ], () => <div>Other</div>)}
-</div>
+  {choose(
+    value.value,
+    [
+      [0, () => <div>Zero</div>],
+      [1, () => <div>One</div>],
+    ],
+    () => (
+      <div>Other</div>
+    )
+  )}
+</div>;
 ```
 
 ## repeat
@@ -79,10 +89,12 @@ import { repeat } from 'kaori.js';
 <ul>
   {repeat(
     items.value,
-    (item) => item.id,
-    (item) => <li>{item.name}</li>
+    item => item.id,
+    item => (
+      <li>{item.name}</li>
+    )
   )}
-</ul>
+</ul>;
 ```
 
 ## map
@@ -93,8 +105,10 @@ Maps an iterable to templates.
 import { map } from 'kaori.js';
 
 <ul>
-  {map(items.value, (item) => <li>{item}</li>)}
-</ul>
+  {map(items.value, item => (
+    <li>{item}</li>
+  ))}
+</ul>;
 ```
 
 ::: tip
