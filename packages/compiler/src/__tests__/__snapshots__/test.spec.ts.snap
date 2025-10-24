@@ -8,9 +8,9 @@ function HtmlWithDataAttrs() {
 `;
 
 exports[`JSX to lit-html transformation > should handle component props with colons (namespaced attributes) 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function NamespacedProps(props) {
-  return component(Input, {
+  return html\`\${component(Input, {
     get ["prop:value"]() {
       return props.value;
     },
@@ -20,14 +20,14 @@ function NamespacedProps(props) {
     get ["bind:value"]() {
       return state.value;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`JSX to lit-html transformation > should handle component props with hyphens (data attributes) 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function DataAttributes(props) {
-  return component(Input, {
+  return html\`\${component(Input, {
     "data-thing": "asd",
     get ["data-value"]() {
       return props.value;
@@ -36,7 +36,7 @@ function DataAttributes(props) {
     get ["custom-attr"]() {
       return getValue();
     }
-  });
+  })}\`;
 }"
 `;
 
@@ -84,9 +84,9 @@ function ImportThing() {
 `;
 
 exports[`JSX to lit-html transformation > should handle mixed valid and invalid identifier props 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function MixedProps(props) {
-  return component(Input, {
+  return html\`\${component(Input, {
     get thing() {
       return props.value;
     },
@@ -100,7 +100,7 @@ function MixedProps(props) {
     get ["another-invalid"]() {
       return getStuff();
     }
-  });
+  })}\`;
 }"
 `;
 
@@ -131,14 +131,14 @@ function ComplexNesting() {
         get items() {
           return items();
         },
-        children: item => component(Card, {
+        children: item => html\`\${component(Card, {
           get key() {
             return item.id;
           },
           get children() {
             return [html\`<h3>\${item.title}</h3>\`, html\`<p>\${item.description}</p>\`, html\`<button @click=\${() => handleClick(item.id)}>\${item.completed ? "Undo" : "Complete"}</button>\`];
           }
-        })
+        })}\`
       })}</div>\`;
     }
   })}</div>\`;
@@ -148,7 +148,7 @@ function ComplexNesting() {
 exports[`JSX to lit-html transformation > should transform components with children 1`] = `
 "import { component, html } from "kaori.js";
 function ComponentChildren() {
-  return component(Layout, {
+  return html\`\${component(Layout, {
     get children() {
       return [html\`\${component(Header, {
         title: "My App"
@@ -169,7 +169,7 @@ function ComponentChildren() {
         }
       })}\`, html\`\${component(Footer, {})}\`];
     }
-  });
+  })}\`;
 }"
 `;
 

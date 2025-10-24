@@ -244,9 +244,9 @@ function Parent() {
 
       expect(output).toContain('component(For');
       expect(output).toContain('component(Item');
-      // Arrow function children are static values and don't get wrapped themselves
-      // The JSX inside them (<Item />) gets compiled to component() call
-      expect(output).toContain('children: item => component(Item');
+      // Arrow function children are static values, but JSX inside them gets wrapped
+      // The Item component inside the arrow function will be wrapped in html
+      expect(output).toContain('children: item => html`${component(Item');
       expect(output).toMatchSnapshot();
     });
 

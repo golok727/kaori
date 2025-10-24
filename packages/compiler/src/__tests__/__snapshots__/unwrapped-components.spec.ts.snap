@@ -3,7 +3,7 @@
 exports[`Unwrapped Components - Critical Issue > Complex component hierarchies > should handle component with multiple nested children at different levels 1`] = `
 "import { component, html } from "kaori.js";
 function App() {
-  return component(Layout, {
+  return html\`\${component(Layout, {
     get children() {
       return [html\`\${component(Header, {
         get children() {
@@ -19,41 +19,41 @@ function App() {
         }
       })}\`, html\`\${component(Footer, {})}\`];
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Complex component hierarchies > should handle components in arrays/maps 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
-      return items.map(item => component(Item, {
+      return items.map(item => html\`\${component(Item, {
         get key() {
           return item.id;
         },
         data: item
-      }));
+      })}\`);
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Complex component hierarchies > should handle components with conditional rendering 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
-      return [showHeader && component(Header, {}), html\`\${component(Body, {})}\`, showFooter ? component(Footer, {}) : component(MinimalFooter, {})];
+      return [showHeader && html\`\${component(Header, {})}\`, html\`\${component(Body, {})}\`, showFooter ? html\`\${component(Footer, {})}\` : html\`\${component(MinimalFooter, {})}\`];
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Edge cases > should handle component as direct return value 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Wrapper() {
-  return component(Child, {});
+  return html\`\${component(Child, {})}\`;
 }"
 `;
 
@@ -67,73 +67,73 @@ function Parent() {
 exports[`Unwrapped Components - Critical Issue > Edge cases > should handle component with spread props 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return html\`\${component(Child, props)}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Edge cases > should handle self-closing and non-self-closing components 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return [html\`\${component(Child1, {})}\`, html\`\${component(Child2, {})}\`, html\`\${component(Child3, {
         children: "Content"
       })}\`];
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Edge cases > should not double-wrap already wrapped components 1`] = `
-"import { component } from "kaori.js";
+"import { component, html as html1 } from "kaori.js";
 function Parent() {
-  return component(Container, {
-    children: html\`\${component(Child, {})}\`
-  });
+  return html1\`\${component(Container, {
+    children: html\`\${html1\`\${component(Child, {})}\`}\`
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Multiple unwrapped components in children > should wrap all sibling components in html template literal 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return [html\`\${component(Header, {})}\`, html\`\${component(Body, {})}\`, html\`\${component(Footer, {})}\`];
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Multiple unwrapped components in children > should wrap components mixed with HTML elements 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return [html\`\${component(Component1, {})}\`, html\`<div>Middle content</div>\`, html\`\${component(Component2, {})}\`];
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Multiple unwrapped components in children > should wrap components mixed with text in html template literal 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return [html\`\${component(Header, {})}\`, "Some text", html\`\${component(Footer, {})}\`];
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Nested unwrapped components (3+ levels) > should handle deeply nested components (5 levels) 1`] = `
 "import { component, html } from "kaori.js";
 function Root() {
-  return component(L1, {
+  return html\`\${component(L1, {
     get children() {
       return html\`\${component(L2, {
         get children() {
@@ -149,14 +149,14 @@ function Root() {
         }
       })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Nested unwrapped components (3+ levels) > should handle nested components with reactive props at each level 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Outer, {
+  return html\`\${component(Outer, {
     get prop() {
       return getValue1();
     },
@@ -174,14 +174,14 @@ function Parent() {
         }
       })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Nested unwrapped components (3+ levels) > should wrap nested components at each level 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Outer, {
+  return html\`\${component(Outer, {
     get children() {
       return html\`\${component(Middle, {
         get children() {
@@ -189,59 +189,59 @@ function Parent() {
         }
       })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Regression tests > should handle arrow function children (For component pattern) 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(For, {
+  return html\`\${component(For, {
     get items() {
       return getItems();
     },
     children: item => html\`<div>\${item.name}</div>\`
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Regression tests > should make children reactive when containing dynamic content 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return getMessage();
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Regression tests > should preserve static content wrapping behavior 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     children: html\`<p>Static text</p>\`
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Single unwrapped component in children > should wrap component with props in html template literal 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return html\`\${component(Child, {
         title: "test"
       })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Single unwrapped component in children > should wrap component with reactive props in html template literal 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return html\`\${component(Child, {
         get title() {
@@ -249,25 +249,25 @@ function Parent() {
         }
       })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Single unwrapped component in children > should wrap component() call in html template literal when used as children 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Container, {
+  return html\`\${component(Container, {
     get children() {
       return html\`\${component(Child, {})}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Unwrapped components in control flow > should handle nested Show with components 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Show, {
+  return html\`\${component(Show, {
     when: outer,
     get children() {
       return html\`\${component(Show, {
@@ -277,31 +277,31 @@ function Parent() {
         }
       })}\`;
     }
-  });
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Unwrapped components in control flow > should wrap component in For loop 1`] = `
-"import { component } from "kaori.js";
+"import { component, html } from "kaori.js";
 function Parent() {
-  return component(For, {
+  return html\`\${component(For, {
     items: items,
     key: item => item.id,
-    children: item => component(Item, {
+    children: item => html\`\${component(Item, {
       data: item
-    })
-  });
+    })}\`
+  })}\`;
 }"
 `;
 
 exports[`Unwrapped Components - Critical Issue > Unwrapped components in control flow > should wrap component in Show conditional 1`] = `
 "import { component, html } from "kaori.js";
 function Parent() {
-  return component(Show, {
+  return html\`\${component(Show, {
     when: condition,
     get children() {
       return html\`\${component(Child, {})}\`;
     }
-  });
+  })}\`;
 }"
 `;

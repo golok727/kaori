@@ -186,12 +186,12 @@ function App() {
 
   // provideContext(ThemeContext, signal('light'));
 
-  return () =>
-    html`${(
-      <ThemeProvider>
+  return () => (
+    <ThemeProvider>
+      <div>
         <div>
           <h1 class="text-xl font-bold">Kaori Playground</h1>
-          {<ContextExample />}
+          <ContextExample />
           <SpreadProps
             ref={spreadPropsRef}
             class="p-2 bg-black text-white rounded-md"
@@ -222,15 +222,18 @@ function App() {
             toggleCompleted={toggleCompleted}
           />
         </div>
-      </ThemeProvider>
-    )}`;
+      </div>
+    </ThemeProvider>
+  );
 }
 
 function ThemeProvider(props: { children: JSX.Element }) {
   const theme = signal<'light' | 'dark'>('light');
   provideContext(ThemeContext, theme);
 
-  return () => <div>{props.children}</div>;
+  return () => {
+    return props.children;
+  };
 }
 
 function ContextExample() {
@@ -426,4 +429,4 @@ function Todos(props: {
 //   );
 // }
 
-render(html`${(<App />)}`, root);
+render(<App />, root);
