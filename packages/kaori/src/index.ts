@@ -1,8 +1,9 @@
-import { html, type Part } from 'lit-html';
+import { html, nothing, type Part } from 'lit-html';
 import { AsyncDirective, directive } from 'lit-html/async-directive.js';
 import { effect as syncEffect, untracked } from '@preact/signals-core';
 import type { Component } from './types.js';
 import { invariant } from './utils.js';
+import type { StyleInfo } from 'lit-html/directives/style-map.js';
 
 export interface Logger {
   log: (...args: any[]) => void;
@@ -380,5 +381,14 @@ export {
   ref,
   createRef,
 } from 'lit-html/directives/ref.js';
-export { styleMap } from 'lit-html/directives/style-map.js';
+
+import { styleMap as style_map } from 'lit-html/directives/style-map.js';
+export type { StyleInfo } from 'lit-html/directives/style-map.js';
+
+export function styleMap(styles: Readonly<StyleInfo> | string | undefined) {
+  if (!styles) return nothing;
+  if (typeof styles === 'string') return styles;
+  return style_map(styles);
+}
+
 export { classMap } from 'lit-html/directives/class-map.js';

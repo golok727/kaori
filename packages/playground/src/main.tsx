@@ -337,7 +337,7 @@ function Todos(props: {
         class="py-2 px-2 border border-gray-300 rounded"
         type="text"
         id="new-todo"
-        onChange={handleInputChange}
+        onChange={handleInputChange as never}
       />
       <button class="button-primary" onClick={addTodo}>
         addTodo

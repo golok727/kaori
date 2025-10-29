@@ -1,6 +1,6 @@
 {
   "name": "kaori-compiler",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "JSX to lit-html compiler for kaori",
   "type": "module",
   "exports": {

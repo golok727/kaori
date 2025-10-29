@@ -4,7 +4,7 @@ function EyeWidget() {
   const pupilX = signal(0);
   const pupilY = signal(0);
 
-  const eyeContainerRef = createRef();
+  const eyeContainerRef = createRef<HTMLDivElement>();
 
   onMount(() => {
     const eyeContainerElement = eyeContainerRef.value;
